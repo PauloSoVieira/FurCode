@@ -22,6 +22,6 @@ public class Shelter {
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
 
-    @OneToOne(mappedBy = "shelter")
-    private Pet pet;
+    @OneToMany(mappedBy = "shelter")
+    private Set<Pet> pet;
 }

@@ -4,6 +4,8 @@ package org.mindera.fur.code.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "pet")
@@ -16,9 +18,13 @@ public class Pet {
 
     private String name;
 
-    @OneToOne
+    @ManyToOne
     private Shelter shelter;
 
     @OneToOne
     private PetType pet_type;
+
+
+    @OneToMany(mappedBy = "pet")
+    private List<MedicalRecord> medical_records;
 }
