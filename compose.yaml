@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16.3-alpine
+    restart: always
+
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - spring-postgres
+    environment:
+      - POSTGRES_DB=furcode
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+volumes:
+  db-data:
+networks:
+  spring-postgres:
