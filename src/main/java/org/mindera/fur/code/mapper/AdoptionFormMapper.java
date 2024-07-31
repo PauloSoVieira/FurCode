@@ -2,8 +2,8 @@ package org.mindera.fur.code.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.mindera.fur.code.dto.AdoptionFormCreateDTO;
-import org.mindera.fur.code.dto.AdoptionFormDTO;
+import org.mindera.fur.code.dto.formsDTO.AdoptionFormCreateDTO;
+import org.mindera.fur.code.dto.formsDTO.AdoptionFormDTO;
 import org.mindera.fur.code.model.form.AdoptionForm;
 
 import java.util.List;
@@ -14,15 +14,16 @@ public interface AdoptionFormMapper {
 
     AdoptionFormMapper INSTANCE = Mappers.getMapper(AdoptionFormMapper.class);
 
-    AdoptionFormDTO adoptionToDto(AdoptionForm adoptionForm);
+    AdoptionFormDTO toDTO(AdoptionForm adoptionForm);
 
-    AdoptionFormCreateDTO DtoToAdoptionCreation(AdoptionForm adoptionForm);
+    // AdoptionFormCreateDTO DtoToAdoptionCreation(AdoptionForm adoptionForm);
 
     AdoptionForm toModel(AdoptionFormDTO adoptionFormDto);
 
-    AdoptionForm adoptionToCreate(AdoptionFormCreateDTO adoptionFormCreateDto);
+    AdoptionForm toModel(AdoptionFormCreateDTO adoptionFormCreateDto);
 
-    List<AdoptionFormDTO> adoptionToAdoptionDto(List<AdoptionForm> adoptionForms);
 
-    List<AdoptionForm> adoptionDtoToAdoption(List<AdoptionFormDTO> adoptionFormDTOS);
+    List<AdoptionFormDTO> toDTOList(List<AdoptionForm> adoptionForms);
+
+    List<AdoptionForm> toModelList(List<AdoptionFormDTO> adoptionFormDTOS);
 }

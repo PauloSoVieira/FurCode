@@ -19,8 +19,8 @@ public class FormField {
 
     private String name;
     private String type; // TODO: enum de numbers, text, etc
-    private String label;
-    private String placeholder;
+    // private String label;
+    // private String placeholder;
 //    private Boolean required;
 //    private Boolean unique;
 }

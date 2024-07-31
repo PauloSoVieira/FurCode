@@ -3,7 +3,6 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.mindera.fur.code.model.form.AdoptionForm;
 
 import java.util.List;
 
@@ -29,6 +28,5 @@ public class Pet {
     @OneToMany(mappedBy = "pet")
     private List<MedicalRecord> medical_records;
 
-    @OneToMany(mappedBy = "pet")
-    private List<AdoptionForm> adoption_forms;
+
 }

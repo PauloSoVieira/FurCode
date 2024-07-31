@@ -1,7 +1,7 @@
 package org.mindera.fur.code.controller;
 
-import org.mindera.fur.code.dto.AdoptionFormCreateDTO;
-import org.mindera.fur.code.dto.AdoptionFormDTO;
+import org.mindera.fur.code.dto.formsDTO.AdoptionFormCreateDTO;
+import org.mindera.fur.code.dto.formsDTO.AdoptionFormDTO;
 import org.mindera.fur.code.service.AdoptionFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +27,7 @@ public class AdotionFormController {
         return new ResponseEntity<>(adoptionFormService.getAll(), HttpStatus.OK);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<AdoptionFormDTO> getAdoptionFormById(@PathVariable Long id) {
         return new ResponseEntity<>(adoptionFormService.getById(id), HttpStatus.OK);
@@ -47,5 +48,6 @@ public class AdotionFormController {
         AdoptionFormDTO dto = adoptionFormService.updateAdoptionForm(adoptionFormDto, id);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+
 
 }
