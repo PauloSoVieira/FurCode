@@ -9,5 +9,4 @@ class FurCodeApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

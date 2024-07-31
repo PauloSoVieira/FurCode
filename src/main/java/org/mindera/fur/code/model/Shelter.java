@@ -36,10 +36,7 @@ public class Shelter {
     @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
+    @OneToMany(mappedBy = "shelterId") // changed to shelterId
+    private Set<Pet> pet;
 
-    @OneToMany(mappedBy = "shelter")
-    private Set<Pet> pets;
-
-    @OneToMany(mappedBy = "shelter")
-    private Set<AdoptionRequest> adoptionRequests;
 }
