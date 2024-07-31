@@ -15,7 +15,15 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String firstName;
+    private String lastName;
+    private Integer nif; //TODO nif cant be changed
+    private String email;
+    private String password;
+    private String address1;
+    private String address2;
+    private Integer postalCode;
+    private Integer cellPhone;
 
 
     @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
