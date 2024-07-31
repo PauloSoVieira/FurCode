@@ -1,59 +1,68 @@
 package org.mindera.fur.code.service;
 
+import org.mindera.fur.code.dto.ShelterDTO.ShelterCreationDTO;
 import org.mindera.fur.code.dto.ShelterDTO.ShelterDTO;
-import org.mindera.fur.code.model.Person;
-import org.mindera.fur.code.model.Pet;
+import org.mindera.fur.code.mapper.ShelterMapper;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.repository.ShelterRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ShelterService {
 
-    @Autowired
+
     private ShelterRepository shelterRepository;
+
+    private ShelterMapper shelterMapper;
+
+    @Autowired
+    public ShelterService(ShelterRepository shelterRepository) {
+        this.shelterRepository = shelterRepository;
+    }
 
     public List<ShelterDTO> getAllShelters() {
         List<Shelter> shelters = shelterRepository.findAll();
-        return shelters.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return shelterMapper.INSTANCE.toDto(shelters);
     }
 
     public ShelterDTO getShelterById(Long id) {
-        return shelterRepository.findById(id)
-                .map(this::convertToDTO)
-                .orElse(null);
+        Shelter shelter = shelterRepository.findById(id).orElseThrow();
+        return shelterMapper.INSTANCE.toDto(shelter);
     }
 
-    public ShelterDTO saveShelter(ShelterDTO shelterDTO) {
-        Shelter shelter = convertToEntity(shelterDTO);
-        shelter = shelterRepository.save(shelter);
-        return convertToDTO(shelter);
+    public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
+        Shelter shelter = shelterMapper.INSTANCE.toModel(shelterCreationDTO);
+        shelterRepository.save(shelter);
+        return ShelterMapper.INSTANCE.toDto(shelter);
     }
 
     public void deleteShelter(Long id) {
         shelterRepository.deleteById(id);
     }
 
-    private ShelterDTO convertToDTO(Shelter shelter) {
-        ShelterDTO shelterDTO = new ShelterDTO();
-        BeanUtils.copyProperties(shelter, shelterDTO);
-        return shelterDTO;
+    public ShelterDTO updateShelter(Long id, ShelterDTO shelterDTO) {
+        Shelter shelter = shelterRepository.findById(id).orElseThrow();
+        Shelter updateShelter = shelterMapper.INSTANCE.toModel(shelterDTO);
+        shelter.setName(updateShelter.getName());
+        shelter.setEmail(updateShelter.getEmail());
+        shelter.setAddress1(updateShelter.getAddress1());
+        shelter.setAddress2(updateShelter.getAddress2());
+        shelter.setPostCode(updateShelter.getPostCode());
+        shelter.setPhone(updateShelter.getPhone());
+        shelter.setSize(updateShelter.getSize());
+        shelter.setIsActive(updateShelter.getIsActive());
+        shelterRepository.save(shelter);
+        return shelterMapper.INSTANCE.toDto(shelter);
     }
 
-    private Shelter convertToEntity(ShelterDTO shelterDTO) {
-        Shelter shelter = new Shelter();
-        BeanUtils.copyProperties(shelterDTO, shelter);
-        return shelter;
+    public void deleteAll() {
+        shelterRepository.deleteAll();
     }
 
-    public List<PersonDTO> getAllRequests(Long personId) {
+    /*public List<PersonDTO> getAllRequests(Long personId) {
         List<Person> persons = personRepository.findAll();
         return persons.stream()
                 .filter(person -> person.getShelter().getId().equals(personId))
@@ -93,5 +102,5 @@ public class ShelterService {
         petRepository.save(pet);
         personRepository.save(person);
         shelterRepository.save(shelter);
-    }
+    }*/
 }

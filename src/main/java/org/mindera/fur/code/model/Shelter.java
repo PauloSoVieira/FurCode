@@ -17,7 +17,7 @@ public class Shelter {
 
     private String name;
 
-    private Integer VAT;
+    private Integer vat;
 
     private String email;
 
@@ -29,9 +29,7 @@ public class Shelter {
 
     private Integer phone;
 
-    private String passwordHash;
-
-    private String passwordSalt;
+    private Integer size;
 
     private Boolean isActive;
 
