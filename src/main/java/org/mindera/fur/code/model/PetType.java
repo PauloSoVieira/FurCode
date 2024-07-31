@@ -1,27 +1,24 @@
 package org.mindera.fur.code.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "pet_type")
-@Data
 public class PetType {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String name;
 
-
-    @OneToOne(mappedBy = "pet_type")
+    @OneToOne(mappedBy = "petType")
     private Pet pet;
 
     @OneToOne
-    private Breed breed;
-
+    private Breed breedId;
 
 }
