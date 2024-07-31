@@ -3,6 +3,7 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.mindera.fur.code.model.form.AdoptionForm;
 
 import java.util.Set;
 
@@ -20,4 +21,10 @@ public class Person {
 
     @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
     private Set<ShelterPersonRoles> shelterPersonRoles;
+
+
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
+    private Set<AdoptionForm> adoptionForms;
+
+
 }
