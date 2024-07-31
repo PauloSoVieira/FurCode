@@ -17,11 +17,31 @@ public class Shelter {
 
     private String name;
 
+    private Integer VAT;
+
+    private String email;
+
+    private String address1;
+
+    private String address2;
+
+    private String postCode;
+
+    private Integer phone;
+
+    private String passwordHash;
+
+    private String passwordSalt;
+
+    private Boolean isActive;
 
     @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
 
     @OneToMany(mappedBy = "shelter")
-    private Set<Pet> pet;
+    private Set<Pet> pets;
+
+    @OneToMany(mappedBy = "shelter")
+    private Set<AdoptionRequest> adoptionRequests;
 }
