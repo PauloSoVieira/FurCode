@@ -17,11 +17,26 @@ public class Shelter {
 
     private String name;
 
+    private Integer vat;
+
+    private String email;
+
+    private String address1;
+
+    private String address2;
+
+    private String postCode;
+
+    private Integer phone;
+
+    private Integer size;
+
+    private Boolean isActive;
 
     @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
-
     @OneToMany(mappedBy = "shelterId") // changed to shelterId
     private Set<Pet> pet;
+
 }
