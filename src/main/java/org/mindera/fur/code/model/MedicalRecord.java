@@ -1,12 +1,13 @@
 package org.mindera.fur.code.model;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
+
+@Data
 @Entity
 @Table(name = "medical_record")
-@Data
 public class MedicalRecord {
 
     @Id
@@ -15,7 +16,21 @@ public class MedicalRecord {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "pet_id", nullable = false)
-    private Pet pet;
+    private Pet petId;
 
+    @Column
+    private boolean isVaccinated;
+
+    @Column
+    private boolean isSterilized;
+
+    @Column
+    private boolean isDewormed;
+
+    @Column
+    private Date date;
+
+    @Column
+    private String observation;
 
 }
