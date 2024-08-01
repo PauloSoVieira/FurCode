@@ -3,8 +3,10 @@ package org.mindera.fur.code;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
-import org.mindera.fur.code.dto.Person.PersonCreationDTO;
-import org.mindera.fur.code.dto.Person.PersonDTO;
+import org.mindera.fur.code.dto.person.PersonCreationDTO;
+import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
+import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -230,6 +232,52 @@ public class PersonControllerIntegrationTest {
                     .then()
                     .statusCode(204);
 
+        }
+
+        @Test
+        void createShelterShouldReturn201() {
+            PersonCreationDTO personCreationDTO = new PersonCreationDTO(
+                    "John",
+                    "Doe",
+                    123456789,
+                    "john.doe@example.com",
+                    "password",
+                    "123 Main Street",
+                    "Apt 1",
+                    12345,
+                    123456789
+            );
+
+            PersonDTO personDTO =
+                    given()
+                            .contentType(ContentType.JSON)
+                            .body(personCreationDTO)
+                            .when()
+                            .post("/api/v1/person")
+                            .then()
+                            .statusCode(201).extract().body().as(PersonDTO.class);
+
+            String personId =
+                    given()
+                            .contentType(ContentType.JSON)
+                            .body(personDTO)
+                            .when()
+                            .post("/api/v1/person")
+                            .then()
+                            .statusCode(201).extract().body().jsonPath().getString("id");
+
+            ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
+                    "Shelter"
+            );
+
+            ShelterDTO shelterDTO =
+                    given()
+                            .contentType(ContentType.JSON)
+                            .body(shelterCreationDTO)
+                            .when()
+                            .post("/api/v1/person/" + personId + "/create-shelter")
+                            .then()
+                            .statusCode(201).extract().body().as(ShelterDTO.class);
         }
     }
 

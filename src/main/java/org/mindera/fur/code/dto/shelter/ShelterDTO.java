@@ -1,4 +1,4 @@
-package org.mindera.fur.code.dto.ShelterDTO;
+package org.mindera.fur.code.dto.shelter;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
