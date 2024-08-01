@@ -25,34 +25,31 @@ public class ShelterController {
     //Create Shelter
     @PostMapping
     public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
-
-        ShelterCreationDTO test = shelterCreationDTO;
-
         return new ResponseEntity<>(shelterService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
 
     //Get all shelters
     @GetMapping("/all")
-    public List<ShelterDTO> getShelters() {
-        return shelterService.getAllShelters();
+    public ResponseEntity<List<ShelterDTO>> getAllShelters() {
+        return new ResponseEntity<>(shelterService.getAllShelters(), HttpStatus.OK);
     }
 
     //Get shelter by id
     @GetMapping("/{id}")
-    public ShelterDTO getShelterById(@PathVariable Long id) {
-        return shelterService.getShelterById(id);
+    public ResponseEntity<ShelterDTO> getShelterById(@PathVariable Long id) {
+        return new ResponseEntity<>(shelterService.getShelterById(id), HttpStatus.OK);
     }
 
     //Delete shelter by Id
     @DeleteMapping("/delete/{id}")
-    public void deleteShelter(@PathVariable Long id) {
-        shelterService.deleteShelter(id);
+    public ResponseEntity<ShelterDTO> deleteShelter(@PathVariable Long id) {
+        return new ResponseEntity<>(shelterService.deleteShelter(id), HttpStatus.NO_CONTENT);
     }
 
     //Update shelter info
     @PatchMapping("/update/{id}")
-    public ShelterDTO updateShelter(@PathVariable Long id, @RequestBody ShelterDTO shelterDTO) {
-        return shelterService.updateShelter(id, shelterDTO);
+    public ResponseEntity<ShelterDTO> updateShelter(@PathVariable Long id, @RequestBody ShelterDTO shelterDTO) {
+        return new ResponseEntity<>(shelterService.updateShelter(id, shelterDTO), HttpStatus.OK);
     }
 
     /*//Request Adoption

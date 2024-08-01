@@ -122,7 +122,7 @@ public class ShelterControllerIntegrationTest {
                             .contentType(ContentType.JSON)
                             .body(shelterCreationDTO)
                             .when()
-                            .post("/api/v1/shelter/")
+                            .post("/api/v1/shelter")
                             .then()
                             .statusCode(201).extract().body().as(ShelterDTO.class);
 

@@ -39,8 +39,10 @@ public class ShelterService {
         return ShelterMapper.INSTANCE.toDto(shelter);
     }
 
-    public void deleteShelter(Long id) {
-        shelterRepository.deleteById(id);
+    public ShelterDTO deleteShelter(Long id) {
+        Shelter shelter = shelterRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Error"));
+        shelterRepository.delete(shelter);
+        return ShelterMapper.INSTANCE.toDto(shelter);
     }
 
     public ShelterDTO updateShelter(Long id, ShelterDTO shelterDTO) {
