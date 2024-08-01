@@ -1,7 +1,9 @@
 package org.mindera.fur.code.service;
 
-import org.mindera.fur.code.dto.Person.PersonCreationDTO;
-import org.mindera.fur.code.dto.Person.PersonDTO;
+import org.mindera.fur.code.dto.person.PersonCreationDTO;
+import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
+import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.repository.PersonRepository;
@@ -13,11 +15,13 @@ import java.util.List;
 @Service
 public class PersonService {
     private final PersonRepository personRepository;
+    private final ShelterService shelterService;
     private PersonMapper personMapper;
 
     @Autowired
-    public PersonService(PersonRepository personRepository) {
+    public PersonService(PersonRepository personRepository, ShelterService shelterService) {
         this.personRepository = personRepository;
+        this.shelterService = shelterService;
     }
 
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
@@ -58,5 +62,9 @@ public class PersonService {
 
     public void deleteAllPersons() {
         personRepository.deleteAll();
+    }
+
+    public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
+        return shelterService.createShelter(shelterCreationDTO);
     }
 }

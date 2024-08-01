@@ -1,7 +1,9 @@
 package org.mindera.fur.code.controller;
 
-import org.mindera.fur.code.dto.Person.PersonCreationDTO;
-import org.mindera.fur.code.dto.Person.PersonDTO;
+import org.mindera.fur.code.dto.person.PersonCreationDTO;
+import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
+import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,11 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<PersonDTO> createPerson(PersonCreationDTO personCreationDTO) {
         return new ResponseEntity<>(personService.createPerson(personCreationDTO), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{id}/create-shelter")
+    public ResponseEntity<ShelterDTO> createShelter(ShelterCreationDTO shelterCreationDTO) {
+        return new ResponseEntity<>(personService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")

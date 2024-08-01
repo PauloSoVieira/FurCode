@@ -1,4 +1,4 @@
-package org.mindera.fur.code.dto.ShelterDTO;
+package org.mindera.fur.code.dto.shelter;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,6 @@ public class ShelterCreationDTO {
     @NotNull
     @NotBlank
     private String name;
-
     private Integer vat;
     private String email;
     private String address1;
@@ -18,4 +17,8 @@ public class ShelterCreationDTO {
     private Integer phone;
     private Integer size;
     private Boolean isActive;
+
+    public ShelterCreationDTO(String name) {
+        this.name = name;
+    }
 }

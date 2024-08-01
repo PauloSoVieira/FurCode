@@ -1,7 +1,7 @@
 package org.mindera.fur.code.service;
 
-import org.mindera.fur.code.dto.ShelterDTO.ShelterCreationDTO;
-import org.mindera.fur.code.dto.ShelterDTO.ShelterDTO;
+import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
+import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.mapper.ShelterMapper;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.repository.ShelterRepository;
