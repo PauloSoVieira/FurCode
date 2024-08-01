@@ -35,9 +35,9 @@ public class PersonService {
     }
 
     private static void personValidation(PersonCreationDTO personCreationDTO) {
-        if (personCreationDTO.getFirstName() == null) {
+      /*  if (personCreationDTO.getFirstName() == null) {
             throw new PersonsNameCannotBeNull();
-        }
+        }*/
         if (personCreationDTO.getFirstName().equals(" ")) {
             throw new PersonsNameCannotBeEmpty();
         }
@@ -74,7 +74,7 @@ public class PersonService {
     }
 
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
-        personValidation(personCreationDTO);
+        //personValidation(personCreationDTO);
         Person person = personMapper.INSTANCE.toModel(personCreationDTO);
         personRepository.save(person);
         return personMapper.INSTANCE.toDTO(person);

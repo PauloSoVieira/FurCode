@@ -41,7 +41,7 @@ public class Pet {
     @Column
     private String observation;
 
-    // @Column
+    @Column
     // private String cage;
 
     @OneToMany(mappedBy = "petId")

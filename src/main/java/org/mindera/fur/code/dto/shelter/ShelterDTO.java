@@ -1,45 +1,18 @@
 package org.mindera.fur.code.dto.shelter;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class ShelterDTO {
     private Long id;
-
-    @NotNull
-    @NotBlank
     private String name;
-
-    @NotNull
-    @NotBlank
     private Long vat;
-
-    @NotNull
-    @NotBlank
     private String email;
-
-    @NotNull
-    @NotBlank
     private String address1;
-
     private String address2;
-
-    @NotNull
-    @NotBlank
     private String postCode;
-
-    @NotNull
-    @NotBlank
     private Long phone;
-
-    @NotNull
-    @NotBlank
     private Long size;
-
-    @NotNull
-    @NotBlank
     private Boolean isActive;
 
     public ShelterDTO(String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive) {

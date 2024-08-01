@@ -62,29 +62,20 @@ public class ShelterService {
         shelterRepository.deleteAll();
     }
 
+    /*public void addPetToShelter(Long shelterId, Long petId) {
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow();
+        pet.setShelter(shelterRepository.findById(shelterId)
+                .orElseThrow();
+        petRepository.save(pet);
+    }*/
+
     /*public List<PersonDTO> getAllRequests(Long personId) {
         List<Person> persons = personRepository.findAll();
         return persons.stream()
                 .filter(person -> person.getShelter().getId().equals(personId))
                 .map(this::convertToPersonDTO)
                 .collect(Collectors.toList());
-    }
-
-    public void addPersonToShelter(Long shelterId, Long personId, String role) {
-        Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found"));
-        person.setRole(role);
-        person.setShelter(shelterRepository.findById(shelterId)
-                .orElseThrow(() -> new IllegalArgumentException("Shelter not found")));
-        personRepository.save(person);
-    }
-
-    public void addPetToShelter(Long shelterId, Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new IllegalArgumentException("Pet not found"));
-        pet.setShelter(shelterRepository.findById(shelterId)
-                .orElseThrow(() -> new IllegalArgumentException("Shelter not found")));
-        petRepository.save(pet);
     }
 
     public void requestAdoption(Long id, Long petId, Long personId) {

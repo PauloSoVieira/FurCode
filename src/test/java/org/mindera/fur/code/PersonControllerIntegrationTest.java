@@ -51,16 +51,6 @@ public class PersonControllerIntegrationTest {
                     123456789L
             );
 
-            String personId =
-                    given()
-                            .contentType(ContentType.JSON)
-                            .body(person)
-                            .when()
-                            .post("/api/v1/person")
-                            .then()
-                            .statusCode(201)
-                            .extract().body().jsonPath().getString("id");
-
             PersonDTO personDTO =
                     given()
                             .contentType(ContentType.JSON)
