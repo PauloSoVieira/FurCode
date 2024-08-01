@@ -58,7 +58,7 @@ public class ShelterService {
         return shelterMapper.INSTANCE.toDto(shelter);
     }
 
-    public void deleteAll() {
+    public void deleteAllShelters() {
         shelterRepository.deleteAll();
     }
 

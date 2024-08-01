@@ -42,13 +42,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO person = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             String personId =
@@ -81,13 +81,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -122,13 +122,13 @@ public class PersonControllerIntegrationTest {
 
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -155,13 +155,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -199,13 +199,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -239,13 +239,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -267,7 +267,15 @@ public class PersonControllerIntegrationTest {
                             .statusCode(201).extract().body().jsonPath().getString("id");
 
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
-                    "Shelter"
+                    "Shelter",
+                    123456789L,
+                    "shelter@shelter.com",
+                    "Shelter Street",
+                    "number",
+                    "4400",
+                    987654321L,
+                    1234L,
+                    true
             );
 
             ShelterDTO shelterDTO =
