@@ -1,5 +1,6 @@
 package org.mindera.fur.code.dto.person;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -14,10 +15,11 @@ public class PersonCreationDTO {
     @NotBlank
     private String lastName;
 
-    private Integer nif;
+    private Long nif;
 
     @NotNull
     @NotBlank
+    @Email
     private String email;
 
     @NotNull
@@ -32,14 +34,14 @@ public class PersonCreationDTO {
 
     @NotNull
     @NotBlank
-    private Integer postalCode;
+    private Long postalCode;
 
-    private Integer cellPhone;
+    private Long cellPhone;
 
     public PersonCreationDTO() {
     }
 
-    public PersonCreationDTO(String firstName, String lastName, Integer nif, String email, String password, String address1, String address2, Integer postalCode, Integer cellPhone) {
+    public PersonCreationDTO(String firstName, String lastName, Long nif, String email, String password, String address1, String address2, Long postalCode, Long cellPhone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.nif = nif;
