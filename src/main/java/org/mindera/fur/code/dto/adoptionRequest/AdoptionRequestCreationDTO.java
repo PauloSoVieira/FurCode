@@ -3,10 +3,12 @@ package org.mindera.fur.code.dto.adoptionRequest;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import org.mindera.fur.code.model.State;
 
 import java.sql.Date;
 
+@Data
 public class AdoptionRequestCreationDTO {
 
     @NotNull
