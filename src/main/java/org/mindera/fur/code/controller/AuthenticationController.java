@@ -1,7 +1,10 @@
 package org.mindera.fur.code.controller;
 
 import jakarta.validation.Valid;
+import org.mindera.fur.code.dto.person.LoginResponseDTO;
 import org.mindera.fur.code.dto.person.PersonAuthenticationDTO;
+import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.infra.security.TokenService;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,17 +21,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
     @Autowired
+    TokenService tokenService;
+    @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private PersonRepository personRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid PersonAuthenticationDTO personAuthenticationDTO) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid PersonAuthenticationDTO personAuthenticationDTO) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(personAuthenticationDTO.getEmail(), personAuthenticationDTO.getPassword());
-        Authentication auth = this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Authentication auth = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+        String token = tokenService.generateToken((PersonDTO) auth.getPrincipal());
+
+        return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
     }
 
 }
