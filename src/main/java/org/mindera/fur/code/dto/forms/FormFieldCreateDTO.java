@@ -1,4 +1,4 @@
-package org.mindera.fur.code.dto.formsDTO;
+package org.mindera.fur.code.dto.forms;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

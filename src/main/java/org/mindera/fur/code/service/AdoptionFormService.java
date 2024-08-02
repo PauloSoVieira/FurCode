@@ -1,7 +1,7 @@
 package org.mindera.fur.code.service;
 
-import org.mindera.fur.code.dto.formsDTO.AdoptionFormCreateDTO;
-import org.mindera.fur.code.dto.formsDTO.AdoptionFormDTO;
+import org.mindera.fur.code.dto.forms.AdoptionFormCreateDTO;
+import org.mindera.fur.code.dto.forms.AdoptionFormDTO;
 import org.mindera.fur.code.exceptions.adoptionFormException.AdoptionFormNotFound;
 import org.mindera.fur.code.mapper.adoptionMapper.AdoptionFormMapper;
 import org.mindera.fur.code.model.form.AdoptionForm;

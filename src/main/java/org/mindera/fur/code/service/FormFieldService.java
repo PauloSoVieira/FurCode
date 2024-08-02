@@ -1,6 +1,6 @@
 package org.mindera.fur.code.service;
 
-import org.mindera.fur.code.dto.formsDTO.FormFieldDTO;
+import org.mindera.fur.code.dto.forms.FormFieldDTO;
 import org.mindera.fur.code.mapper.adoptionMapper.FormFieldMapper;
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.repository.FormFieldRepository;
@@ -34,9 +34,9 @@ public class FormFieldService {
 
     public FormFieldDTO updateField(Long id, FormFieldDTO formFieldDTO) {
         FormField formField = formFieldRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Field not found"));
-//        formField.setName(formFieldDTO.getName());
-//        formField.setType(formFieldDTO.getType());
-//        formField.setRequired(formFieldDTO.isRequired());
+        formField.setId(formFieldDTO.getId());
+        formField.setName(formFieldDTO.getName());
+        formField.setType(formFieldDTO.getType());
         formFieldRepository.save(formField);
         return FormFieldMapper.INSTANCE.toDTO(formField);
     }

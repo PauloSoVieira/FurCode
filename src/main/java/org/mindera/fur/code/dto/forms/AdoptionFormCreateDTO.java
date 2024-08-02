@@ -1,4 +1,4 @@
-package org.mindera.fur.code.dto.formsDTO;
+package org.mindera.fur.code.dto.forms;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
