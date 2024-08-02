@@ -1,4 +1,4 @@
-package org.mindera.fur.code.mapper;
+package org.mindera.fur.code.mapper.adoptionMapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

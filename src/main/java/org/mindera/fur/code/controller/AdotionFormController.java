@@ -1,5 +1,6 @@
 package org.mindera.fur.code.controller;
 
+import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.formsDTO.AdoptionFormCreateDTO;
 import org.mindera.fur.code.dto.formsDTO.AdoptionFormDTO;
 import org.mindera.fur.code.service.AdoptionFormService;
@@ -33,14 +34,14 @@ public class AdotionFormController {
         return new ResponseEntity<>(adoptionFormService.getById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<AdoptionFormDTO> addAdoptionForm(@PathVariable Long id, @RequestBody AdoptionFormCreateDTO adoptionFormDto) {
-        return new ResponseEntity<>(adoptionFormService.addAdoptionForm(adoptionFormDto), HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<AdoptionFormDTO> createAdoptionForm(@Valid @RequestBody AdoptionFormCreateDTO adoptionFormDto) {
+        return new ResponseEntity<>(adoptionFormService.createAdoptionForm(adoptionFormDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<AdoptionFormDTO> deleteAdoptionFormById(@PathVariable Long id) {
-        return new ResponseEntity<>(adoptionFormService.delete(id), HttpStatus.OK);
+        return new ResponseEntity<>(adoptionFormService.delete(id), HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}")

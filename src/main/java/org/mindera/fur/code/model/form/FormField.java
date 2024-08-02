@@ -14,8 +14,8 @@ public class FormField {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "form_id")
-    private AdoptionForm form;
+    @JoinColumn(name = "adoption_form_id")
+    private AdoptionForm adoptionForm;
 
     private String name;
     private String type; // TODO: enum de numbers, text, etc
