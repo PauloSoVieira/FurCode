@@ -1,7 +1,11 @@
 package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -12,10 +16,15 @@ public class Breed {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @NotBlank(message = "Breed name must be provided")
+    @Column(nullable = false)
     private String name;
 
-    @OneToOne(mappedBy = "breedId")
-    private PetType petType;
+    @NotBlank(message = "Animal type must be provided")
+    @Column(nullable = false)
+    private String animalType;
 
+    @Valid
+    @OneToMany(mappedBy = "breed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PetType> petTypes; // Changed from @OneToOne(mappedBy = "breedId")
 }
