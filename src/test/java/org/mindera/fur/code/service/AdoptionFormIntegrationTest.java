@@ -44,7 +44,7 @@ public class AdoptionFormIntegrationTest {
                 1L,
                 1L,
                 1L,
-                Set.of(new FormFieldDTO("1", "1", "1")));
+                Set.of(new FormFieldDTO(1L, "1", "1")));
 
         String adoptionId = given()
                 .contentType(ContentType.JSON)
@@ -67,7 +67,7 @@ public class AdoptionFormIntegrationTest {
                 .extract().body().as(AdoptionFormDTO.class);
 
         adoptionForm.setName("Pablo");
-        adoptionForm.setFormFields(Set.of(new FormFieldDTO("2", "2", "2")));
+        adoptionForm.setFormFields(Set.of(new FormFieldDTO(2L, "2", "2")));
 
         adoptionFormService.updateAdoptionForm(adoptionFormDTO, Long.valueOf(adoptionId));
 

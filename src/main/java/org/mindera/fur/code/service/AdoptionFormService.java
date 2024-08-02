@@ -14,53 +14,55 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Service class for managing AdoptionForms.
+ */
 @Service
 public class AdoptionFormService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdoptionFormService.class);
     private AdoptionFormRepository adoptionFormRepository;
 
-
+    /**
+     * Constructor for Dependency Injection.
+     *
+     * @param AdoptionFormRepository the AdoptionForm repository.
+     */
     @Autowired
     public AdoptionFormService(AdoptionFormRepository AdoptionFormRepository) {
         this.adoptionFormRepository = AdoptionFormRepository;
     }
 
-
+    /**
+     * Retrieves all adoption forms.
+     *
+     * @return a list of AdoptionFormDTOs.
+     */
     public List<AdoptionFormDTO> getAll() {
         List<AdoptionForm> adoptionForms = adoptionFormRepository.findAll();
         return AdoptionFormMapper.INSTANCE.toDTOList(adoptionForms);
     }
 
+    /**
+     * Creates a new adoption form.
+     *
+     * @param adoptionFormDto the DTO for creating a new adoption form.
+     * @return the created AdoptionFormDTO.
+     */
 
     public AdoptionFormDTO createAdoptionForm(AdoptionFormCreateDTO adoptionFormDto) {
-        if (adoptionFormDto == null) {
-            throw new IllegalArgumentException("Adoption form DTO cannot be null");
-        }
-
-        if (adoptionFormDto.getName() == null || adoptionFormDto.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Name is required");
-        }
-
-        if (adoptionFormDto.getShelterId() == null) {
-            throw new IllegalArgumentException("Shelter ID is required");
-        }
-
-        if (adoptionFormDto.getPersonId() == null) {
-            throw new IllegalArgumentException("Person ID is required");
-        }
-
-        if (adoptionFormDto.getPetId() == null) {
-            throw new IllegalArgumentException("Pet ID is required");
-        }
-
+        validateAdoptionFormCreateDTO(adoptionFormDto);
         AdoptionForm adoptionForm = AdoptionFormMapper.INSTANCE.toModel(adoptionFormDto);
-
-
         adoptionFormRepository.save(adoptionForm);
-
         return AdoptionFormMapper.INSTANCE.toDTO(adoptionForm);
     }
+
+    /**
+     * Deletes an adoption form by ID.
+     *
+     * @param id the ID of the adoption form to be deleted.
+     * @return the deleted AdoptionFormDTO.
+     */
 
     public AdoptionFormDTO delete(Long id) {
         if (id == null) {
@@ -76,6 +78,13 @@ public class AdoptionFormService {
         return AdoptionFormMapper.INSTANCE.toDTO(adoptionForm);
     }
 
+    /**
+     * Updates an existing adoption form.
+     *
+     * @param adoptionFormDto the DTO containing updated information.
+     * @param id              the ID of the adoption form to be updated.
+     * @return the updated AdoptionFormDTO.
+     */
 
     public AdoptionFormDTO updateAdoptionForm(AdoptionFormDTO adoptionFormDto, Long id) {
 
@@ -145,6 +154,12 @@ public class AdoptionFormService {
     */
     }
 
+    /**
+     * Retrieves an adoption form by ID.
+     *
+     * @param id the ID of the adoption form.
+     * @return the retrieved AdoptionFormDTO.
+     */
 
     public AdoptionFormDTO getById(Long id) {
         if (id == null) {
@@ -157,8 +172,36 @@ public class AdoptionFormService {
         return AdoptionFormMapper.INSTANCE.toDTO(adoptionForm);
     }
 
+    /**
+     * Deletes all adoption forms.
+     */
+
     public void deleteAllAdoptionForms() {
         adoptionFormRepository.deleteAll();
         ;
+    }
+
+
+    /**
+     * Validates the AdoptionFormCreateDTO.
+     *
+     * @param adoptionFormDto the DTO to be validated.
+     */
+    private void validateAdoptionFormCreateDTO(AdoptionFormCreateDTO adoptionFormDto) {
+        if (adoptionFormDto.getName() == null || adoptionFormDto.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Name is required");
+        }
+
+        if (adoptionFormDto.getShelterId() == null) {
+            throw new IllegalArgumentException("Shelter ID is required");
+        }
+
+        if (adoptionFormDto.getPersonId() == null) {
+            throw new IllegalArgumentException("Person ID is required");
+        }
+
+        if (adoptionFormDto.getPetId() == null) {
+            throw new IllegalArgumentException("Pet ID is required");
+        }
     }
 }

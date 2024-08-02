@@ -4,17 +4,13 @@ import lombok.Data;
 
 @Data
 public class FormFieldDTO {
-
     private Long id;
-    private String question;
-    private String type;
-    private String answer;
+    private String name;
+    private String type; // Consider using an enum for field types
 
-    public FormFieldDTO(String s, String text, String s1) {
-        this.question = s;
-        this.type = text;
-        this.answer = s1;
+    public FormFieldDTO(Long id, String name, String type) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
     }
-    //  private String label;
-    //  private String placeholder;
 }
