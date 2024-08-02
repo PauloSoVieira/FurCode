@@ -1,17 +1,16 @@
 package org.mindera.fur.code.controller;
 
-
-import org.mindera.fur.code.dto.MedicalRecordDTO;
-import org.mindera.fur.code.service.PetService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.mindera.fur.code.dto.pet.PetCreateDTO;
+import org.mindera.fur.code.dto.pet.PetDTO;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
@@ -25,8 +24,19 @@ public class PetController {
         this.petService = petService;
     }
 
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PetDTO> createPet(@Valid @RequestBody PetCreateDTO petCreateDTO) {
+        try {
+            PetDTO petDTO = petService.createPet(petCreateDTO);
+            return new ResponseEntity<>(petDTO, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /*
     @GetMapping(value = "/{id}/medicalRecord", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MedicalRecordDTO> getMedicalRecord(@PathVariable("id") Long id) {
+    public ResponseEntity<MedicalRecordDTO> getMedicalRecord(@Valid @PathVariable("id") Long id) {
         try {
             MedicalRecordDTO medicalRecordDTO = petService.getMedicalRecord(id);
             return new ResponseEntity<>(medicalRecordDTO, HttpStatus.OK);
@@ -34,6 +44,6 @@ public class PetController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+     */
 
 }
