@@ -21,7 +21,7 @@ public class Pet {
     private PetType petType;
 
     @ManyToOne
-    private Shelter shelterId; // changed to shelterId
+    private Shelter shelter;
 
     @Column
     private String isAdopted;
