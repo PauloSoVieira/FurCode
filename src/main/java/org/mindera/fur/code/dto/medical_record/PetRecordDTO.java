@@ -1,27 +1,21 @@
-package org.mindera.fur.code.model;
+package org.mindera.fur.code.dto.medical_record;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-@Entity
-@Table(name = "medical_record")
-public class MedicalRecord {
+public class PetRecordDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Pet is required")
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pet_id", nullable = false)
-    private Pet pet; // Change from Pet to Long???? Change from petId to pet???
+    @NotNull(message = "Pet ID is required")
+    private Long petId;
 
     @NotNull(message = "Vaccination status is required")
-    @Column(nullable = false)
     private boolean isVaccinated;
 
     // Eliminar os dois booleans abaixo e criar um enum de intervenções
@@ -30,10 +24,9 @@ public class MedicalRecord {
 
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
-    @Column(nullable = false)
     private Date date;
 
+    @NotNull(message = "Observation is required")
     @Size(max = 999, message = "Observation cannot be longer than 999 characters")
-    @Column(length = 999)
     private String observation;
 }
