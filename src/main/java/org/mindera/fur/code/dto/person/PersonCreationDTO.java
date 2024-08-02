@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.mindera.fur.code.model.Role;
 
 @Data
 public class PersonCreationDTO {
@@ -39,7 +38,6 @@ public class PersonCreationDTO {
 
     private Long cellPhone;
 
-    private Role role;
 
     public PersonCreationDTO() {
     }

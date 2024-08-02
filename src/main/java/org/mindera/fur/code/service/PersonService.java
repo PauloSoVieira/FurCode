@@ -10,6 +10,7 @@ import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -76,7 +77,15 @@ public class PersonService {
 
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
         personValidation(personCreationDTO);
+
+        if (personRepository.findByEmail(personCreationDTO.getEmail()) != null) {
+            throw new PersonsEmailCannotBeEmpty("Need to change this exception");
+        }
+
         Person person = personMapper.INSTANCE.toModel(personCreationDTO);
+        String encryptedPassword = new BCryptPasswordEncoder().encode(personCreationDTO.getPassword());
+        person.setPassword(encryptedPassword); //TODO verificar se está sendo criado o não
+
         personRepository.save(person);
         return personMapper.INSTANCE.toDTO(person);
     }
