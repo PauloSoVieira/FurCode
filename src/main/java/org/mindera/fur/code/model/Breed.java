@@ -20,11 +20,14 @@ public class Breed {
     @Column(nullable = false)
     private String name;
 
-    @NotBlank(message = "Animal type must be provided")
-    @Column(nullable = false)
-    private String animalType;
+    /*
+    @NotNull(message = "Animal type must be provided")
+    @ManyToOne
+    @JoinColumn(name = "pet_type_id", nullable = false)
+    private List<PetType> petType;
+     */
 
-    @Valid
-    @OneToMany(mappedBy = "breed", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PetType> petTypes; // Changed from @OneToOne(mappedBy = "breedId")
+    //@Valid
+    //@OneToMany(mappedBy = "breed", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<PetType> petTypes; // Changed from @OneToOne(mappedBy = "breedId")
 }

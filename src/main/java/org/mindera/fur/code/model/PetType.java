@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Entity
 @Table(name = "pet_type")
@@ -17,17 +15,10 @@ public class PetType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // TODO: change too PetTypeEnum
     @NotBlank(message = "Pet type name must be provided")
     @Column(nullable = false)
-    private String name;
-
-    /*
-    //@OneToOne(mappedBy = "petType")
-    //private Pet pet;
-
-    //@OneToOne
-    //private Breed breedId;
-     */
+    private String type;
 
     @Valid
     @NotNull
@@ -35,6 +26,6 @@ public class PetType {
     @JoinColumn(name = "breed_id", nullable = false)
     private Breed breed;
 
-    @OneToMany(mappedBy = "petType")
-    private List<Pet> pets;
+    //@OneToMany(mappedBy = "petType")
+    //private List<Pet> pets;
 }
