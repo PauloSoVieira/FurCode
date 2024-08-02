@@ -12,7 +12,7 @@
     <artifactId>fur-code</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>fur-code</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Backend project for MindSwap 2024</description>
     <url/>
     <licenses>
         <license/>
@@ -48,10 +48,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -69,7 +74,6 @@
             <version>5.4.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -114,5 +118,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

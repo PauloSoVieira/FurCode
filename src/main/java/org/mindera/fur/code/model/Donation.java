@@ -29,4 +29,5 @@ public class Donation {
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
 
+
 }
