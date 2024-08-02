@@ -130,4 +130,12 @@ public class PersonService {
     public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
         return shelterService.createShelter(shelterCreationDTO);
     }
+
+    public PersonDTO setPersonRole(Long id, PersonDTO personDTO) {
+        Person person = personRepository.findById(id).orElseThrow();
+        Person personWithNewRole = personMapper.INSTANCE.toModel(personDTO);
+        person.setRole(personWithNewRole.getRole());
+        personRepository.save(person);
+        return personMapper.INSTANCE.toDTO(person);
+    }
 }

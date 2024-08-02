@@ -1,6 +1,5 @@
 package org.mindera.fur.code.controller;
 
-import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -25,7 +24,7 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<PersonDTO> createPerson(@Valid @RequestBody PersonCreationDTO personCreationDTO) {
+    public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonCreationDTO personCreationDTO) {
         return new ResponseEntity<>(personService.createPerson(personCreationDTO), HttpStatus.CREATED);
     }
 
@@ -49,6 +48,10 @@ public class PersonController {
         return new ResponseEntity<>(personService.updatePerson(id, personDTO), HttpStatus.OK);
     }
 
+    @PatchMapping("/set-person-role/{id}")
+    public ResponseEntity<PersonDTO> setPersonRole(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
+        return new ResponseEntity<>(personService.setPersonRole(id, personDTO), HttpStatus.OK);
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable Long id) {
