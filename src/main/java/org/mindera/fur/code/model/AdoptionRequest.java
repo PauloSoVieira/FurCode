@@ -28,4 +28,7 @@ public class AdoptionRequest {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
+
+    @Enumerated(EnumType.STRING)
+    private State state;
 }
