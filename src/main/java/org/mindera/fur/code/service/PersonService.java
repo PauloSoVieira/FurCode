@@ -1,5 +1,6 @@
 package org.mindera.fur.code.service;
 
+
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -108,6 +109,7 @@ public class PersonService {
     }
 
     public void deletePerson(Long id) {
+        idValidation(id);
         Person person = personRepository.findById(id).get();
         personRepository.delete(person);
     }

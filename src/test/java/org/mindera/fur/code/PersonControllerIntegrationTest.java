@@ -42,13 +42,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO person = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             String personId =
@@ -81,13 +81,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -102,7 +102,7 @@ public class PersonControllerIntegrationTest {
             String personId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(personDTO)
+                            .body(personCreationDTO)
                             .when()
                             .post("/api/v1/person")
                             .then()
@@ -122,13 +122,13 @@ public class PersonControllerIntegrationTest {
 
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -155,13 +155,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -176,7 +176,7 @@ public class PersonControllerIntegrationTest {
             String personId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(personDTO)
+                            .body(personCreationDTO)
                             .when()
                             .post("/api/v1/person")
                             .then()
@@ -199,13 +199,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -220,7 +220,7 @@ public class PersonControllerIntegrationTest {
             String personId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(personDTO)
+                            .body(personCreationDTO)
                             .when()
                             .post("/api/v1/person")
                             .then()
@@ -239,13 +239,13 @@ public class PersonControllerIntegrationTest {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
-                    123456789,
+                    123456789L,
                     "john.doe@example.com",
                     "password",
                     "123 Main Street",
                     "Apt 1",
-                    12345,
-                    123456789
+                    12345L,
+                    123456789L
             );
 
             PersonDTO personDTO =
@@ -260,7 +260,7 @@ public class PersonControllerIntegrationTest {
             String personId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(personDTO)
+                            .body(personCreationDTO)
                             .when()
                             .post("/api/v1/person")
                             .then()

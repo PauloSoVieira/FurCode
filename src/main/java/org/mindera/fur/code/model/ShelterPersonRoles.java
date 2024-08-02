@@ -14,9 +14,9 @@ public class ShelterPersonRoles {
     private Long id;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+  /*  @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    private Role role;*/
 
 
     @ManyToOne(cascade = CascadeType.ALL)

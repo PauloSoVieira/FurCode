@@ -1,6 +1,5 @@
 package org.mindera.fur.code.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mindera.fur.code.dto.MedicalRecordDTO;
 import org.mindera.fur.code.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @RequestMapping(path = "/api/v1/pet")
-@Tag(name = "Pets")
 public class PetController {
 
     PetService petService;

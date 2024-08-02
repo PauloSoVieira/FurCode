@@ -1,23 +1,19 @@
 package org.mindera.fur.code.model;
 
 
-import jakarta.persistence.*;
-import lombok.Data;
+public enum Role {
+    MASTER,
+    MANAGER,
+    ADMIN,
+    USER;
 
-import java.util.Set;
+    private String role;
 
-@Entity
-@Table(name = "role")
-@Data
-public class Role {
+    Role() {
+    }
 
+    public String getRole() {
+        return role;
+    }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String type;
-
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private Set<ShelterPersonRoles> shelterPersonRoles;
 }

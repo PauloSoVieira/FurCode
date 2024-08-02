@@ -1,6 +1,5 @@
 package org.mindera.fur.code.controller;
 
-import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -25,7 +24,7 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<PersonDTO> createPerson(@Valid PersonCreationDTO personCreationDTO) {
+    public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonCreationDTO personCreationDTO) {
         return new ResponseEntity<>(personService.createPerson(personCreationDTO), HttpStatus.CREATED);
     }
 
