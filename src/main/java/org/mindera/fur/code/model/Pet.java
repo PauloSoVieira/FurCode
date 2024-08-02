@@ -31,6 +31,7 @@ public class Pet {
     @Valid
     @NotNull(message = "Shelter must be provided")
     @ManyToOne
+
     @JoinColumn(name = "shelter_id", nullable = false)
     private Shelter shelter;
 
@@ -47,6 +48,7 @@ public class Pet {
     @DecimalMin(value = "0.01", message = "Pet weight must be greater than 0.01 kilos")
     @DecimalMax(value = "999.99", message = "Pet weight must be less than 999.99 kilos")
     @Column(nullable = false)
+
     private Double weight;
 
     @NotBlank(message = "Pet color must be provided")
@@ -64,7 +66,7 @@ public class Pet {
     @Column(nullable = false)
     private String observations;
 
-    // @Column
+    @Column
     // private String cage;
 
     @Valid

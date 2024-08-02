@@ -39,8 +39,10 @@ public class ShelterService {
         return ShelterMapper.INSTANCE.toDto(shelter);
     }
 
-    public void deleteShelter(Long id) {
-        shelterRepository.deleteById(id);
+    public ShelterDTO deleteShelter(Long id) {
+        Shelter shelter = shelterRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Error"));
+        shelterRepository.delete(shelter);
+        return ShelterMapper.INSTANCE.toDto(shelter);
     }
 
     public ShelterDTO updateShelter(Long id, ShelterDTO shelterDTO) {
@@ -58,9 +60,17 @@ public class ShelterService {
         return shelterMapper.INSTANCE.toDto(shelter);
     }
 
-    public void deleteAll() {
+    public void deleteAllShelters() {
         shelterRepository.deleteAll();
     }
+
+    /*public void addPetToShelter(Long shelterId, Long petId) {
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow();
+        pet.setShelter(shelterRepository.findById(shelterId)
+                .orElseThrow();
+        petRepository.save(pet);
+    }*/
 
     /*public List<PersonDTO> getAllRequests(Long personId) {
         List<Person> persons = personRepository.findAll();
@@ -68,23 +78,6 @@ public class ShelterService {
                 .filter(person -> person.getShelter().getId().equals(personId))
                 .map(this::convertToPersonDTO)
                 .collect(Collectors.toList());
-    }
-
-    public void addPersonToShelter(Long shelterId, Long personId, String role) {
-        Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found"));
-        person.setRole(role);
-        person.setShelter(shelterRepository.findById(shelterId)
-                .orElseThrow(() -> new IllegalArgumentException("Shelter not found")));
-        personRepository.save(person);
-    }
-
-    public void addPetToShelter(Long shelterId, Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new IllegalArgumentException("Pet not found"));
-        pet.setShelter(shelterRepository.findById(shelterId)
-                .orElseThrow(() -> new IllegalArgumentException("Shelter not found")));
-        petRepository.save(pet);
     }
 
     public void requestAdoption(Long id, Long petId, Long personId) {
