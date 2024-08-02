@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequestMapping(path = "/api/v1/pet")
-@Tag(name = "Pets")
 public class PetController {
 
     PetService petService;

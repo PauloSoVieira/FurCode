@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 class OpenApiConfig {
 
     @Bean
-    OpenAPI openAPI(){
+    OpenAPI openAPI() {
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()
-                                .title("FurCode API")
-                                .description("To decide later")
-                                .version("0.0.1")
+                        .title("FurCode API")
+                        .description("To decide later")
+                        .version("0.0.1")
                 );
     }
 }

@@ -22,7 +22,7 @@ public class PetService {
 
     public PetDTO createPet(PetCreateDTO petCreateDTO) {
         Pet pet = PetMapper.INSTANCE.toModel(petCreateDTO);
-        Pet savedPet = petRepository.save(pet);
-        return PetMapper.INSTANCE.toDTO(savedPet);
+        pet = petRepository.save(pet);
+        return PetMapper.INSTANCE.toDTO(pet);
     }
 }
