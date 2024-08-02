@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.mindera.fur.code.model.enums.PetSizeEnum;
 
 import java.util.List;
 
@@ -38,8 +39,9 @@ public class Pet {
     @Column(nullable = false)
     private boolean isAdopted;
 
-    // TODO: add enum for size: small, medium, large
-    @NotBlank(message = "Size must be provided")
+    // TODO: add enum for petType with PetTypeId
+    @NotNull(message = "Size must be provided")
+    //@Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private String size;
 
@@ -69,5 +71,5 @@ public class Pet {
 
     @Valid
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MedicalRecord> medicalRecords;
+    private List<PetRecord> medicalRecords;
 }
