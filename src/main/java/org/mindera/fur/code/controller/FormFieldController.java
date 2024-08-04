@@ -2,6 +2,7 @@ package org.mindera.fur.code.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import org.mindera.fur.code.dto.forms.FormFieldCreateDTO;
 import org.mindera.fur.code.dto.forms.FormFieldDTO;
 import org.mindera.fur.code.service.FormFieldService;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.List;
  * Controller for managing form fields.
  */
 @RestController
-@RequestMapping("/v1/api/field")
+@RequestMapping("/api/v1/field")
 public class FormFieldController {
 
 
@@ -56,12 +57,12 @@ public class FormFieldController {
     /**
      * Creates a new form field.
      *
-     * @param formFieldDTO the FormFieldDTO.
+     * @param formFieldDTO the FormFieldCreateDTO.
      * @return the created FormFieldDTO.
      */
     @Operation(summary = "Create a new form field", description = "Create a new form field.")
     @PostMapping
-    public ResponseEntity<FormFieldDTO> getFieldById(@RequestBody FormFieldDTO formFieldDTO) {
+    public ResponseEntity<FormFieldDTO> createField(@RequestBody FormFieldCreateDTO formFieldDTO) {
         return new ResponseEntity<>(formFieldService.createField(formFieldDTO), HttpStatus.OK);
     }
 
@@ -87,7 +88,7 @@ public class FormFieldController {
     @Operation(summary = "Delete a form field by ID", description = "Delete a form field by ID.")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<FormFieldDTO> deleteField(@PathVariable Long id) {
-        return new ResponseEntity<>(formFieldService.deleteField(id), HttpStatus.OK);
+        return new ResponseEntity<>(formFieldService.deleteField(id), HttpStatus.NO_CONTENT);
     }
 
 }
