@@ -1,7 +1,9 @@
 package org.mindera.fur.code.dto.pet;
 
 import jakarta.validation.constraints.*;
+import lombok.Data;
 
+@Data
 public class PetCreateDTO {
 
     @NotBlank(message = "Pet name must be provided")
