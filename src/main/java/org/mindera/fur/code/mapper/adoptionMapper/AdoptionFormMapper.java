@@ -25,6 +25,7 @@ public interface AdoptionFormMapper {
      * @param adoptionForm the AdoptionForm entity.
      * @return the converted AdoptionFormDTO.
      */
+    
     AdoptionFormDTO toDTO(AdoptionForm adoptionForm);
 
     /**

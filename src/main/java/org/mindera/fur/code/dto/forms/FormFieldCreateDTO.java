@@ -22,6 +22,13 @@ public class FormFieldCreateDTO {
     private String type;
 
     /**
+     * The ID of the AdoptionForm this FormField belongs to.
+     * This is required to establish the association between FormField and AdoptionForm.
+     */
+    @NotNull(message = "Adoption Form ID is required")
+    private Long adoptionFormId;
+
+    /**
      * Default constructor.
      */
     public FormFieldCreateDTO() {
@@ -30,9 +37,17 @@ public class FormFieldCreateDTO {
     /**
      * Parameterized constructor for creating a FormFieldCreateDTO.
      *
-     * @param name the name of the FormField
-     * @param type the type of the FormField
+     * @param name           the name of the FormField
+     * @param type           the type of the FormField
+     * @param adoptionFormId the ID of the AdoptionForm this FormField belongs to
      */
+    public FormFieldCreateDTO(String name, String type, Long adoptionFormId) {
+        this.name = name;
+        this.type = type;
+        this.adoptionFormId = adoptionFormId;
+    }
+
+
     public FormFieldCreateDTO(String name, String type) {
         this.name = name;
         this.type = type;
