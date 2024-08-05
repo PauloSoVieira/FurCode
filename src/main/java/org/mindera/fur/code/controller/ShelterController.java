@@ -56,11 +56,11 @@ public class ShelterController {
     @GetMapping("/{id}/request/{petId}/{personId}")
     public void requestAdoption(@PathVariable Long id, @PathVariable Long petId, @PathVariable Long personId) {
         shelterService.requestAdoption(id, petId, personId);
-    }
+    }*/
 
     //Add pet to shelter
     @GetMapping("/{id}/addPet")
     public void addPetToShelter(@PathVariable Long id, @PathVariable Long petId) {
         shelterService.addPetToShelter(id, petId);
-    }*/
+    }
 }
