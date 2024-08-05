@@ -28,4 +28,6 @@ public class Person {
 
     @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
     private Set<ShelterPersonRoles> shelterPersonRoles;
+
+
 }
