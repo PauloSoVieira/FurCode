@@ -2,8 +2,8 @@ package org.mindera.fur.code.mapper.adoptionMapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.mindera.fur.code.dto.formsDTO.FormFieldCreateDTO;
-import org.mindera.fur.code.dto.formsDTO.FormFieldDTO;
+import org.mindera.fur.code.dto.forms.FormFieldCreateDTO;
+import org.mindera.fur.code.dto.forms.FormFieldDTO;
 import org.mindera.fur.code.model.form.FormField;
 
 import java.util.List;

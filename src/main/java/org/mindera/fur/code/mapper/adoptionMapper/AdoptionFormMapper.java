@@ -2,8 +2,8 @@ package org.mindera.fur.code.mapper.adoptionMapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.mindera.fur.code.dto.formsDTO.AdoptionFormCreateDTO;
-import org.mindera.fur.code.dto.formsDTO.AdoptionFormDTO;
+import org.mindera.fur.code.dto.forms.AdoptionFormCreateDTO;
+import org.mindera.fur.code.dto.forms.AdoptionFormDTO;
 import org.mindera.fur.code.model.form.AdoptionForm;
 
 import java.util.List;
@@ -25,6 +25,7 @@ public interface AdoptionFormMapper {
      * @param adoptionForm the AdoptionForm entity.
      * @return the converted AdoptionFormDTO.
      */
+    
     AdoptionFormDTO toDTO(AdoptionForm adoptionForm);
 
     /**
