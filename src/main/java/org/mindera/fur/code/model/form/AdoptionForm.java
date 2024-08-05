@@ -15,7 +15,7 @@ import java.util.Set;
 @Schema(description = "Unique identifier for the adoption form.", example = "1")
 
 @Entity
-@Table(name = "adoption_form")
+@Table(name = "form")
 @Data
 public class AdoptionForm {
 
@@ -72,12 +72,7 @@ public class AdoptionForm {
      * Fetch type is EAGER.
      */
     @Schema(description = "A set of form fields associated with the adoption form.")
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "adoption_form_fields",
-            joinColumns = @JoinColumn(name = "adoption_form_id"),
-            inverseJoinColumns = @JoinColumn(name = "form_field_id")
-    )
+    @OneToMany(mappedBy = "adoptionForm", fetch = FetchType.EAGER)
     private Set<FormField> formFields;
 
 

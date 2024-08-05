@@ -4,8 +4,6 @@ package org.mindera.fur.code.model.form;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Set;
-
 @Entity
 @Table(name = "form_field")
 @Data
@@ -15,8 +13,9 @@ public class FormField {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "formFields")
-    private Set<AdoptionForm> adoptionForms;
+    @ManyToOne
+    @JoinColumn(name = "adoption_form_id")
+    private AdoptionForm adoptionForm;
 
     private String name;
     //Criar Enum para os tipos de campos e tirar Strng para o type

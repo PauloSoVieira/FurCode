@@ -5,6 +5,7 @@ import org.mindera.fur.code.dto.forms.FormFieldDTO;
 import org.mindera.fur.code.mapper.adoptionMapper.FormFieldMapper;
 import org.mindera.fur.code.messages.formField.FormFieldMessages;
 import org.mindera.fur.code.model.form.FormField;
+import org.mindera.fur.code.repository.AdoptionFormRepository;
 import org.mindera.fur.code.repository.FormFieldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,9 @@ public class FormFieldService {
 
     @Autowired
     private FormFieldRepository formFieldRepository;
+
+    @Autowired
+    private AdoptionFormRepository adoptionRepository;
 
     /**
      * Retrieves all FormFields.
@@ -61,6 +65,7 @@ public class FormFieldService {
     public FormFieldDTO createField(FormFieldCreateDTO formFieldCreateDTO) {
         validateToCreateField(formFieldCreateDTO);
         FormField formField = FormFieldMapper.INSTANCE.toModel(formFieldCreateDTO);
+        formField.setAdoptionForm(adoptionRepository.findById(formFieldCreateDTO.getAdoptionFormId()).orElseThrow(() -> new IllegalArgumentException()));
         formFieldRepository.save(formField);
         return FormFieldMapper.INSTANCE.toDTO(formField);
     }
