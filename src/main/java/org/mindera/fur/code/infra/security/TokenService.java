@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.messages.TokenMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,7 +27,7 @@ public class TokenService {
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Error while generating token", exception);
+            throw new RuntimeException(TokenMessage.TOKEN_CREATION_ERROR, exception);
         }
     }
 

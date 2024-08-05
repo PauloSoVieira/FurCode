@@ -53,4 +53,8 @@ public class PersonCreationDTO {
         this.postalCode = postalCode;
         this.cellPhone = cellPhone;
     }
+
+    public PersonCreationDTO(String firstName) {
+        this.firstName = firstName;
+    }
 }

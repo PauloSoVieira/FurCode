@@ -1,10 +1,9 @@
-package org.mindera.fur.code.controller;
+/*package org.mindera.fur.code.infra.security;
 
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.person.LoginResponseDTO;
 import org.mindera.fur.code.dto.person.PersonAuthenticationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
-import org.mindera.fur.code.infra.security.TokenService;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,4 +37,4 @@ public class AuthenticationController {
         return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
     }
 
-}
+}*/

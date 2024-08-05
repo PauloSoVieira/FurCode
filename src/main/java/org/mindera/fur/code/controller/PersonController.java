@@ -29,7 +29,7 @@ public class PersonController {
     }
 
     @PostMapping("/{id}/create-shelter")
-    public ResponseEntity<ShelterDTO> createShelter(ShelterCreationDTO shelterCreationDTO) {
+    public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(personService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
 

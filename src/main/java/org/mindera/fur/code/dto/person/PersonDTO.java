@@ -20,4 +20,7 @@ public class PersonDTO {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+
+    public PersonDTO() {
+    }
 }

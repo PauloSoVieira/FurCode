@@ -5,13 +5,16 @@ import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
-import org.mindera.fur.code.exceptions.donation.person.*;
+import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
+import org.mindera.fur.code.messages.PersonsMessages;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,49 +32,49 @@ public class PersonService {
 
     private static void idValidation(Long id) {
         if (id == null) {
-            throw new PersonsIdCannotBeNullException();
+            throw new PersonException(PersonsMessages.ID_CANT_BE_NULL);
         }
         if (id <= 0) {
-            throw new PersonsIdCannotBeLowerOrEqualZero();
+            throw new PersonException(PersonsMessages.ID_CANT_BE_LOWER_OR_EQUAL_ZERO);
         }
     }
 
     private static void personValidation(PersonCreationDTO personCreationDTO) {
         if (personCreationDTO.getFirstName() == null) {
-            throw new PersonsNameCannotBeNull();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PersonsMessages.NAME_CANT_BE_NULL);
         }
         if (personCreationDTO.getFirstName().equals(" ")) {
-            throw new PersonsNameCannotBeEmpty();
+            throw new PersonException(PersonsMessages.NAME_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getLastName() == null) {
-            throw new PersonsLastNameCannotBeNull();
+            throw new PersonException(PersonsMessages.LAST_NAME_CANT_BE_NULL);
         }
         if (personCreationDTO.getLastName().equals(" ")) {
-            throw new PersonsLastNameCannotBeEmpty();
+            throw new PersonException(PersonsMessages.LAST_NAME_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getEmail() == null) {
-            throw new PersonsEmailCannotBeNull();
+            throw new PersonException(PersonsMessages.EMAIL_CANT_BE_NULL);
         }
         if (personCreationDTO.getEmail().equals(" ")) {
-            throw new PersonsEmailCannotBeEmpty();
+            throw new PersonException(PersonsMessages.EMAIL_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getPassword() == null) {
-            throw new PersonsPasswordCannotBeNull();
+            throw new PersonException(PersonsMessages.PASSWORD_CANT_BE_NULL);
         }
         if (personCreationDTO.getPassword().equals(" ")) {
-            throw new PersonsPasswordCannotBeEmpty();
+            throw new PersonException(PersonsMessages.PASSWORD_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getPostalCode() == null) {
-            throw new PersonsPostalCodeCannotBeNull();
+            throw new PersonException(PersonsMessages.POSTAL_CODE_CANT_BE_NULL);
         }
         if (personCreationDTO.getPostalCode() <= 0) {
-            throw new PersonsPostalCodeCannotBeZero();
+            throw new PersonException(PersonsMessages.POSTAL_CODE_CANT_BE_ZERO);
         }
         if (personCreationDTO.getAddress1() == null) {
-            throw new PersonsAddressCannotBeNull();
+            throw new PersonException(PersonsMessages.ADDRESS_CANT_BE_NULL);
         }
         if (personCreationDTO.getAddress1().equals(" ")) {
-            throw new PersonsAddressCannotBeEmpty();
+            throw new PersonException(PersonsMessages.ADDRESS_CANT_BE_EMPTY);
         }
     }
 
@@ -79,7 +82,7 @@ public class PersonService {
         personValidation(personCreationDTO);
 
         if (personRepository.findByEmail(personCreationDTO.getEmail()) != null) {
-            throw new PersonsEmailCannotBeEmpty("Need to change this exception");
+            throw new PersonException(PersonsMessages.EMAIL_ALREADY_EXISTS);
         }
 
         Person person = personMapper.INSTANCE.toModel(personCreationDTO);
