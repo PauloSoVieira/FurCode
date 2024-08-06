@@ -30,6 +30,6 @@ public class AdoptionRequest {
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
 
-    @Enumerated(EnumType.STRING)
-    private State state;
+    @OneToOne
+    private AdoptionForm adoptionForm;
 }
