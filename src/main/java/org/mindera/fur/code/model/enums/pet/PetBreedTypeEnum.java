@@ -1,6 +1,6 @@
-package org.mindera.fur.code.model.enums;
+package org.mindera.fur.code.model.enums.pet;
 
-public enum BreedTypeEnum {
+public enum PetBreedTypeEnum {
     LABRADOR(1),
     BEAGLE(2),
     BULLDOG(3),
@@ -9,7 +9,7 @@ public enum BreedTypeEnum {
 
     private final int id;
 
-    BreedTypeEnum(int id) {
+    PetBreedTypeEnum(int id) {
         this.id = id;
     }
 
@@ -17,8 +17,8 @@ public enum BreedTypeEnum {
         return id;
     }
 
-    public static BreedTypeEnum fromId(int id) {
-        for (BreedTypeEnum breedType : values()) {
+    public static PetBreedTypeEnum fromId(int id) {
+        for (PetBreedTypeEnum breedType : values()) {
             if (breedType.getId() == id) {
                 return breedType;
             }

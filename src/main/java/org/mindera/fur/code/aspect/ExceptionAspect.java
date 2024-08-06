@@ -1,6 +1,8 @@
 package org.mindera.fur.code.aspect;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
@@ -11,8 +13,10 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -21,9 +25,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -153,6 +155,7 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
             NoSuchElementException.class,
             DonationNotFoundException.class,
+            EntityNotFoundException.class,
     })
     public ResponseEntity<String> ResourceNotFoundException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Resource Not Found", e.getMessage());
@@ -188,6 +191,59 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 "An invalid resource was requested.",
                 e.getMessage(),
+                new Date());
+
+        return new ResponseEntity<>(responseJson, BAD_REQUEST);
+    }
+
+    /**
+     * Handles method argument not valid exceptions, returning a 400 response with the appropriate error message.
+     *
+     * @param ex      the exception
+     * @param headers the headers
+     * @param status  the status
+     * @param request the request
+     * @return the response entity
+     */
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        logger.error("Validation failed: {}", ex.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        String responseJson = response(
+                BAD_REQUEST.value(),
+                BAD_REQUEST.getReasonPhrase(),
+                ((ServletWebRequest) request).getRequest().getRequestURI(),
+                "Validation failed for request.",
+                errors.toString(),
+                new Date());
+
+        return new ResponseEntity<>(responseJson, BAD_REQUEST);
+    }
+
+    /**
+     * Handles constraint violation exceptions, returning a 400 response with the appropriate error message.
+     *
+     * @param ex      the exception
+     * @param request the request
+     * @return the response entity
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+        logger.error("Constraint violation: {}", ex.getMessage());
+
+        String responseJson = response(
+                BAD_REQUEST.value(),
+                BAD_REQUEST.getReasonPhrase(),
+                request.getRequestURI(),
+                "Constraint violation occurred.",
+                ex.getMessage(),
                 new Date());
 
         return new ResponseEntity<>(responseJson, BAD_REQUEST);

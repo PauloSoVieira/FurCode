@@ -1,4 +1,4 @@
-package org.mindera.fur.code.model.enums;
+package org.mindera.fur.code.model.enums.pet;
 
 public enum PetTypeEnum {
     DOG(1),
