@@ -34,7 +34,7 @@ public class Shelter {
 
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shelter", fetch = FetchType.EAGER)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
     @OneToMany(mappedBy = "shelter")

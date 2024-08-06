@@ -1,4 +1,4 @@
-package org.mindera.fur.code.messages.person;
+package org.mindera.fur.code.messages;
 
 public class PersonsMessages {
     public static final String POSTAL_CODE_CANT_BE_ZERO = "Postal Code can't be zero";
@@ -15,4 +15,7 @@ public class PersonsMessages {
     public static final String EMAIL_CANT_BE_EMPTY = "Email can't be empty";
     public static final String ADDRESS_CANT_BE_NULL = "Address can't be null";
     public static final String ADDRESS_CANT_BE_EMPTY = "Address can't be empty.";
+    public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
+    public static final String NOT_ROLE = "Not a valid role";
+    public static final String PERSON_NOT_FOUND = "Person not found";
 }

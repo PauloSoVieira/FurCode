@@ -4,6 +4,8 @@ import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesCreationDTO;
+import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,13 +26,19 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<PersonDTO> createPerson(PersonCreationDTO personCreationDTO) {
+
+    public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonCreationDTO personCreationDTO) {
         return new ResponseEntity<>(personService.createPerson(personCreationDTO), HttpStatus.CREATED);
     }
 
     @PostMapping("/{id}/create-shelter")
-    public ResponseEntity<ShelterDTO> createShelter(ShelterCreationDTO shelterCreationDTO) {
+    public ResponseEntity<ShelterDTO> createShelter(@PathVariable Long id, @RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(personService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/add-person-to-shelter")
+    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestBody ShelterPersonRolesCreationDTO shelterPersonRolesCreationDTO) {
+        return new ResponseEntity<>(personService.addPersonToShelter(shelterPersonRolesCreationDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
@@ -48,8 +56,15 @@ public class PersonController {
         return new ResponseEntity<>(personService.updatePerson(id, personDTO), HttpStatus.OK);
     }
 
+    //Only Managers can set roles
+    @PatchMapping("/set-person-role/{id}")
+    public ResponseEntity<PersonDTO> setPersonRole(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
+        return new ResponseEntity<>(personService.setPersonRole(id, personDTO), HttpStatus.OK);
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable Long id) {
+        personService.deletePerson(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

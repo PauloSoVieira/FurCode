@@ -15,6 +15,7 @@ public class ShelterDTO {
     private Long size;
     private Boolean isActive;
 
+
     public ShelterDTO(String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive) {
         this.name = name;
         this.vat = vat;
@@ -25,5 +26,6 @@ public class ShelterDTO {
         this.phone = phone;
         this.size = size;
         this.isActive = isActive;
+
     }
 }

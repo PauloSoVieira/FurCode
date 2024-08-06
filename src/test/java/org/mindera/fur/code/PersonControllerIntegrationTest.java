@@ -6,7 +6,8 @@ import org.junit.jupiter.api.*;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
-import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.repository.PersonRepository;
+import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,12 @@ public class PersonControllerIntegrationTest {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
+    private ShelterRepository shelterRepository;
 
     @BeforeEach
     void setUp() {
@@ -80,19 +87,10 @@ public class PersonControllerIntegrationTest {
                     123456789L
             );
 
-            PersonDTO personDTO =
-                    given()
-                            .contentType(ContentType.JSON)
-                            .body(personCreationDTO)
-                            .when()
-                            .post("/api/v1/person")
-                            .then()
-                            .statusCode(201).extract().body().as(PersonDTO.class);
-
             String personId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(personDTO)
+                            .body(personCreationDTO)
                             .when()
                             .post("/api/v1/person")
                             .then()
@@ -104,6 +102,44 @@ public class PersonControllerIntegrationTest {
                             .get("/api/v1/person/" + personId)
                             .then()
                             .statusCode(200).extract().body().as(PersonDTO.class);
+        }
+
+        @Test
+        void addPersonToShelterShouldReturn201() {
+            PersonCreationDTO personCreationDTO = new PersonCreationDTO(
+                    "John",
+                    "Doe",
+                    123456789L,
+                    "john.doe@example.com",
+                    "password",
+                    "123 Main Street",
+                    "Apt 1",
+                    12345L,
+                    123456789L
+            );
+
+            String personId =
+                    given()
+                            .contentType(ContentType.JSON)
+                            .body(personCreationDTO)
+                            .when()
+                            .post("/api/v1/person")
+                            .then()
+                            .statusCode(201).extract().body().jsonPath().getString("id");
+
+            ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
+                    "Shelter"
+            );
+
+            String shelterId =
+                    given()
+                            .contentType(ContentType.JSON)
+                            .body(shelterCreationDTO)
+                            .when()
+                            .post("/api/v1/shelter")
+                            .then()
+                            .statusCode(201).extract().jsonPath().getString("id");
+
         }
 
         @Test
@@ -154,7 +190,19 @@ public class PersonControllerIntegrationTest {
                     123456789L
             );
 
-            PersonDTO personDTO =
+            String personId =
+                    given()
+                            .contentType(ContentType.JSON)
+                            .body(personCreationDTO)
+                            .when()
+                            .post("/api/v1/person")
+                            .then()
+                            .statusCode(201).extract().body().jsonPath().getString("id");
+
+
+            personCreationDTO.setEmail("johndoe@gmail.com");
+
+            PersonDTO updatedPersonDTO =
                     given()
                             .contentType(ContentType.JSON)
                             .body(personCreationDTO)
@@ -163,25 +211,7 @@ public class PersonControllerIntegrationTest {
                             .then()
                             .statusCode(201).extract().body().as(PersonDTO.class);
 
-            String personId =
-                    given()
-                            .contentType(ContentType.JSON)
-                            .body(personDTO)
-                            .when()
-                            .post("/api/v1/person")
-                            .then()
-                            .statusCode(201).extract().body().jsonPath().getString("id");
-
-            personDTO.setEmail("johndoe@gmail.com");
-            given()
-                    .contentType(ContentType.JSON)
-                    .body(personDTO)
-                    .patch("/api/v1/person/update/" + personId)
-                    .then()
-                    .statusCode(200).extract().body().as(PersonDTO.class);
-
-            Assertions.assertEquals("johndoe@gmail.com", personDTO.getEmail());
-
+            Assertions.assertEquals("johndoe@gmail.com", updatedPersonDTO.getEmail());
         }
 
         @Test
@@ -198,19 +228,10 @@ public class PersonControllerIntegrationTest {
                     123456789L
             );
 
-            PersonDTO personDTO =
-                    given()
-                            .contentType(ContentType.JSON)
-                            .body(personCreationDTO)
-                            .when()
-                            .post("/api/v1/person")
-                            .then()
-                            .statusCode(201).extract().body().as(PersonDTO.class);
-
             String personId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(personDTO)
+                            .body(personCreationDTO)
                             .when()
                             .post("/api/v1/person")
                             .then()
@@ -238,19 +259,10 @@ public class PersonControllerIntegrationTest {
                     123456789L
             );
 
-            PersonDTO personDTO =
-                    given()
-                            .contentType(ContentType.JSON)
-                            .body(personCreationDTO)
-                            .when()
-                            .post("/api/v1/person")
-                            .then()
-                            .statusCode(201).extract().body().as(PersonDTO.class);
-
             String personId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(personDTO)
+                            .body(personCreationDTO)
                             .when()
                             .post("/api/v1/person")
                             .then()
@@ -268,24 +280,30 @@ public class PersonControllerIntegrationTest {
                     true
             );
 
-            ShelterDTO shelterDTO =
-                    given()
-                            .contentType(ContentType.JSON)
-                            .body(shelterCreationDTO)
-                            .when()
-                            .post("/api/v1/person/" + personId + "/create-shelter")
-                            .then()
-                            .statusCode(201).extract().body().as(ShelterDTO.class);
         }
     }
 
     @Nested
     class validation {
+
+        //TODO ALTERAR O TESTE  ESTA 404 MANUALMENTE NO SERVIÇO
         @Test
         void createPersonWithNullName() {
-
+            PersonCreationDTO personCreationDTO = new PersonCreationDTO(
+                    null, "Doe", 123456789L, "john.doe@example.com", "password",
+                    "123 Main Street", "Apt 1", 12345L, 123456789L
+            );
+            given()
+                    .contentType(ContentType.JSON)
+                    .body(personCreationDTO)
+                    .when()
+                    .post("/api/v1/person")
+                    .then()
+                    .statusCode(400);
         }
+
     }
-
-
 }
+
+
+

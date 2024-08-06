@@ -1,5 +1,4 @@
 package org.mindera.fur.code.controller;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,63 +13,53 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 @Validated
 @Tag(name = "Pet", description = "Operations for pets")
 @RestController
 @RequestMapping(path = "/api/v1/pet")
 public class PetController {
     private final PetService petService;
-
     @Autowired
     public PetController(PetService petService) {
         this.petService = petService;
     }
-
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetDTO>> getAllPets() {
         List<PetDTO> petDTOs = petService.findAllPets();
         return new ResponseEntity<>(petDTOs, HttpStatus.OK);
     }
-
     @Operation(summary = "Get a pet by id")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
         PetDTO petDTO = petService.findPetById(id);
         return new ResponseEntity<>(petDTO, HttpStatus.OK);
     }
-
     @Operation(summary = "Create a new pet")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> createPet(@RequestBody @Valid PetCreateDTO petCreateDTO) {
         PetDTO petDTO = petService.addPet(petCreateDTO);
         return new ResponseEntity<>(petDTO, HttpStatus.CREATED);
     }
-
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetCreateDTO petCreateDTO) {
         petService.updatePet(id, petCreateDTO);
     }
-
     @Operation(summary = "Delete a pet")
     @DeleteMapping(value = "/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePet(@PathVariable @Valid Long id) {
         petService.softDeletePet(id);
     }
-
     @Operation(summary = "Get all pet records by pet ID")
     @GetMapping(value = "/{id}/record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetRecordDTO>> getPetRecordByPetId(@PathVariable @Valid Long id) {
         List<PetRecordDTO> petRecordDTO = petService.getPetRecordByPetId(id);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.OK);
     }
-
     @Operation(summary = "Create a new pet record by pet ID")
     @PostMapping(value = "/{id}/create-record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {

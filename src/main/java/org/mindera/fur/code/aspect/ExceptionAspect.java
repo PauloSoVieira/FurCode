@@ -29,6 +29,7 @@ import java.util.*;
 
 import static org.springframework.http.HttpStatus.*;
 
+
 @Component
 @ControllerAdvice
 public class ExceptionAspect extends ResponseEntityExceptionHandler {
@@ -180,7 +181,7 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler({
             InvalidDonationAmountException.class,
-            InvalidDonationDateException.class
+            InvalidDonationDateException.class,
     })
     public ResponseEntity<String> InvalidResourceException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Invalid Request/Resource", e.getMessage());
