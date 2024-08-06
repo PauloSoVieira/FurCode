@@ -3,14 +3,14 @@ package org.mindera.fur.code.service;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
-import org.mindera.fur.code.mapper.PetMapper;
 import org.mindera.fur.code.mapper.ShelterMapper;
-import org.mindera.fur.code.model.Pet;
+import org.mindera.fur.code.mapper.pet.PetMapper;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.repository.PersonRepository;
-import org.mindera.fur.code.repository.PetRepository;
+import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.service.pet.PetService;
+import org.mindera.fur.code.repository.pet.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

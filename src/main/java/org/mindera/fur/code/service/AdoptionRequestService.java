@@ -6,8 +6,8 @@ import org.mindera.fur.code.mapper.AdoptionRequestMapper;
 import org.mindera.fur.code.model.AdoptionRequest;
 import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mindera.fur.code.repository.PersonRepository;
-import org.mindera.fur.code.repository.PetRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
+import org.mindera.fur.code.repository.pet.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +19,12 @@ public class AdoptionRequestService {
     @Autowired
     public AdoptionRequestRepository adoptionRequestRepository;
 
-    @Autowired
+
+    //TODO CONSTRUCTOR URGENT
     public PetRepository petRepository;
 
-    @Autowired
     public ShelterRepository shelterRepository;
 
-    @Autowired
     public PersonRepository personRepository;
 
     public AdoptionRequestMapper adoptionRequestMapper;

@@ -2,8 +2,8 @@ package org.mindera.fur.code.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.mindera.fur.code.dto.formsDTO.AdoptionFormCreateDTO;
-import org.mindera.fur.code.dto.formsDTO.AdoptionFormDTO;
+import org.mindera.fur.code.dto.forms.AdoptionFormCreateDTO;
+import org.mindera.fur.code.dto.forms.AdoptionFormDTO;
 import org.mindera.fur.code.service.AdoptionFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -90,3 +90,4 @@ public class AdoptionFormController {
 
 
 }
+

@@ -7,6 +7,7 @@ import org.mindera.fur.code.model.form.AdoptionForm;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import org.mindera.fur.code.model.pet.Pet;
 
 @Entity
 @Table(name = "adoption_request")
