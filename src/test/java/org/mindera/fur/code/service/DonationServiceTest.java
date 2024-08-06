@@ -10,7 +10,11 @@ import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
 import org.mindera.fur.code.mapper.DonationMapper;
 import org.mindera.fur.code.model.Donation;
+import org.mindera.fur.code.model.Person;
+import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.DonationRepository;
+import org.mindera.fur.code.repository.PersonRepository;
+import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,6 +33,10 @@ class DonationServiceTest {
 
     @Mock
     private DonationRepository donationRepository;
+    @Mock
+    private PersonRepository personRepository;
+    @Mock
+    private PetRepository petRepository;
 
     @InjectMocks
     private DonationService donationService;
@@ -48,6 +56,8 @@ class DonationServiceTest {
             newDonation.setPersonId(1L);
             Donation expectedDonation = mapper.toModel(newDonation);
 
+            when(petRepository.findById(1L)).thenReturn(Optional.of(new Pet()));
+            when(personRepository.findById(1L)).thenReturn(Optional.of(new Person()));
             when(donationRepository.save(any(Donation.class))).thenReturn(expectedDonation);
             Donation savedDonation = donationService.createDonation(newDonation);
 
@@ -122,6 +132,8 @@ class DonationServiceTest {
             newDonation.setPersonId(1L);
             Donation expectedDonation = DonationMapper.INSTANCE.toModel(newDonation);
 
+            when(petRepository.findById(1L)).thenReturn(Optional.of(new Pet()));
+            when(personRepository.findById(1L)).thenReturn(Optional.of(new Person()));
             when(donationRepository.save(any(Donation.class))).thenReturn(expectedDonation);
 
             Donation savedDonation = donationService.createDonation(newDonation);
