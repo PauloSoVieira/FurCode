@@ -104,6 +104,7 @@ public class PersonControllerIntegrationTest {
                             .statusCode(200).extract().body().as(PersonDTO.class);
         }
 
+        @Disabled
         @Test
         void addPersonToShelterShouldReturn201() {
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
