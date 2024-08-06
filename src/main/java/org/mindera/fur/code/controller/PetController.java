@@ -65,9 +65,9 @@ public class PetController {
     }
 
     @Operation(summary = "Get all pet records by pet ID")
-    @GetMapping(value = "/{id}/record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PetRecordDTO>> getPetRecordByPetId(@PathVariable @Valid Long id) {
-        List<PetRecordDTO> petRecordDTO = petService.getPetRecordByPetId(id);
+    @GetMapping(value = "/{id}/record", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @Valid Long id) {
+        List<PetRecordDTO> petRecordDTO = petService.getAllPetRecordsByPetId(id);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.OK);
     }
 
