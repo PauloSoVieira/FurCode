@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -97,4 +98,17 @@ public class PetController {
     }
      */
 
+    @GetMapping(value = "/{id}/new-description", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getPetDescription(@Valid @PathVariable("id") Long id) {
+
+        RestClient restClient = RestClient.create();
+        String url = "http://localhost:8090/api/v1/generation/send-details?prompt=Please make a simple intro text, about 100 words, to adopt this animal. I just need the text nothing more.";
+        String result = restClient.post()
+                .uri(url)
+                .body(petService.findPetById(id))
+                .retrieve()
+                .body(String.class);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
