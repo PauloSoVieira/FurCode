@@ -37,7 +37,6 @@ public class PersonController {
 
     @PostMapping("/add-person-to-shelter")
     public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestBody ShelterPersonRolesCreationDTO shelterPersonRolesCreationDTO) {
-        System.out.println("FOI CRIADO ADMIN");
         return new ResponseEntity<>(personService.addPersonToShelter(shelterPersonRolesCreationDTO), HttpStatus.CREATED);
     }
 

@@ -118,7 +118,11 @@ public class PersonService {
         shelterPersonRoles.setRole(shelterPersonRolesCreationDTO.getRole());
         shelterPersonRolesRepository.save(shelterPersonRoles);
 
-        return shelterPersonRolesMapper.INSTANCE.toDto(shelterPersonRoles);
+        ShelterPersonRolesDTO test = shelterPersonRolesMapper.INSTANCE.toDto(shelterPersonRoles);
+        test.setPersonId(shelterPersonRolesCreationDTO.getPersonId());
+        test.setShelterId(shelterPersonRolesCreationDTO.getShelterId());
+
+        return test;
     }
 
     public List<PersonDTO> getAllPersons() {
