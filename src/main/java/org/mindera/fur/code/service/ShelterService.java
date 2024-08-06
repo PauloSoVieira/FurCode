@@ -1,7 +1,9 @@
 package org.mindera.fur.code.service;
 
+import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.mapper.PetMapper;
 import org.mindera.fur.code.mapper.ShelterMapper;
 import org.mindera.fur.code.model.Pet;
 import org.mindera.fur.code.model.Shelter;
@@ -23,6 +25,7 @@ public class ShelterService {
     private PetRepository petRepository;
 
     private ShelterMapper shelterMapper;
+    private PetMapper petMapper;
 
     @Autowired
     public ShelterService(ShelterRepository shelterRepository,
@@ -81,6 +84,10 @@ public class ShelterService {
         pet.setShelter(shelterRepository.findById(shelterId)
                 .orElseThrow());
         petRepository.save(pet);
+    }
+
+    public List<PetDTO> getAllPetsInShelter(Long id) {
+        
     }
 
    /* public List<Request> getAllRequests() {
