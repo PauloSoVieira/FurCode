@@ -7,6 +7,8 @@ import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
 import org.mindera.fur.code.mapper.DonationMapper;
 import org.mindera.fur.code.model.Donation;
 import org.mindera.fur.code.repository.DonationRepository;
+import org.mindera.fur.code.repository.PersonRepository;
+import org.mindera.fur.code.repository.pet.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +19,14 @@ import java.util.Optional;
 public class DonationService {
 
     private final DonationRepository donationRepository;
+    private final PersonRepository personRepository;
+    private final PetRepository petRepository;
 
     @Autowired
-    public DonationService(DonationRepository donationRepository) {
+    public DonationService(DonationRepository donationRepository, PersonRepository personRepository, PetRepository petRepository) {
         this.donationRepository = donationRepository;
+        this.personRepository = personRepository;
+        this.petRepository = petRepository;
     }
 
     /**
@@ -66,8 +72,14 @@ public class DonationService {
             throw new InvalidDonationAmountException("Donation total must be less than 999999");
         }
 
-        Donation savedDonation = donationRepository.save(DonationMapper.INSTANCE.toModel(donation));
-        return savedDonation;
+        Donation newDonation = DonationMapper.INSTANCE.toModel(donation);
+
+        newDonation.setPerson(personRepository.findById
+                (donation.getPersonId()).orElseThrow(() -> new IllegalArgumentException("Person not found")));
+        newDonation.setPet(petRepository.findById(
+                donation.getPetId()).orElseThrow(() -> new IllegalArgumentException("Pet not found")));
+
+        return donationRepository.save(newDonation);
     }
 
     /**
