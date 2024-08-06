@@ -5,11 +5,18 @@ import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesCreationDTO;
+import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
+import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
 import org.mindera.fur.code.messages.PersonsMessages;
 import org.mindera.fur.code.model.Person;
+import org.mindera.fur.code.model.Shelter;
+import org.mindera.fur.code.model.ShelterPersonRoles;
 import org.mindera.fur.code.repository.PersonRepository;
+import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
+import org.mindera.fur.code.repository.ShelterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,13 +28,19 @@ import java.util.List;
 @Service
 public class PersonService {
     private final PersonRepository personRepository;
+    private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
+    private final ShelterPersonRolesRepository shelterPersonRolesRepository;
     private PersonMapper personMapper;
+    private ShelterPersonRolesMapper shelterPersonRolesMapper;
 
     @Autowired
-    public PersonService(PersonRepository personRepository, ShelterService shelterService) {
+    public PersonService(PersonRepository personRepository, ShelterService shelterService,
+                         ShelterPersonRolesRepository shelterPersonRolesRepository, ShelterRepository shelterRepository) {
         this.personRepository = personRepository;
         this.shelterService = shelterService;
+        this.shelterPersonRolesRepository = shelterPersonRolesRepository;
+        this.shelterRepository = shelterRepository;
     }
 
     private static void idValidation(Long id) {
@@ -93,6 +106,21 @@ public class PersonService {
         return personMapper.INSTANCE.toDTO(person);
     }
 
+    public ShelterPersonRolesDTO addPersonToShelter(ShelterPersonRolesCreationDTO shelterPersonRolesCreationDTO) {
+
+        Person person = personRepository.findById(shelterPersonRolesCreationDTO.getPersonId()).orElseThrow(PersonException::new);
+        Shelter shelter = shelterRepository.findById(shelterPersonRolesCreationDTO.getShelterId()).orElseThrow(PersonException::new);  //TODO change this exception
+
+        ShelterPersonRoles shelterPersonRoles = new ShelterPersonRoles();
+
+        shelterPersonRoles.setShelter(shelter);
+        shelterPersonRoles.setPerson(person);
+        shelterPersonRoles.setRole(shelterPersonRolesCreationDTO.getRole());
+        shelterPersonRolesRepository.save(shelterPersonRoles);
+
+        return shelterPersonRolesMapper.INSTANCE.toDto(shelterPersonRoles);
+    }
+
     public List<PersonDTO> getAllPersons() {
         List<Person> persons = personRepository.findAll();
         return personMapper.INSTANCE.toDTO(persons);
@@ -141,4 +169,5 @@ public class PersonService {
         personRepository.save(person);
         return personMapper.INSTANCE.toDTO(person);
     }
+
 }

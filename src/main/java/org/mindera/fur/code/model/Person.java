@@ -22,20 +22,27 @@ public class Person implements UserDetails {
 
     private String firstName;
     private String lastName;
-    private Integer nif; //TODO nif cant be changed
+    private Long nif; //TODO nif cant be changed
     private String email;
     private String password;
     private String address1;
     private String address2;
-    private Integer postalCode;
-    private Integer cellPhone;
+    private Long postalCode;
+    private Long cellPhone;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
 
-    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", fetch = FetchType.EAGER)
     private Set<ShelterPersonRoles> shelterPersonRoles;
+
+    public Person(Long id) {
+        this.id = id;
+    }
+
+    public Person() {
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

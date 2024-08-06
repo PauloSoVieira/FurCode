@@ -18,6 +18,10 @@ public class ShelterCreationDTO {
     private Integer size;
     private Boolean isActive;
 
+
+    public ShelterCreationDTO() {
+    }
+
     public ShelterCreationDTO(String name) {
         this.name = name;
     }

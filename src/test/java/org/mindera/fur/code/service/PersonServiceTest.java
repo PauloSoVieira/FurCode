@@ -41,7 +41,6 @@ class PersonServiceTest {
             verify(personRepository, times(1)).save(person);
         }
 
-
         @Test
         void getPersonById() {
             Person person = new Person();

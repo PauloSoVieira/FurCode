@@ -23,4 +23,8 @@ public class PersonDTO {
 
     public PersonDTO() {
     }
+
+    public PersonDTO(String firstName) {
+        this.firstName = firstName;
+    }
 }

@@ -19,4 +19,11 @@ public class ShelterDTO {
     private Integer phone;
     private Integer size;
     private Boolean isActive;
+
+    public ShelterDTO(String name) {
+        this.name = name;
+    }
+
+    public ShelterDTO() {
+    }
 }

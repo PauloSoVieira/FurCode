@@ -1,4 +1,4 @@
-/*package org.mindera.fur.code.infra.security;
+package org.mindera.fur.code.infra.security;
 
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.person.LoginResponseDTO;
@@ -37,4 +37,4 @@ public class AuthenticationController {
         return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
     }
 
-}*/
+}

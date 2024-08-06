@@ -4,6 +4,8 @@ import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesCreationDTO;
+import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,8 +31,14 @@ public class PersonController {
     }
 
     @PostMapping("/{id}/create-shelter")
-    public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
+    public ResponseEntity<ShelterDTO> createShelter(@PathVariable Long id, @RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(personService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/add-person-to-shelter")
+    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestBody ShelterPersonRolesCreationDTO shelterPersonRolesCreationDTO) {
+        System.out.println("FOI CRIADO ADMIN");
+        return new ResponseEntity<>(personService.addPersonToShelter(shelterPersonRolesCreationDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
@@ -48,6 +56,7 @@ public class PersonController {
         return new ResponseEntity<>(personService.updatePerson(id, personDTO), HttpStatus.OK);
     }
 
+    //Only Managers can set roles
     @PatchMapping("/set-person-role/{id}")
     public ResponseEntity<PersonDTO> setPersonRole(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
         return new ResponseEntity<>(personService.setPersonRole(id, personDTO), HttpStatus.OK);
