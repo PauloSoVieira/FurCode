@@ -3,6 +3,7 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.mindera.fur.code.model.form.AdoptionForm;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -37,4 +38,7 @@ public class AdoptionRequest {
 
     @DateTimeFormat
     private Date date;
+
+    @OneToOne
+    private AdoptionForm adoptionForm;
 }

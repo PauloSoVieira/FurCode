@@ -10,6 +10,7 @@ import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.PetRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 public class ShelterService {
 
+    private PetService petService;
 
     private ShelterRepository shelterRepository;
     private PersonRepository personRepository;
@@ -30,11 +32,13 @@ public class ShelterService {
     @Autowired
     public ShelterService(ShelterRepository shelterRepository,
                           PersonRepository personRepository,
-                          PetRepository petRepository
+                          PetRepository petRepository,
+                          PetService petService
     ) {
         this.shelterRepository = shelterRepository;
         this.personRepository = personRepository;
         this.petRepository = petRepository;
+        this.petService = petService;
     }
 
     public List<ShelterDTO> getAllShelters() {
@@ -87,7 +91,12 @@ public class ShelterService {
     }
 
     public List<PetDTO> getAllPetsInShelter(Long id) {
-        
+        return petService.findAllPets()
+                .stream()
+                .filter(pet -> pet
+                        .getShelterId()
+                        .equals(id))
+                .toList();
     }
 
    /* public List<Request> getAllRequests() {

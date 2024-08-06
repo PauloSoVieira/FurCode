@@ -7,6 +7,8 @@ import org.mindera.fur.code.dto.pet.PetCreateDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.model.Pet;
 
+import java.util.List;
+
 @Mapper
 public interface PetMapper {
 
@@ -19,4 +21,7 @@ public interface PetMapper {
     Pet toModel(PetCreateDTO petCreateDTO);
 
     void updatePetFromDTO(PetCreateDTO dto, @MappingTarget Pet model);
+
+    List<PetDTO> toDto(List<Pet> pet);
+
 }
