@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
+import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.mapper.ShelterMapper;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.repository.ShelterRepository;
@@ -11,8 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ShelterServiceTest {
@@ -24,7 +27,7 @@ class ShelterServiceTest {
     private ShelterService service;
 
     @Nested
-    class GetShelter {
+    class CrudShelter {
 
         @Test
         void createShelter() {
@@ -37,27 +40,62 @@ class ShelterServiceTest {
 
             verify(repository, times(1)).save(shelter);
         }
-    }
 
-    @Nested
-    class DeleteShelter {
 
         @Test
         void deleteShelter() {
+//            Shelter shelter = new Shelter();
             repository.deleteAll();
 
             verify(repository, times(1)).deleteAll();
         }
 
-    }
-
-    @Nested
-    class GetShelterById {
 
         @Test
         void getShelterById() {
-            Shelter shelter = repository.findById(id).orElseThrow();
-            
+            Shelter shelter = new Shelter();
+            shelter.setId(1L);
+            when(repository.findById(1L)).thenReturn(Optional.of(shelter));
+
+            ShelterMapper.INSTANCE.toDto(shelter);
+            service.getShelterById(shelter.getId());
+
+            verify(repository, times(1)).findById(1L);
         }
+
+        @Test
+        void getAllShelters() {
+            Shelter shelter = new Shelter();
+            when(repository.findAll()).thenReturn(List.of(shelter));
+
+            service.getAllShelters();
+            verify(repository, times(1)).findAll();
+        }
+
+        @Test
+        void updateShelter() {
+            Shelter shelter = new Shelter();
+            shelter.setId(1L);
+            when(repository.findById(1L)).thenReturn(Optional.of(shelter));
+
+            ShelterDTO shelterUpdate = ShelterMapper.INSTANCE.toDto(shelter);
+            shelterUpdate.setName("test");
+
+            service.updateShelter(1L, shelterUpdate);
+
+            verify(repository, times(1)).save(shelter);
+        }
+
+        @Test
+        void deleteShelterById() {
+            Shelter shelter = new Shelter();
+            shelter.setId(1L);
+            when(repository.findById(1L)).thenReturn(Optional.of(shelter));
+
+            service.deleteShelter(1L);
+
+            verify(repository, times(1)).delete(shelter);
+        }
+
     }
 }
