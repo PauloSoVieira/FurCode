@@ -36,7 +36,6 @@ public class PersonCreationDTO {
 
     private Long cellPhone;
 
-
     public PersonCreationDTO() {
     }
 
@@ -50,9 +49,5 @@ public class PersonCreationDTO {
         this.address2 = address2;
         this.postalCode = postalCode;
         this.cellPhone = cellPhone;
-    }
-
-    public PersonCreationDTO(String firstName) {
-        this.firstName = firstName;
     }
 }

@@ -223,7 +223,7 @@ public class ShelterControllerIntegrationTest {
     class validation {
         @Test
         void createShelterWithNullName() {
-
+            //TODO VALIDATION TESTS
         }
     }
 }
