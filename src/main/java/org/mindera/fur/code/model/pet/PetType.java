@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.mindera.fur.code.model.enums.pet.PetTypeEnum;
 
 @Data
 @Entity
@@ -20,7 +19,6 @@ public class PetType {
     //@NotNull(message = "Pet type name must be provided")
     //@Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    //private PetTypeEnum type;
     private String type;
 
     @Valid
