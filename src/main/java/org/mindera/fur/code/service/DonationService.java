@@ -49,6 +49,7 @@ public class DonationService {
         // change strings to enum
 
         if (donation.getId() == null ||
+                donation.getId() <= 0 ||
                 donation.getTotal() <= 0 ||
                 donation.getDate() == null ||
                 donation.getPetId() == null ||
@@ -56,9 +57,10 @@ public class DonationService {
             throw new IllegalArgumentException("Donation has invalid data fields");
         }
 
-        if (donation.getDate().getTime() < System.currentTimeMillis()) {
-            throw new InvalidDonationDateException("Donation date must be in the future");
-        }
+        // TODO: this is not working, please fix
+        //if (donation.getDate().getTime() < System.currentTimeMillis()) {
+        //    throw new InvalidDonationDateException("Donation date must be in the future");
+        // }
 
         if (donation.getTotal() >= 999999) {
             throw new InvalidDonationAmountException("Donation total must be less than 999999");

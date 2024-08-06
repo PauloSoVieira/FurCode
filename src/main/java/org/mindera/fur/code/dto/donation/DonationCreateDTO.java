@@ -15,7 +15,7 @@ public class DonationCreateDTO {
     //@Schema(type = "double", example = "20")
     @NotNull
     @NotBlank(message = "Donation amount is required")
-    @Min(value = 0, message = "Donation amount must be greater than 0")
+    @Min(value = 1, message = "Donation amount must be greater than 0")
     @Max(value = 999999, message = "Donation amount must be less than 999999")
     private Double total;
 

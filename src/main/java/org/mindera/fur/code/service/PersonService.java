@@ -53,9 +53,11 @@ public class PersonService {
     }
 
     private static void personValidation(PersonCreationDTO personCreationDTO) {
+
         if (personCreationDTO.getFirstName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PersonsMessages.NAME_CANT_BE_NULL);
         }
+
         if (personCreationDTO.getFirstName().equals(" ")) {
             throw new PersonException(PersonsMessages.NAME_CANT_BE_EMPTY);
         }

@@ -37,6 +37,7 @@ public class Person implements UserDetails {
     @OneToMany(mappedBy = "person", fetch = FetchType.EAGER)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
+
     public Person(Long id) {
         this.id = id;
     }
@@ -88,4 +89,5 @@ public class Person implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

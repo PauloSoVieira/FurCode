@@ -1,6 +1,5 @@
 package org.mindera.fur.code.dto.person;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -19,7 +18,6 @@ public class PersonCreationDTO {
 
     @NotNull
     @NotBlank
-    @Email
     private String email;
 
     @NotNull

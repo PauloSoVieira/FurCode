@@ -269,7 +269,15 @@ public class PersonControllerIntegrationTest {
                             .statusCode(201).extract().body().jsonPath().getString("id");
 
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
-                    "Shelter"
+                    "Shelter",
+                    123456789L,
+                    "shelter@shelter.com",
+                    "Shelter Street",
+                    "number",
+                    "4400",
+                    987654321L,
+                    1234L,
+                    true
             );
 
         }

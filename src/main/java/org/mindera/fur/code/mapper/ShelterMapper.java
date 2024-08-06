@@ -18,8 +18,6 @@ public interface ShelterMapper {
 
     Shelter toModel(ShelterDTO shelterDTO);
 
-    ShelterCreationDTO toDTO(Shelter shelter);
-
     Shelter toModel(ShelterCreationDTO shelterCreationDTO);
 
     List<ShelterDTO> toDto(List<Shelter> shelter);
