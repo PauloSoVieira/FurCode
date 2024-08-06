@@ -25,18 +25,13 @@ public class ShelterService {
     private ShelterMapper shelterMapper;
 
     @Autowired
-    public ShelterService(ShelterRepository shelterRepository) {
+    public ShelterService(ShelterRepository shelterRepository,
+                          PersonRepository personRepository,
+                          PetRepository petRepository
+    ) {
         this.shelterRepository = shelterRepository;
-    }
-
-    @Autowired
-    public ShelterService(PetRepository petRepository) {
-        this.petRepository = petRepository;
-    }
-
-    @Autowired
-    public ShelterService(PersonRepository personRepository) {
         this.personRepository = personRepository;
+        this.petRepository = petRepository;
     }
 
     public List<ShelterDTO> getAllShelters() {

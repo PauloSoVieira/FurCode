@@ -3,6 +3,9 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "adoption_request")
@@ -31,4 +34,7 @@ public class AdoptionRequest {
 
     @Enumerated(EnumType.STRING)
     private State state;
+
+    @DateTimeFormat
+    private Date date;
 }

@@ -3,7 +3,7 @@ package org.mindera.fur.code.dto.adoptionRequest;
 import lombok.Data;
 import org.mindera.fur.code.model.State;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 public class AdoptionRequestDTO {
