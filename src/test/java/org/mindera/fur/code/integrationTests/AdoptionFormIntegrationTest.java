@@ -1,17 +1,16 @@
-package org.mindera.fur.code.service;
+package org.mindera.fur.code.integrationTests;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 import org.mindera.fur.code.dto.forms.AdoptionFormCreateDTO;
 import org.mindera.fur.code.dto.forms.AdoptionFormDTO;
-import org.mindera.fur.code.dto.forms.FormFieldDTO;
+import org.mindera.fur.code.service.AdoptionFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.util.List;
-import java.util.Set;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,16 +38,11 @@ public class AdoptionFormIntegrationTest {
 
     @Test
     public void update_AdoptionFormById_return200() {
-        AdoptionFormDTO adoptionForm = new AdoptionFormDTO(
-                "jojo",
-                1L,
-                1L,
-                1L,
-                Set.of(new FormFieldDTO(1L, "1", "1")));
+        AdoptionFormCreateDTO adoptionFormCreateDTO = new AdoptionFormCreateDTO("jojo", 1L, 1L, 1L);
 
         String adoptionId = given()
                 .contentType(ContentType.JSON)
-                .body(adoptionForm)
+                .body(adoptionFormCreateDTO)
                 .when()
                 .post("/api/v1/adoptionForm")
                 .then()
@@ -57,19 +51,15 @@ public class AdoptionFormIntegrationTest {
                 .body()
                 .jsonPath().getString("id");
 
-        AdoptionFormDTO adoptionFormDTO = given()
+        adoptionFormCreateDTO.setName("Pablo");
+
+        given()
                 .contentType(ContentType.JSON)
-                .body(adoptionForm)
+                .body(adoptionFormCreateDTO)
                 .when()
                 .put("/api/v1/adoptionForm/" + adoptionId)
                 .then()
-                .statusCode(200)
-                .extract().body().as(AdoptionFormDTO.class);
-
-        adoptionForm.setName("Pablo");
-        adoptionForm.setFormFields(Set.of(new FormFieldDTO(2L, "2", "2")));
-
-        adoptionFormService.updateAdoptionForm(adoptionFormDTO, Long.valueOf(adoptionId));
+                .statusCode(200);
 
         AdoptionFormDTO updatedForm = given()
                 .when()
@@ -78,8 +68,7 @@ public class AdoptionFormIntegrationTest {
                 .statusCode(200)
                 .extract().body().as(AdoptionFormDTO.class);
 
-
-        // assertEquals("Pablo", updatedForm.getName());
+        Assertions.assertEquals("Pablo", updatedForm.getName());
 
     }
 

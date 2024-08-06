@@ -31,7 +31,6 @@ public class AdoptionRequest {
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
 
-
     @OneToOne
     private AdoptionForm adoptionForm;
 }

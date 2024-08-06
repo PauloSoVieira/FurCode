@@ -25,6 +25,7 @@ import java.util.Optional;
 @Validated
 @Service
 public class PetService {
+
     private final PetRepository petRepository;
     private final PetTypeRepository petTypeRepository;
     private final PetRecordRepository petRecordRepository;

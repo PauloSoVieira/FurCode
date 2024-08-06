@@ -18,9 +18,7 @@ public class FormField {
     private AdoptionForm adoptionForm;
 
     private String name;
+    //Criar Enum para os tipos de campos e tirar Strng para o type
     private String type; // TODO: enum de numbers, text, etc
-    // private String label;
-    // private String placeholder;
-//    private Boolean required;
-//    private Boolean unique;
+
 }
