@@ -1,4 +1,4 @@
-package org.mindera.fur.code.model;
+package org.mindera.fur.code.model.pet;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -15,8 +15,9 @@ public class PetType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: change too PetTypeEnum
     @NotBlank(message = "Pet type name must be provided")
+    //@NotNull(message = "Pet type name must be provided")
+    //@Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private String type;
 
@@ -24,8 +25,5 @@ public class PetType {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "breed_id", nullable = false)
-    private Breed breed;
-
-    //@OneToMany(mappedBy = "petType")
-    //private List<Pet> pets;
+    private PetBreed breed;
 }

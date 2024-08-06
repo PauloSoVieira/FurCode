@@ -1,24 +1,31 @@
-package org.mindera.fur.code.dto.medical_record;
+package org.mindera.fur.code.dto.pet;
 
-import java.util.Date;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
-public class PetRecordCreateDTO {
+public class PetRecordDTO {
+
+    private Long id;
 
     @NotNull(message = "Pet ID is required")
     private Long petId;
 
-    @NotNull(message = "Vaccinated status is required")
+    @NotNull(message = "Vaccination status is required")
     private Boolean isVaccinated;
 
-    //@NotNull(message = "Intervention type is required")
-    //private MedicalIntervention interventionType;
+    // Criar um enum de intervenções
+    @NotBlank(message = "Intervention type is required")
+    // @NotNull(message = "Intervention type is required")
+    private String petRecordsStatus;
 
+    @Valid
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
     private Date date;
