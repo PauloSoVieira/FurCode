@@ -9,9 +9,9 @@ public class FileUploadDTO {
     @NotNull(message = "File name is required")
     private String fileName;
 
-    @NotNull(message = "File Base64 encoding is required")
-    private String base64;
+    @NotNull(message = "File data as base64 encoding is required")
+    private String fileData;
 
-    @NotNull(message = "Base64 checksum is required")
-    private String checksum;
+    @NotNull(message = "Base64 checksum as MD5 is required")
+    private String md5;
 }

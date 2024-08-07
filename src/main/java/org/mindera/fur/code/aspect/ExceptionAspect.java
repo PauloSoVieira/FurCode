@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
+import org.mindera.fur.code.exceptions.file.FileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -177,7 +178,8 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler({
             InvalidDonationAmountException.class,
-            InvalidDonationDateException.class
+            InvalidDonationDateException.class,
+            FileException.class
     })
     public ResponseEntity<String> InvalidResourceException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Invalid Request/Resource", e.getMessage());
