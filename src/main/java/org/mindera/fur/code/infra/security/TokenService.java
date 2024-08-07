@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.mindera.fur.code.dto.person.PersonDTO;
-import org.mindera.fur.code.messages.TokenMessage;
+import org.mindera.fur.code.messages.token.TokenMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

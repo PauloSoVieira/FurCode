@@ -39,4 +39,7 @@ public class Shelter {
 
     @OneToMany(mappedBy = "shelter")
     private Set<Pet> pet;
+
+    @OneToMany(mappedBy = "shelter")
+    private Set<Donation> donations;
 }

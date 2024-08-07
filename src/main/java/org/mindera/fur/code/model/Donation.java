@@ -3,7 +3,6 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.mindera.fur.code.model.pet.Pet;
 
 import java.util.Date;
 
@@ -23,8 +22,8 @@ public class Donation {
     private Date date;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pet_id", nullable = false)
-    private Pet pet;
+    @JoinColumn(name = "shelter_id", nullable = false)
+    private Shelter shelter;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", nullable = false)

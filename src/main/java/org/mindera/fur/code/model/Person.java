@@ -37,6 +37,9 @@ public class Person implements UserDetails {
     @OneToMany(mappedBy = "person", fetch = FetchType.EAGER)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
+    private Set<Donation> donations;
+
 
     public Person(Long id) {
         this.id = id;

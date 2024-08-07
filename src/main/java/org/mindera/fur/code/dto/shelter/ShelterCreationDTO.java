@@ -26,7 +26,7 @@ public class ShelterCreationDTO {
 
     @NotNull
     @NotBlank
-    private String postCode;
+    private String postalCode;
 
     @NotNull
     @NotBlank
@@ -40,13 +40,13 @@ public class ShelterCreationDTO {
     @NotBlank
     private Boolean isActive;
 
-    public ShelterCreationDTO(String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive) {
+    public ShelterCreationDTO(String name, Long vat, String email, String address1, String address2, String postalCode, Long phone, Long size, Boolean isActive) {
         this.name = name;
         this.vat = vat;
         this.email = email;
         this.address1 = address1;
         this.address2 = address2;
-        this.postCode = postCode;
+        this.postalCode = postalCode;
         this.phone = phone;
         this.size = size;
         this.isActive = isActive;

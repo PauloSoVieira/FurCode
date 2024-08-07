@@ -1,5 +1,7 @@
 package org.mindera.fur.code.controller;
 
+import org.mindera.fur.code.dto.donation.DonationCreateDTO;
+import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -26,7 +28,6 @@ public class PersonController {
     }
 
     @PostMapping
-
     public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonCreationDTO personCreationDTO) {
         return new ResponseEntity<>(personService.createPerson(personCreationDTO), HttpStatus.CREATED);
     }
@@ -41,6 +42,11 @@ public class PersonController {
         return new ResponseEntity<>(personService.addPersonToShelter(shelterPersonRolesCreationDTO), HttpStatus.CREATED);
     }
 
+    @PostMapping("/{id}/donate")
+    public ResponseEntity<DonationDTO> donate(@PathVariable Long id, @RequestBody DonationCreateDTO donationCreateDTO) {
+        return new ResponseEntity<>(personService.donate(id, donationCreateDTO), HttpStatus.CREATED);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<PersonDTO>> getAllPersons() {
         return new ResponseEntity<>(personService.getAllPersons(), HttpStatus.OK);
@@ -49,6 +55,11 @@ public class PersonController {
     @GetMapping("/{id}")
     public ResponseEntity<PersonDTO> getPersonById(@PathVariable Long id) {
         return new ResponseEntity<>(personService.getPersonById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/get-all-donations")
+    public ResponseEntity<List<DonationDTO>> getAllDonationsById(@PathVariable Long id) {
+        return new ResponseEntity<>(personService.getAllDonationsById(id), HttpStatus.OK);
     }
 
     @PatchMapping("/update/{id}")

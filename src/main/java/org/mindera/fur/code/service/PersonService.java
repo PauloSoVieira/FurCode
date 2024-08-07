@@ -1,6 +1,8 @@
 package org.mindera.fur.code.service;
 
 
+import org.mindera.fur.code.dto.donation.DonationCreateDTO;
+import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -10,7 +12,7 @@ import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
-import org.mindera.fur.code.messages.PersonsMessages;
+import org.mindera.fur.code.messages.person.PersonMessages;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.ShelterPersonRoles;
@@ -30,66 +32,69 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
+    private final DonationService donationService;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
     private PersonMapper personMapper;
     private ShelterPersonRolesMapper shelterPersonRolesMapper;
 
     @Autowired
     public PersonService(PersonRepository personRepository, ShelterService shelterService,
-                         ShelterPersonRolesRepository shelterPersonRolesRepository, ShelterRepository shelterRepository) {
+                         ShelterPersonRolesRepository shelterPersonRolesRepository, ShelterRepository shelterRepository,
+                         DonationService donationService) {
         this.personRepository = personRepository;
         this.shelterService = shelterService;
         this.shelterPersonRolesRepository = shelterPersonRolesRepository;
         this.shelterRepository = shelterRepository;
+        this.donationService = donationService;
     }
 
     private static void idValidation(Long id) {
         if (id == null) {
-            throw new PersonException(PersonsMessages.ID_CANT_BE_NULL);
+            throw new PersonException(PersonMessages.ID_CANT_BE_NULL);
         }
         if (id <= 0) {
-            throw new PersonException(PersonsMessages.ID_CANT_BE_LOWER_OR_EQUAL_ZERO);
+            throw new PersonException(PersonMessages.ID_CANT_BE_LOWER_OR_EQUAL_ZERO);
         }
     }
 
     private static void personValidation(PersonCreationDTO personCreationDTO) {
 
         if (personCreationDTO.getFirstName() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PersonsMessages.NAME_CANT_BE_NULL);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PersonMessages.NAME_CANT_BE_NULL);
         }
 
         if (personCreationDTO.getFirstName().equals(" ")) {
-            throw new PersonException(PersonsMessages.NAME_CANT_BE_EMPTY);
+            throw new PersonException(PersonMessages.NAME_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getLastName() == null) {
-            throw new PersonException(PersonsMessages.LAST_NAME_CANT_BE_NULL);
+            throw new PersonException(PersonMessages.LAST_NAME_CANT_BE_NULL);
         }
         if (personCreationDTO.getLastName().equals(" ")) {
-            throw new PersonException(PersonsMessages.LAST_NAME_CANT_BE_EMPTY);
+            throw new PersonException(PersonMessages.LAST_NAME_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getEmail() == null) {
-            throw new PersonException(PersonsMessages.EMAIL_CANT_BE_NULL);
+            throw new PersonException(PersonMessages.EMAIL_CANT_BE_NULL);
         }
         if (personCreationDTO.getEmail().equals(" ")) {
-            throw new PersonException(PersonsMessages.EMAIL_CANT_BE_EMPTY);
+            throw new PersonException(PersonMessages.EMAIL_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getPassword() == null) {
-            throw new PersonException(PersonsMessages.PASSWORD_CANT_BE_NULL);
+            throw new PersonException(PersonMessages.PASSWORD_CANT_BE_NULL);
         }
         if (personCreationDTO.getPassword().equals(" ")) {
-            throw new PersonException(PersonsMessages.PASSWORD_CANT_BE_EMPTY);
+            throw new PersonException(PersonMessages.PASSWORD_CANT_BE_EMPTY);
         }
         if (personCreationDTO.getPostalCode() == null) {
-            throw new PersonException(PersonsMessages.POSTAL_CODE_CANT_BE_NULL);
+            throw new PersonException(PersonMessages.POSTAL_CODE_CANT_BE_NULL);
         }
         if (personCreationDTO.getPostalCode() <= 0) {
-            throw new PersonException(PersonsMessages.POSTAL_CODE_CANT_BE_ZERO);
+            throw new PersonException(PersonMessages.POSTAL_CODE_CANT_BE_ZERO);
         }
         if (personCreationDTO.getAddress1() == null) {
-            throw new PersonException(PersonsMessages.ADDRESS_CANT_BE_NULL);
+            throw new PersonException(PersonMessages.ADDRESS_CANT_BE_NULL);
         }
         if (personCreationDTO.getAddress1().equals(" ")) {
-            throw new PersonException(PersonsMessages.ADDRESS_CANT_BE_EMPTY);
+            throw new PersonException(PersonMessages.ADDRESS_CANT_BE_EMPTY);
         }
     }
 
@@ -97,7 +102,7 @@ public class PersonService {
         personValidation(personCreationDTO);
 
         if (personRepository.findByEmail(personCreationDTO.getEmail()) != null) {
-            throw new PersonException(PersonsMessages.EMAIL_ALREADY_EXISTS);
+            throw new PersonException(PersonMessages.EMAIL_ALREADY_EXISTS);
         }
 
         Person person = personMapper.INSTANCE.toModel(personCreationDTO);
@@ -172,4 +177,13 @@ public class PersonService {
         return personMapper.INSTANCE.toDTO(person);
     }
 
+    public DonationDTO donate(Long id, DonationCreateDTO donationCreateDTO) {
+        idValidation(id);
+        return donationService.createDonation(donationCreateDTO);
+    }
+
+    public List<DonationDTO> getAllDonationsById(Long id) {
+        idValidation(id);
+        return donationService.getAllDonationsById(id);
+    }
 }
