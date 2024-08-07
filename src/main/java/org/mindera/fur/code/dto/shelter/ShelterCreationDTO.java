@@ -54,4 +54,8 @@ public class ShelterCreationDTO {
 
     public ShelterCreationDTO() {
     }
+
+    public ShelterCreationDTO(String name) {
+        this.name = name;
+    }
 }

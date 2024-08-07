@@ -1,23 +1,27 @@
 package org.mindera.fur.code.model;
 
+public enum Role {
+    MASTER("Master"),
+    MANAGER("Manager"),
+    ADMIN("Admin"),
+    USER("User");
 
-import jakarta.persistence.*;
-import lombok.Data;
+    private String role;
 
-import java.util.Set;
+    Role(String role) {
+    }
 
-@Entity
-@Table(name = "role")
-@Data
-public class Role {
+    public static Role fromString(String role) {
+        for (Role r : Role.values()) {
+            if (r.role.equalsIgnoreCase(role)) {
+                return r;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant with role " + role);
+    }
 
+    public String getRole() {
+        return role;
+    }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String type;
-
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private Set<ShelterPersonRoles> shelterPersonRoles;
 }

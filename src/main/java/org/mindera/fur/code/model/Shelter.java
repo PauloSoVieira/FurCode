@@ -3,6 +3,7 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.mindera.fur.code.model.pet.Pet;
 
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class Shelter {
 
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shelter", fetch = FetchType.EAGER)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
     @OneToMany(mappedBy = "shelter")

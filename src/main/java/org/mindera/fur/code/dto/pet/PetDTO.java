@@ -12,18 +12,18 @@ public class PetDTO {
     @Size(min = 1, max = 30, message = "Pet name must be between 1 and 30 characters")
     private String name;
 
-    // TODO: add enum for petTypeId
     @NotNull(message = "Pet typeId must be provided")
-    private Integer petTypeId; // changed to int-petTypeId from Pet-petType
+    //@Enumerated(EnumType.ORDINAL)
+    private Long petTypeId; // changed to int-petTypeId from Pet-petType
 
     @NotNull(message = "Shelter ID must be provided")
-    private Long shelterId; // changed to Long-shelterId from Shelter-shelter
+    private Long shelterId;
 
     @NotNull(message = "Adopted status must be provided")
     private Boolean isAdopted;
 
-    // TODO: add enum for size: small, medium, large
-    @NotBlank(message = "Size must be provided")
+    @NotNull(message = "Size must be provided")
+    //@Enumerated(EnumType.STRING)
     private String size;
 
     @NotNull(message = "Pet weight must be provided")
@@ -35,6 +35,7 @@ public class PetDTO {
     @Size(min = 3, max = 99, message = "Pet color must be between 3 and 99 characters")
     private String color;
 
+    @NotNull(message = "Pet age must be provided")
     @Min(value = 1, message = "Pet age must be greater than 1")
     @Max(value = 99, message = "Pet age must be less than 99")
     private Integer age;

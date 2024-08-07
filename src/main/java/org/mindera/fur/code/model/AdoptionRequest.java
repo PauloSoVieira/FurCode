@@ -4,6 +4,10 @@ package org.mindera.fur.code.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.mindera.fur.code.model.form.AdoptionForm;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
+import org.mindera.fur.code.model.pet.Pet;
 
 @Entity
 @Table(name = "adoption_request")
@@ -29,6 +33,12 @@ public class AdoptionRequest {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
+
+    @Enumerated(EnumType.STRING)
+    private State state;
+
+    @DateTimeFormat
+    private Date date;
 
     @OneToOne
     private AdoptionForm adoptionForm;

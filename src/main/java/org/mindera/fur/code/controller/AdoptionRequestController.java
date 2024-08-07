@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/adoption-request")
+@RequestMapping("/api/v1/adoption-request")
 public class AdoptionRequestController {
 
     @Autowired
@@ -19,7 +19,7 @@ public class AdoptionRequestController {
 
     //Create an adoption request
     @PostMapping
-    public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
+    public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@RequestBody AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
         return new ResponseEntity<>(adoptionRequestService.createAdoptionRequest(adoptionRequestCreationDTO), HttpStatus.CREATED);
     }
 

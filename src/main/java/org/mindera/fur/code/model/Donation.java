@@ -3,6 +3,7 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.mindera.fur.code.model.pet.Pet;
 
 import java.util.Date;
 
