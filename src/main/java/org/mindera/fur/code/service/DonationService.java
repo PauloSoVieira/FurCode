@@ -100,12 +100,22 @@ public class DonationService {
      * @return the DonationDTO representing the donation details
      * @throws DonationNotFoundException if no donation with the specified ID is found
      */
-    public DonationDTO getDonationById(long id) {
+    public DonationDTO getDonationById(Long id) {
+        idValidation(id);
         Optional<Donation> donation = donationRepository.findById(id);
         if (donation.isEmpty()) {
             throw new DonationNotFoundException();
         }
         return DonationMapper.INSTANCE.toDTO(donation.get());
+    }
+
+    private void idValidation(Long id) {
+        if (id == null) {
+            throw new DonationNotFoundException(DonationMessages.DONATION_NOT_FOUND);
+        }
+        if (id <= 0) {
+            throw new DonationNotFoundException(DonationMessages.DONATION_NOT_FOUND);
+        }
     }
 
     /**
@@ -132,7 +142,8 @@ public class DonationService {
      * @param id the ID of the person whose donations are to be retrieved
      * @return an ArrayList of DonationDTO objects representing all donations for the specified person
      */
-    public ArrayList<DonationDTO> getAllDonationsById(Long id) {
+    public ArrayList<DonationDTO> getAllDonationsByPersonId(Long id) {
+
         ArrayList<DonationDTO> donations = new ArrayList<>();
         donationRepository.findAll().forEach(donation -> {
             if (Objects.equals(donation.getPerson().getId(), id)) {

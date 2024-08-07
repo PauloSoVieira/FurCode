@@ -20,10 +20,8 @@ import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -60,7 +58,7 @@ public class PersonService {
     private static void personValidation(PersonCreationDTO personCreationDTO) {
 
         if (personCreationDTO.getFirstName() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PersonMessages.NAME_CANT_BE_NULL);
+            throw new PersonException(PersonMessages.NAME_CANT_BE_NULL);
         }
 
         if (personCreationDTO.getFirstName().equals(" ")) {
@@ -184,6 +182,6 @@ public class PersonService {
 
     public List<DonationDTO> getAllDonationsById(Long id) {
         idValidation(id);
-        return donationService.getAllDonationsById(id);
+        return donationService.getAllDonationsByPersonId(id);
     }
 }
