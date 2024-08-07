@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class ShelterCreationDTO {
     @NotNull
@@ -40,7 +42,11 @@ public class ShelterCreationDTO {
     @NotBlank
     private Boolean isActive;
 
-    public ShelterCreationDTO(String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive) {
+    @NotNull
+    @NotBlank
+    private Date creationDate;
+
+    public ShelterCreationDTO(String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive, Date creationDate) {
         this.name = name;
         this.vat = vat;
         this.email = email;
@@ -50,6 +56,7 @@ public class ShelterCreationDTO {
         this.phone = phone;
         this.size = size;
         this.isActive = isActive;
+        this.creationDate = creationDate;
     }
 
     public ShelterCreationDTO() {

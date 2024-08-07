@@ -19,6 +19,10 @@ public class ShelterMessages {
     public static final String SIZE_CANT_BE_EMPTY = "Size can't be empty";
     public static final String SIZE_CANT_BE_ZERO_OR_LOWER = "Size can't be zero or lower";
     public static final String SIZE_CANT_BE_NULL = "Size can't be null";
-    public static final String ISACTIVE_CANT_BE_EMPTY = "State can't be empy";
-    public static final String ISACTIVE_CANT_BE_NULL = "State can't be null";
+    public static final String IS_ACTIVE_CANT_BE_EMPTY = "State can't be empy";
+    public static final String IS_ACTIVE_CANT_BE_NULL = "State can't be null";
+    public static final String CREATION_DATE_CANT_BE_EMPTY = "Creation Date can't be empty";
+    public static final String CREATION_DATE_CANT_BE_NULL = "Creation Date can't be null";
+    public static final String CREATION_DATE_CANT_BE_IN_FUTURE = "Creation Date can't be in future";
+    public static final String CREATION_DATE_CANT_BE_BEFORE_CURRENT_DATE = "Creation Date can't be before current date";
 }

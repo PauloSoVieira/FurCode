@@ -6,7 +6,6 @@ import org.junit.jupiter.api.*;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.model.Person;
-import org.mindera.fur.code.model.Pet;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.State;
 import org.mindera.fur.code.service.AdoptionRequestService;
@@ -43,8 +42,8 @@ public class AdoptionRequestControllerIntegrationTest {
         @Test
         void createAdoptionRequestShouldReturn201() {
             Date date = new Date();
-            Pet pet = new Pet();
-            pet.setId(1L);
+//            Pet pet = new Pet();
+//            pet.setId(1L);
             // Set other required pet fields
             Shelter shelter = new Shelter();
             shelter.setId(1L);
@@ -57,7 +56,7 @@ public class AdoptionRequestControllerIntegrationTest {
             adoptionRequestCreationDTO.setState(State.SENT);
             adoptionRequestCreationDTO.setPersonId(person.getId());
             adoptionRequestCreationDTO.setShelterId(shelter.getId());
-            adoptionRequestCreationDTO.setPetId(pet.getId());
+//            adoptionRequestCreationDTO.setPetId(pet.getId());
             System.out.println("DTO: " + adoptionRequestCreationDTO);
             given()
                     .contentType(ContentType.JSON)

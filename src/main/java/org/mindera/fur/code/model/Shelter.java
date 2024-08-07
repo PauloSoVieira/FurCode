@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.mindera.fur.code.model.pet.Pet;
 
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -33,6 +34,8 @@ public class Shelter {
     private Integer size;
 
     private Boolean isActive;
+
+    private Date creationDate;
 
     @OneToMany(mappedBy = "shelter", fetch = FetchType.EAGER)
     private Set<ShelterPersonRoles> shelterPersonRoles;
