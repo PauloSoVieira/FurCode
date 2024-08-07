@@ -35,8 +35,6 @@ public class AdoptionRequestService {
         request.setPet(petRepository.findById(dto.getPetId()).orElseThrow(() -> new RuntimeException("Pet not found")));
         request.setShelter(shelterRepository.findById(dto.getShelterId()).orElseThrow(() -> new RuntimeException("Shelter not found")));
         request.setPerson(personRepository.findById(dto.getPersonId()).orElseThrow(() -> new RuntimeException("Person not found")));
-        request.setState(dto.getState());
-        request.setDate(dto.getDate());
         System.out.println("AdoptionRequest before saving: " + request);
         AdoptionRequest savedRequest = adoptionRequestRepository.save(request);
         System.out.println("AdoptionRequest after saving: " + savedRequest);
