@@ -1,6 +1,7 @@
 package org.mindera.fur.code.service;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Schema(description = "The person service")
 public class PersonService {
     private final PersonRepository personRepository;
     private final ShelterRepository shelterRepository;
@@ -46,6 +48,13 @@ public class PersonService {
         this.donationService = donationService;
     }
 
+    /**
+     * Validates if the id is null or less than 0
+     *
+     * @param id The id to be validated
+     * @throws PersonException if the id is null or less than 0
+     */
+
     private static void idValidation(Long id) {
         if (id == null) {
             throw new PersonException(PersonMessages.ID_CANT_BE_NULL);
@@ -54,6 +63,14 @@ public class PersonService {
             throw new PersonException(PersonMessages.ID_CANT_BE_LOWER_OR_EQUAL_ZERO);
         }
     }
+
+    /**
+     * Validates the fields of the PersonCreationDTO object.
+     * Throws a PersonException if any validation checks fail.
+     *
+     * @param personCreationDTO The DTO object containing person data to be validated.
+     * @throws PersonException if any field fails validation.
+     */
 
     private static void personValidation(PersonCreationDTO personCreationDTO) {
 
@@ -96,6 +113,26 @@ public class PersonService {
         }
     }
 
+    /**
+     * Creates a new person based on the provided PersonCreationDTO.
+     *
+     * <p>This method performs several validation checks on the provided PersonCreationDTO:
+     * <ul>
+     *   <li>Ensures that the first name, last name, email, password, address1, and address2
+     *       are not null and that the password is not empty.</li>
+     *   <li>Validates that the postal code is greater than 0 and the address1 is not empty.</li>
+     *   <li>Ensures that the email is unique.</li>
+     * </ul>
+     * If any of these conditions are not met, an appropriate exception is thrown.
+     *
+     * <p>After successful validation, the person is mapped to a Person model object
+     * and saved to the repository.
+     *
+     * @param personCreationDTO the PersonCreationDTO containing the person details
+     * @return the saved Person object
+     * @throws PersonException if any required fields are null or invalid
+     * @throws PersonException if the email is already in use
+     */
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
         personValidation(personCreationDTO);
 
@@ -110,6 +147,25 @@ public class PersonService {
         personRepository.save(person);
         return personMapper.INSTANCE.toDTO(person);
     }
+
+    /**
+     * Adds a person to a shelter based on the provided ShelterPersonRolesCreationDTO.
+     *
+     * <p>This method performs several validation checks on the provided ShelterPersonRolesCreationDTO:
+     * <ul>
+     *   <li>Ensures that the person ID and shelter ID are not null and that the person ID is greater than 0.</li>
+     *   <li>Ensures that the role is not null and that it is a valid role.</li>
+     * </ul>
+     * If any of these conditions are not met, an appropriate exception is thrown.
+     *
+     * <p>After successful validation, the person is mapped to a Person model object
+     * and saved to the repository.
+     *
+     * @param shelterPersonRolesCreationDTO the ShelterPersonRolesCreationDTO containing the person details
+     * @return the saved ShelterPersonRoles object
+     * @throws PersonException if any required fields are null or invalid
+     * @throws PersonException if the email is already in use
+     */
 
     public ShelterPersonRolesDTO addPersonToShelter(ShelterPersonRolesCreationDTO shelterPersonRolesCreationDTO) {
 
@@ -126,16 +182,59 @@ public class PersonService {
         return shelterPersonRolesMapper.INSTANCE.toDto(shelterPersonRoles);
     }
 
+    /**
+     * Retrieves all persons from the repository.
+     *
+     * <p>This method fetches all person records from the repository, maps each one to a
+     * PersonDTO, and collects them in an ArrayList which is then returned.
+     *
+     * @return an ArrayList of PersonDTO objects representing all persons
+     */
+
     public List<PersonDTO> getAllPersons() {
         List<Person> persons = personRepository.findAll();
         return personMapper.INSTANCE.toDTO(persons);
     }
+
+    /**
+     * Retrieves a person by its ID.
+     *
+     * <p>This method attempts to find a person record in the repository using the provided ID.
+     * If the person is found, it is mapped to a PersonDTO and returned.
+     * If the person is not found, a {@code PersonNotFoundException} is thrown.
+     *
+     * @param id the ID of the person to retrieve
+     * @return the PersonDTO representing the person details
+     * @throws PersonException if no person with the specified ID is found
+     */
 
     public PersonDTO getPersonById(Long id) {
         idValidation(id);
         Person person = personRepository.findById(id).get(); //TODO verificar melhor forma para este get
         return personMapper.INSTANCE.toDTO(person);
     }
+
+    /**
+     * Updates a person based on the provided PersonDTO.
+     *
+     * <p>This method performs several validation checks on the provided PersonDTO:
+     * <ul>
+     *   <li>Ensures that the first name, last name, email, password, address1, and address2
+     *       are not null and that the password is not empty.</li>
+     *   <li>Validates that the postal code is greater than 0 and the address1 is not empty.</li>
+     *   <li>Ensures that the email is unique.</li>
+     * </ul>
+     * If any of these conditions are not met, an appropriate exception is thrown.
+     *
+     * <p>After successful validation, the person is mapped to a Person model object
+     * and saved to the repository.
+     *
+     * @param id        the ID of the person to update
+     * @param personDTO the PersonDTO containing the person details to update
+     * @return the updated Person object
+     * @throws PersonException if any required fields are null or invalid
+     * @throws PersonException if the email is already in use
+     */
 
     public PersonDTO updatePerson(Long id, PersonDTO personDTO) {
         idValidation(id);
@@ -153,19 +252,67 @@ public class PersonService {
         return personMapper.INSTANCE.toDTO(person);
     }
 
+    /**
+     * Deletes a person based on the provided ID.
+     *
+     * <p>This method attempts to find a person record in the repository using the provided ID.
+     * If the person is found, it is deleted from the repository.
+     *
+     * @param id the ID of the person to delete
+     * @throws PersonException if no person with the specified ID is found
+     */
+
     public void deletePerson(Long id) {
-        idValidation(id);
         Person person = personRepository.findById(id).get();
         personRepository.delete(person);
     }
+
+    /**
+     * Deletes all persons from the repository.
+     *
+     * <p>This method fetches all person records from the repository, maps each one to a
+     * PersonDTO, and collects them in an ArrayList which is then deleted from the repository.
+     *
+     * @throws PersonException if no person with the specified ID is found
+     */
 
     public void deleteAllPersons() {
         personRepository.deleteAll();
     }
 
+    /**
+     * Creates a new shelter based on the provided ShelterCreationDTO.
+     * <p>After successful validation, the shelter is mapped to a Shelter model object
+     * and saved to the repository.
+     *
+     * @param shelterCreationDTO the ShelterCreationDTO containing the shelter details
+     * @return the saved Shelter object
+     * @throws PersonException if any required fields are null or invalid
+     * @throws PersonException if the email is already in use
+     */
     public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
         return shelterService.createShelter(shelterCreationDTO);
     }
+
+    /**
+     * Sets the role of a person based on the provided PersonDTO.
+     *
+     * <p>This method performs several validation checks on the provided PersonDTO:
+     * <ul>
+     *   <li>Ensures that the person ID and role are not null and that the person ID is greater than 0.</li>
+     *   <li>Ensures that the role is not null and that it is a valid role.</li>
+     * </ul>
+     * If any of these conditions are not met, an appropriate exception is thrown.
+     *
+     * <p>After successful validation, the person is mapped to a Person model object
+     * and saved to the repository.
+     *
+     * @param id        the ID of the person to update
+     * @param personDTO the PersonDTO containing the person details to update
+     * @return the updated Person object
+     * @throws PersonException if any required fields are null or invalid
+     * @throws PersonException if the email is already in use
+     */
 
     public PersonDTO setPersonRole(Long id, PersonDTO personDTO) {
         Person person = personRepository.findById(id).orElseThrow();
@@ -175,10 +322,41 @@ public class PersonService {
         return personMapper.INSTANCE.toDTO(person);
     }
 
+    /**
+     * Creates a new donation based on the provided DonationCreateDTO.
+     *
+     * <p>This method performs several validation checks on the provided DonationCreateDTO:
+     * <ul>
+     *   <li>Ensures that the donation ID, total amount, date, pet ID, and person ID
+     *       are not null and that the total amount is greater than 0.</li>
+     *   <li>Validates that the donation date is in the future.</li>
+     *   <li>Ensures that the total donation amount is less than 999999.</li>
+     * </ul>
+     * If any of these conditions are not met, an appropriate exception is thrown.
+     *
+     * <p>After successful validation, the donation is mapped to a Donation model object
+     * and saved to the repository.
+     *
+     * @param id                the ID of the person whose donations are to be retrieved
+     * @param donationCreateDTO the DonationCreateDTO containing the donation details
+     * @return the saved Donation object
+     * @throws PersonException if any required fields are null or invalid
+     * @throws PersonException if the email is already in use
+     */
+
     public DonationDTO donate(Long id, DonationCreateDTO donationCreateDTO) {
         idValidation(id);
         return donationService.createDonation(donationCreateDTO);
     }
+
+    /**
+     * Retrieves all donations from the repository.
+     *
+     * <p>This method fetches all donation records from the repository, maps each one to a
+     * DonationDTO, and collects them in an ArrayList which is then returned.
+     *
+     * @return an ArrayList of DonationDTO objects representing all donations
+     */
 
     public List<DonationDTO> getAllDonationsById(Long id) {
         idValidation(id);

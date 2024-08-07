@@ -1,5 +1,6 @@
 package org.mindera.fur.code.service;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
@@ -23,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Schema(description = "The donation service")
 public class DonationService {
 
     private final DonationRepository donationRepository;
