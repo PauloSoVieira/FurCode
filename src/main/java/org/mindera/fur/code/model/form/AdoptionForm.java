@@ -73,7 +73,7 @@ public class AdoptionForm {
      */
     @Schema(description = "A set of form fields associated with the adoption form.")
     @OneToMany(mappedBy = "adoptionForm", fetch = FetchType.EAGER)
-    private Set<FormField> formFields;
+    private Set<FormField1> formField1s;
 
 
     /**
@@ -92,7 +92,7 @@ public class AdoptionForm {
                 ", shelterId=" + shelterId +
                 ", personId=" + personId +
                 ", petId=" + petId +
-                ", formFields=" + formFields +
+                ", formFields=" + formField1s +
                 '}';
     }
 }

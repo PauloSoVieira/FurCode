@@ -7,9 +7,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mindera.fur.code.dto.forms.FormFieldCreateDTO;
-import org.mindera.fur.code.dto.forms.FormFieldDTO;
-import org.mindera.fur.code.service.FormFieldService;
+import org.mindera.fur.code.dto.forms.FormFieldCreateDTO1;
+import org.mindera.fur.code.dto.forms.FormFieldDTO1;
+import org.mindera.fur.code.service.FormFieldService2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-class FormFieldServiceIntegrationTest {
+class FormField1ServiceIntegrationTest {
 
     @LocalServerPort
     private int port;
 
     @Autowired
-    private FormFieldService formFieldService;
+    private FormFieldService2 formFieldService2;
 
     @BeforeEach
     void setUp() {
@@ -36,14 +36,14 @@ class FormFieldServiceIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        formFieldService.deleteAll();
+        formFieldService2.deleteAll();
     }
 
     @Nested
     class CrudTestFieldForm {
         @Test
         void testCreateField() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("Name", "Text");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("Name", "Text");
 
             given()
                     .contentType("application/json")
@@ -56,16 +56,16 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         void deleteField() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("Name", "Text");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("Name", "Text");
 
-            FormFieldDTO fieldDTO = given()
+            FormFieldDTO1 fieldDTO = given()
                     .contentType("application/json")
                     .body(formFieldDTO1)
                     .when()
                     .post("/api/v1/field")
                     .then()
                     .statusCode(200)
-                    .extract().body().as(FormFieldDTO.class);
+                    .extract().body().as(FormFieldDTO1.class);
 
 
             String fieldId = given()
@@ -88,16 +88,16 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         void getFieldById() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("Name", "Text");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("Name", "Text");
 
-            FormFieldDTO fieldDTO = given()
+            FormFieldDTO1 fieldDTO = given()
                     .contentType("application/json")
                     .body(formFieldDTO1)
                     .when()
                     .post("/api/v1/field")
                     .then()
                     .statusCode(200)
-                    .extract().body().as(FormFieldDTO.class);
+                    .extract().body().as(FormFieldDTO1.class);
 
             Long fieldId = Long.valueOf(given()
                     .contentType(ContentType.JSON)
@@ -108,13 +108,13 @@ class FormFieldServiceIntegrationTest {
                     .statusCode(200)
                     .extract().body().jsonPath().getString("id"));
 
-            FormFieldDTO fieldDTO1 = given()
+            FormFieldDTO1 fieldDTO1 = given()
                     .contentType("application/json")
                     .when()
                     .get("/api/v1/field/" + fieldId)
                     .then()
                     .statusCode(200)
-                    .extract().body().as(FormFieldDTO.class);
+                    .extract().body().as(FormFieldDTO1.class);
 
             assertEquals(fieldDTO1.getId(), fieldId);
 
@@ -122,7 +122,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         void getAllFields() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("Name", "Text");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("Name", "Text");
 
             given()
                     .contentType("application/json")
@@ -133,12 +133,12 @@ class FormFieldServiceIntegrationTest {
                     .statusCode(200);
 
 
-            List<FormFieldDTO> fieldDTO = given()
+            List<FormFieldDTO1> fieldDTO = given()
                     .when()
                     .get("/api/v1/field/all")
                     .then()
                     .statusCode(200)
-                    .extract().body().jsonPath().getList(".", FormFieldDTO.class);
+                    .extract().body().jsonPath().getList(".", FormFieldDTO1.class);
 
             assertEquals(1, fieldDTO.size());
         }
@@ -146,7 +146,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         void updateField() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("Name", "Text");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("Name", "Text");
 
             String fieldId = given()
                     .contentType(ContentType.JSON)
@@ -158,16 +158,16 @@ class FormFieldServiceIntegrationTest {
                     .extract().body().jsonPath().getString("id");
 
 
-            FormFieldDTO updateDTO = new FormFieldDTO(Long.parseLong(fieldId), "Test", "Text");
+            FormFieldDTO1 updateDTO = new FormFieldDTO1(Long.parseLong(fieldId), "Test", "Text");
 
-            FormFieldDTO fieldDTO = given()
+            FormFieldDTO1 fieldDTO = given()
                     .contentType("application/json")
                     .body(updateDTO)
                     .when()
                     .put("/api/v1/field/update/" + fieldId)
                     .then()
                     .statusCode(200)
-                    .extract().body().as(FormFieldDTO.class);
+                    .extract().body().as(FormFieldDTO1.class);
 
             assertEquals("Test", fieldDTO.getName());
 
@@ -178,7 +178,7 @@ class FormFieldServiceIntegrationTest {
     class ValidationTestFieldForm {
         @Test
         void test_Validation_NameNull_Field() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO(null, "Text");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1(null, "Text");
 
             given()
                     .contentType("application/json")
@@ -191,7 +191,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         void test_Validation_NameEmpty_Field() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("", "Text");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("", "Text");
 
             given()
                     .contentType("application/json")
@@ -204,7 +204,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         void test_Validation_TypeNull_Field() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("Name", null);
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("Name", null);
 
             given()
                     .contentType("application/json")
@@ -217,7 +217,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         void test_Validation_TypeEmpty_Field() {
-            FormFieldCreateDTO formFieldDTO1 = new FormFieldCreateDTO("Name", "");
+            FormFieldCreateDTO1 formFieldDTO1 = new FormFieldCreateDTO1("Name", "");
 
             given()
                     .contentType("application/json")
@@ -230,7 +230,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         public void Return400_FieldName_IsTooLong() {
-            FormFieldDTO formFieldDTO1 = new FormFieldDTO();
+            FormFieldDTO1 formFieldDTO1 = new FormFieldDTO1();
             formFieldDTO1.setName(StringUtils.repeat("a", 201));
             formFieldDTO1.setType("Text");
 
@@ -245,7 +245,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         public void Return400_FieldName_IsTooShort() {
-            FormFieldDTO formFieldDTO1 = new FormFieldDTO();
+            FormFieldDTO1 formFieldDTO1 = new FormFieldDTO1();
             formFieldDTO1.setName(StringUtils.repeat("a", 1));
             formFieldDTO1.setType("Text");
 
@@ -260,7 +260,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         public void Return400_FieldType_IsTooShort() {
-            FormFieldDTO formFieldDTO1 = new FormFieldDTO();
+            FormFieldDTO1 formFieldDTO1 = new FormFieldDTO1();
             formFieldDTO1.setName("Name");
             formFieldDTO1.setType(StringUtils.repeat("a", 1));
 
@@ -275,7 +275,7 @@ class FormFieldServiceIntegrationTest {
 
         @Test
         public void Return400_FieldType_IsTooLong() {
-            FormFieldDTO formFieldDTO1 = new FormFieldDTO();
+            FormFieldDTO1 formFieldDTO1 = new FormFieldDTO1();
             formFieldDTO1.setName("Name");
             formFieldDTO1.setType(StringUtils.repeat("a", 101));
 

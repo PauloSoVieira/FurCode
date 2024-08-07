@@ -7,7 +7,7 @@ import org.mindera.fur.code.exceptions.adoptionFormException.AdoptionFormNotFoun
 import org.mindera.fur.code.mapper.adoptionMapper.AdoptionFormMapper;
 import org.mindera.fur.code.model.form.AdoptionForm;
 import org.mindera.fur.code.repository.AdoptionFormRepository;
-import org.mindera.fur.code.repository.FormFieldRepository;
+import org.mindera.fur.code.repository.FormFieldRepository2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class AdoptionFormService {
 
     private static final Logger logger = LoggerFactory.getLogger(AdoptionFormService.class);
     private AdoptionFormRepository adoptionFormRepository;
-    private FormFieldRepository formFieldRepository;
+    private FormFieldRepository2 formFieldRepository2;
 
     /**
      * Constructor for Dependency Injection.
@@ -32,9 +32,9 @@ public class AdoptionFormService {
      * @param AdoptionFormRepository the AdoptionForm repository.
      */
     @Autowired
-    public AdoptionFormService(AdoptionFormRepository AdoptionFormRepository, FormFieldRepository formFieldRepository) {
+    public AdoptionFormService(AdoptionFormRepository AdoptionFormRepository, FormFieldRepository2 formFieldRepository2) {
         this.adoptionFormRepository = AdoptionFormRepository;
-        this.formFieldRepository = formFieldRepository;
+        this.formFieldRepository2 = formFieldRepository2;
     }
 
     /**
@@ -99,7 +99,7 @@ public class AdoptionFormService {
 
         adoptionForm.setName(updatedForm.getName());
         adoptionForm.setUpdatedAt(new Date());
-        adoptionForm.setFormFields(updatedForm.getFormFields());
+        adoptionForm.setFormField1s(updatedForm.getFormField1s());
         adoptionFormRepository.save(adoptionForm);
         return AdoptionFormMapper.INSTANCE.toDTO(adoptionForm);
 
@@ -173,7 +173,7 @@ public class AdoptionFormService {
 
         AdoptionForm adoptionForm = adoptionFormRepository.findById(id)
                 .orElseThrow(() -> new AdoptionFormNotFound("Adoption form not found for ID: " + id));
-        adoptionForm.setFormFields(formFieldRepository.findAllByAdoptionFormId(adoptionForm.getId()));
+        adoptionForm.setFormField1s(formFieldRepository2.findAllByAdoptionFormId(adoptionForm.getId()));
         return AdoptionFormMapper.INSTANCE.toDTO(adoptionForm);
     }
 

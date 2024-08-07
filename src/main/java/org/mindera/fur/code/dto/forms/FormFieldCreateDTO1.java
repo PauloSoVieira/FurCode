@@ -7,7 +7,7 @@ import lombok.Data;
  * Data Transfer Object (DTO) for creating a new FormField.
  */
 @Data
-public class FormFieldCreateDTO {
+public class FormFieldCreateDTO1 {
 
     /**
      * The name of the FormField. Must not be null.
@@ -31,7 +31,7 @@ public class FormFieldCreateDTO {
     /**
      * Default constructor.
      */
-    public FormFieldCreateDTO() {
+    public FormFieldCreateDTO1() {
     }
 
     /**
@@ -41,14 +41,14 @@ public class FormFieldCreateDTO {
      * @param type           the type of the FormField
      * @param adoptionFormId the ID of the AdoptionForm this FormField belongs to
      */
-    public FormFieldCreateDTO(String name, String type, Long adoptionFormId) {
+    public FormFieldCreateDTO1(String name, String type, Long adoptionFormId) {
         this.name = name;
         this.type = type;
         this.adoptionFormId = adoptionFormId;
     }
 
 
-    public FormFieldCreateDTO(String name, String type) {
+    public FormFieldCreateDTO1(String name, String type) {
         this.name = name;
         this.type = type;
     }

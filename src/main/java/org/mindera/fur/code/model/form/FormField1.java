@@ -7,7 +7,7 @@ import lombok.Data;
 @Entity
 @Table(name = "form_field")
 @Data
-public class FormField {
+public class FormField1 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

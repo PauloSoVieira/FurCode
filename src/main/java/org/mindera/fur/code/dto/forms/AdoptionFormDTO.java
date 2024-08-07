@@ -47,7 +47,7 @@ public class AdoptionFormDTO {
      * List of fields in the adoption form.
      */
     @Schema(description = "List of fields in the adoption form.")
-    private Set<FormFieldDTO> formFields;
+    private Set<FormFieldDTO1> formFields;
 
     /**
      * Date and time when the adoption form was created.
@@ -70,7 +70,7 @@ public class AdoptionFormDTO {
      * @param personId   The ID of the person who is adopting the pet.
      * @param formFields The set of form fields in the adoption form.
      */
-    public AdoptionFormDTO(String name, Long petId, Long shelterId, Long personId, Set<FormFieldDTO> formFields) {
+    public AdoptionFormDTO(String name, Long petId, Long shelterId, Long personId, Set<FormFieldDTO1> formFields) {
         this.name = name;
         this.petId = petId;
         this.shelterId = shelterId;

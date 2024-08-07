@@ -57,7 +57,7 @@ public class AdoptionFormCreateDTO {
      * List of fields in the adoption form.
      */
     @Schema(description = "List of fields in the adoption form.")
-    private Set<FormFieldDTO> formFields;
+    private Set<FormFieldDTO1> formFields;
 
     /**
      * Default constructor.
@@ -75,7 +75,7 @@ public class AdoptionFormCreateDTO {
      * @param formFields The set of form fields.
      */
 
-    public AdoptionFormCreateDTO(String name, Long shelterId, Long personId, Long petId, Set<FormFieldDTO> formFields) {
+    public AdoptionFormCreateDTO(String name, Long shelterId, Long personId, Long petId, Set<FormFieldDTO1> formFields) {
         this.name = name;
         this.shelterId = shelterId;
         this.personId = personId;
