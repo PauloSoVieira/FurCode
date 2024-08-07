@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.Date;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -37,6 +38,7 @@ public class ShelterControllerIntegrationTest {
     class crudShelter {
         @Test
         void createShelterShouldReturn201() {
+            Date date = new Date();
             ShelterCreationDTO shelter = new ShelterCreationDTO(
                     "Shelter",
                     123456789L,
@@ -46,7 +48,8 @@ public class ShelterControllerIntegrationTest {
                     "4400",
                     987654321L,
                     1234L,
-                    true
+                    true,
+                    date
             );
 
             String shelterId =
@@ -64,6 +67,7 @@ public class ShelterControllerIntegrationTest {
 
         @Test
         void getShelterByIdShouldReturn200() {
+            Date date = new Date();
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
                     "Shelter",
                     123456789L,
@@ -73,7 +77,8 @@ public class ShelterControllerIntegrationTest {
                     "4400",
                     987654321L,
                     1234L,
-                    true
+                    true,
+                    date
             );
 
             ShelterDTO shelterDTO =
@@ -105,6 +110,7 @@ public class ShelterControllerIntegrationTest {
 
         @Test
         void getAllSheltersShouldReturn200() {
+            Date date = new Date();
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
                     "Shelter",
                     123456789L,
@@ -114,7 +120,8 @@ public class ShelterControllerIntegrationTest {
                     "4400",
                     987654321L,
                     1234L,
-                    true
+                    true,
+                    date
             );
 
             ShelterDTO shelterDTO =
@@ -138,6 +145,7 @@ public class ShelterControllerIntegrationTest {
 
         @Test
         void updateShelterShouldReturn200() {
+            Date date = new Date();
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
                     "Shelter",
                     123456789L,
@@ -147,7 +155,8 @@ public class ShelterControllerIntegrationTest {
                     "4400",
                     987654321L,
                     1234L,
-                    true
+                    true,
+                    date
             );
 
             ShelterDTO shelterDTO =
@@ -181,6 +190,7 @@ public class ShelterControllerIntegrationTest {
 
         @Test
         void deleteShelterShouldReturn204() {
+            Date date = new Date();
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
                     "Shelter",
                     123456789L,
@@ -190,7 +200,8 @@ public class ShelterControllerIntegrationTest {
                     "4400",
                     987654321L,
                     1234L,
-                    true
+                    true,
+                    date
             );
 
             ShelterDTO shelterDTO =
