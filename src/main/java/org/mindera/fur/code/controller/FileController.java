@@ -25,7 +25,7 @@ public class FileController {
     }
 
     @Operation(summary = "Upload a pet image")
-    @PostMapping("/upload/pet/{id}/image/")
+    @PostMapping("api/v1/upload/pet/{id}/image/")
     public ResponseEntity<Void> uploadImagePet(@PathVariable("id") Long id, @RequestBody FileUploadDTO file) {
         String filePath = String.format("/pet/%s/image/", id);
         fileService.uploadImagePet(filePath, file, id);
@@ -33,7 +33,7 @@ public class FileController {
     }
 
     @Operation(summary = "Download a pet image")
-    @GetMapping("/download/pet/{id}/image/{fileName}")
+    @GetMapping("api/v1/download/pet/{id}/image/{fileName}")
     public ResponseEntity<Resource> downloadImagePet(@PathVariable("id") Long id,
                                                      @PathVariable("fileName") String fileName) {
         String filePath = String.format("/pet/%s/image/%s", id, fileName);
