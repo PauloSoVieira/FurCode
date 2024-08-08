@@ -16,7 +16,7 @@ public class DonationDTO {
     @NotNull
     @NotBlank(message = "Donation id is required")
     private Long id;
-    
+
     //@Schema(type = "double", example = "20")
     @NotNull
     @NotBlank(message = "Donation amount is required")
@@ -33,9 +33,9 @@ public class DonationDTO {
 
     //@Schema(type = "long", example = "2")
     @NotNull
-    @NotBlank(message = "Pet id is required")
+    @NotBlank(message = "Shelter id is required")
     @Valid
-    private Long petId;
+    private Long shelterId;
 
     //@Schema(type = "long", example = "23")
     @NotNull
