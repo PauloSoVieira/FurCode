@@ -15,7 +15,7 @@ public class FormFieldAnswer {
     @JoinColumn(name = "form_id")
     private Form form;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "form_field_id")
     private FormField formField;
 

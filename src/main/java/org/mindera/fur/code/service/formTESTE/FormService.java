@@ -26,19 +26,25 @@ public class FormService {
     private final FormFieldAnswerRepository formFieldAnswerRepository;
     private final FormFieldService formFieldService;
 
+
+
+
     @Autowired
     public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService) {
         this.formRepository = formRepository;
         this.formFieldRepository = formFieldRepository;
         this.formFieldAnswerRepository = formFieldAnswerRepository;
         this.formFieldService = formFieldService;
+
     }
 
     public FormDTO createForm(String name) {
         Form form = new Form();
-        form.setName(name);
-        form = formRepository.save(form);
-        return FormMapper.INSTANCE.toDTO(form);
+        form.setName(name.replaceAll("^\"|\"$", ""));
+        form.setCreatedAt(LocalDateTime.now());
+        form.setType("DEFAULT"); // TODO: Add a default type
+        Form savedForm = formRepository.save(form);
+        return FormMapper.INSTANCE.toDTO(savedForm);
     }
 
     public FormDTO getForm(Long formId) {
@@ -47,14 +53,14 @@ public class FormService {
         return FormMapper.INSTANCE.toDTO(form);
     }
 
-    public FormDTO createForm(String name, String type) {
-        Form form = new Form();
-        form.setName(name);
-        form.setType(type);
-        form.setCreatedAt(LocalDateTime.now());
-        Form savedForm = formRepository.save(form);
-        return FormMapper.INSTANCE.toDTO(savedForm);
-    }
+//    public FormDTO createForm(String name, String type) {
+//        Form form = new Form();
+//        form.setName(name);
+//        form.setType(type);
+//        form.setCreatedAt(LocalDateTime.now());
+//        Form savedForm = formRepository.save(form);
+//        return FormMapper.INSTANCE.toDTO(savedForm);
+//    }
 
     public FormDTO addFieldToForm(Long formId, Long fieldId, String answer) {
         Form form = formRepository.findById(formId)
@@ -63,14 +69,13 @@ public class FormService {
                 .orElseThrow(() -> new RuntimeException("FormField not found"));
 
         FormFieldAnswer formFieldAnswer = new FormFieldAnswer();
-        formFieldAnswer.setForm(form);
         formFieldAnswer.setFormField(formField);
         formFieldAnswer.setAnswer(answer);
 
-        form.getFormFieldAnswers().add(formFieldAnswer);
-        form = formRepository.save(form);
+        form.addFormFieldAnswer(formFieldAnswer);
+        Form savedForm = formRepository.save(form);
 
-        return FormMapper.INSTANCE.toDTO(form);
+        return FormMapper.INSTANCE.toDTO(savedForm);
     }
 
     public List<FormDTO> getFormsByType(String type) {
@@ -80,5 +85,17 @@ public class FormService {
 
     public FormFieldDTO createFormField(FormFieldCreateDTO createDTO) {
         return formFieldService.createFormField(createDTO);
+    }
+
+
+        public List<FormFieldDTO> getFieldsForForm(Long formId) {
+            Form form = formRepository.findById(formId)
+                    .orElseThrow(() -> new RuntimeException("Form not found"));
+
+            List<FormField> formFields = form.getFormFieldAnswers().stream()
+                    .map(FormFieldAnswer::getFormField)
+                    .collect(Collectors.toList());
+
+            return FormFieldMapper.INSTANCE.toDTOList(formFields);
     }
 }

@@ -16,7 +16,7 @@ public class Form {
     private Long id;
 
     private String name;
-    private String type;  // New field
+    private String type;
 
 
     @Column(name = "created_at")
@@ -28,5 +28,10 @@ public class Form {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+    }
+
+    public void addFormFieldAnswer(FormFieldAnswer answer) {
+        formFieldAnswers.add(answer);
+        answer.setForm(this);
     }
 }

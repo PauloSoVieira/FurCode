@@ -1,5 +1,6 @@
 package org.mindera.fur.code.controller.formTESTE;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.mindera.fur.code.dto.formTESTEDTO.FormFieldCreateDTO;
 import org.mindera.fur.code.dto.formTESTEDTO.FormFieldDTO;
 import org.mindera.fur.code.service.formTESTE.FormFieldService;
@@ -21,6 +22,7 @@ public class FormFieldController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new form field")
     public ResponseEntity<FormFieldDTO> createFormField(@RequestBody FormFieldCreateDTO createDTO) {
         return ResponseEntity.ok(formFieldService.createFormField(createDTO));
     }
