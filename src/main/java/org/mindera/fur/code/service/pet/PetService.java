@@ -9,10 +9,13 @@ import org.mindera.fur.code.dto.pet.PetRecordDTO;
 import org.mindera.fur.code.mapper.pet.PetMapper;
 import org.mindera.fur.code.mapper.pet.PetRecordMapper;
 import org.mindera.fur.code.messages.pet.PetMessages;
+import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.pet.Pet;
-
+import org.mindera.fur.code.model.pet.PetBreed;
 import org.mindera.fur.code.model.pet.PetRecord;
+import org.mindera.fur.code.model.pet.PetType;
 import org.mindera.fur.code.repository.ShelterRepository;
+import org.mindera.fur.code.repository.pet.PetBreedRepository;
 import org.mindera.fur.code.repository.pet.PetRecordRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.repository.pet.PetTypeRepository;
@@ -20,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import java.util.List;
-import java.util.Optional;
 
 @Validated
 @Service
@@ -30,21 +32,21 @@ public class PetService {
     private final PetTypeRepository petTypeRepository;
     private final PetRecordRepository petRecordRepository;
     private final ShelterRepository shelterRepository;
-    //private final PetBreedRepository petBreedRepository;
+    private final PetBreedRepository petBreedRepository;
 
     @Autowired
     public PetService(
             PetRepository petRepository,
             PetRecordRepository petRecordRepository,
             PetTypeRepository petTypeRepository,
-            ShelterRepository shelterRepository
-            //PetBreedRepository petBreedRepository
+            ShelterRepository shelterRepository,
+            PetBreedRepository petBreedRepository
     ) {
         this.petRepository = petRepository;
         this.petRecordRepository = petRecordRepository;
         this.petTypeRepository = petTypeRepository;
         this.shelterRepository = shelterRepository;
-        //this.petBreedRepository = petBreedRepository;
+        this.petBreedRepository = petBreedRepository;
     }
 
     public List<PetDTO> findAllPets() {
@@ -72,12 +74,10 @@ public class PetService {
 //        newPetType.setType(petCreateDTO.getPetTypeId().toString());
 //        newPetType.setBreed(petBreedRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Breed not found with ID: " + 1L)));
 //        petTypeRepository.save(newPetType);
-//
-//        pet.setPetType(petTypeRepository.findById(petCreateDTO.getPetTypeId()).orElseThrow(() -> new EntityNotFoundException("Pet type not found with ID: " + petCreateDTO.getPetTypeId())));
-//        pet.setShelter(shelterRepository.findById(petCreateDTO.getShelterId()).orElseThrow(() -> new EntityNotFoundException("Shelter not found with ID: " + petCreateDTO.getShelterId())));
 
         pet.setPetType(petTypeRepository.findById(petCreateDTO.getPetTypeId()).orElseThrow(() -> new EntityNotFoundException("Pet type not found with ID: " + petCreateDTO.getPetTypeId())));
         pet.setShelter(shelterRepository.findById(petCreateDTO.getShelterId()).orElseThrow(() -> new EntityNotFoundException("Shelter not found with ID: " + petCreateDTO.getShelterId())));
+
         pet = petRepository.save(pet);
         return PetMapper.INSTANCE.toDTO(pet);
     }
@@ -123,12 +123,9 @@ public class PetService {
         return PetRecordMapper.INSTANCE.toDTO(petRecord);
     }
 
-    public List<PetRecordDTO> getPetRecordByPetId(@Valid Long id) {
-        //Optional<PetRecord> optionalPetRecord = petRecordRepository.findFirstByPetId(id);
-        //PetRecord petRecord = optionalPetRecord.orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_RECORD_NOT_FOUND + id));
+    public List<PetRecordDTO> getAllPetRecordsByPetId(@Valid Long id) {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + id));
         return pet.getPetRecords().stream().map(PetRecordMapper.INSTANCE::toDTO).toList();
-        //return PetRecordMapper.INSTANCE.toDTO(pet.getPetRecords());
     }
 
     // For testing purposes only
