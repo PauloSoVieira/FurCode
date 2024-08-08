@@ -1,5 +1,6 @@
 package org.mindera.fur.code.controller;
 
+import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
@@ -39,6 +40,11 @@ public class ShelterController {
     @GetMapping("/{id}")
     public ResponseEntity<ShelterDTO> getShelterById(@PathVariable Long id) {
         return new ResponseEntity<>(shelterService.getShelterById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/get-all-donations")
+    public ResponseEntity<List<DonationDTO>> getAllDonationsById(@PathVariable Long id) {
+        return new ResponseEntity<>(shelterService.getAllDonationsById(id), HttpStatus.OK);
     }
 
     //Delete shelter by Id
