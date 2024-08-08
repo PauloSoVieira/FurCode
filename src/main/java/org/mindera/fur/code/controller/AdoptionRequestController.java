@@ -16,8 +16,13 @@ import java.util.List;
 @RequestMapping("/api/v1/adoption-request")
 public class AdoptionRequestController {
 
+    private final AdoptionRequestService adoptionRequestService;
+
+
     @Autowired
-    AdoptionRequestService adoptionRequestService;
+    public AdoptionRequestController(AdoptionRequestService adoptionRequestService) {
+        this.adoptionRequestService = adoptionRequestService;
+    }
 
     //Create an adoption request
     @PostMapping
@@ -50,11 +55,13 @@ public class AdoptionRequestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
     //Get all details of the adoption request
     @GetMapping("/{id}/details")
     public ResponseEntity<List<RequestDetailDTO>> getAllRequestDetails(@PathVariable Long id) {
         return new ResponseEntity<>(adoptionRequestService.getAllRequestDetails(id), HttpStatus.OK);
     }
+
 
     //Create a new request detail
     @PostMapping("/{id}/detail-request")

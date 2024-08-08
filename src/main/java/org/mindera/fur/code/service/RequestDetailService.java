@@ -6,7 +6,9 @@ import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.exceptions.requestDetail.RequestDetailNotFound;
 import org.mindera.fur.code.mapper.RequestDetailMapper;
 import org.mindera.fur.code.messages.requestDetail.RequestDetailMessage;
+import org.mindera.fur.code.model.AdoptionRequest;
 import org.mindera.fur.code.model.RequestDetail;
+import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.RequestDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +19,17 @@ import java.util.List;
 @Service
 public class RequestDetailService {
 
-    private RequestDetailRepository requestDetailRepository;
-    private PersonRepository personRepository;
-    private AdoptionRequestService adoptionRequestService;
+    private final RequestDetailRepository requestDetailRepository;
+    private final PersonRepository personRepository;
+    private final AdoptionRequestRepository adoptionRequestRepository;
 
     @Autowired
     public RequestDetailService(RequestDetailRepository requestDetailRepository,
-                                PersonRepository personRepository, AdoptionRequestService adoptionRequestService) {
+                                PersonRepository personRepository,
+                                AdoptionRequestRepository adoptionRequestRepository) {
         this.requestDetailRepository = requestDetailRepository;
         this.personRepository = personRepository;
-        this.adoptionRequestService = adoptionRequestService;
+        this.adoptionRequestRepository = adoptionRequestRepository;
     }
 
     private static void idValidation(Long id) {
@@ -49,8 +52,13 @@ public class RequestDetailService {
         return RequestDetailMapper.INSTANCE.toDTO(requestDetail);
     }
 
-    public RequestDetailDTO createRequestDetail(RequestDetailCreationDTO requestDetailCreationDTO) {
+    public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
+        AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
+
         RequestDetail requestDetail = RequestDetailMapper.INSTANCE.toModel(requestDetailCreationDTO);
+
+        requestDetail.setAdoptionRequest(adoptionRequest);
+
         requestDetailRepository.save(requestDetail);
         return RequestDetailMapper.INSTANCE.toDTO(requestDetail);
     }

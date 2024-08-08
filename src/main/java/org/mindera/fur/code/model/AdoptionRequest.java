@@ -36,6 +36,6 @@ public class AdoptionRequest {
     @OneToOne
     private AdoptionForm adoptionForm;
 
-    @OneToMany(mappedBy = "adoptionRequest", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "adoptionRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RequestDetail> requestDetails;
 }

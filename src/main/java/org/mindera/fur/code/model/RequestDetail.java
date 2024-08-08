@@ -15,7 +15,8 @@ public class RequestDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Person person;
+    @Column(name = "person_id")
+    private Long personId;
 
     @Enumerated(EnumType.STRING)
     private State state;
@@ -26,6 +27,6 @@ public class RequestDetail {
     private String observation;
 
     @ManyToOne
-    @JoinColumn(name = "request_detail_id")
+    @JoinColumn(name = "adoption_request_id")
     private AdoptionRequest adoptionRequest;
 }

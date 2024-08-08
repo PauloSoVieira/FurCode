@@ -6,10 +6,13 @@ import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.exceptions.adoptionRequest.AdoptionRequestNotFound;
 import org.mindera.fur.code.mapper.AdoptionRequestMapper;
+import org.mindera.fur.code.mapper.RequestDetailMapper;
 import org.mindera.fur.code.messages.adoptionRequest.AdoptionRequestMessage;
 import org.mindera.fur.code.model.AdoptionRequest;
+import org.mindera.fur.code.model.RequestDetail;
 import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mindera.fur.code.repository.PersonRepository;
+import org.mindera.fur.code.repository.RequestDetailRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +26,25 @@ public class AdoptionRequestService {
     public AdoptionRequestRepository adoptionRequestRepository;
     private PetRepository petRepository;
     private AdoptionRequestMapper adoptionRequestMapper;
+    private RequestDetailMapper requestDetailMapper;
     private ShelterRepository shelterRepository;
     private PersonRepository personRepository;
     private RequestDetailService requestDetailService;
+    private RequestDetailRepository requestDetailRepository;
 
     @Autowired
     public AdoptionRequestService(AdoptionRequestRepository adoptionRequestRepository,
                                   PetRepository petRepository,
                                   ShelterRepository shelterRepository,
                                   PersonRepository personRepository,
-                                  RequestDetailService requestDetailService) {
+                                  RequestDetailService requestDetailService,
+                                  RequestDetailRepository requestDetailRepository) {
         this.adoptionRequestRepository = adoptionRequestRepository;
         this.petRepository = petRepository;
         this.shelterRepository = shelterRepository;
         this.personRepository = personRepository;
         this.requestDetailService = requestDetailService;
+        this.requestDetailRepository = requestDetailRepository;
     }
 
     private static void idValidation(Long id) {
@@ -92,21 +99,19 @@ public class AdoptionRequestService {
         adoptionRequestRepository.deleteAll();
     }
 
+
     public List<RequestDetailDTO> getAllRequestDetails(Long id) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
-        return requestDetailService.getAllRequestDetails()
-                .stream()
-                .filter(requestDetail -> requestDetail.getAdoptionRequestById(id)
-                        .equals(adoptionRequest
-                                .getId()))
-                .toList();
+        List<RequestDetail> requestDetails = requestDetailRepository.findAllByAdoptionRequestId(adoptionRequest.getId());
+        return requestDetailMapper.INSTANCE.toDTO(requestDetails);
+
     }
 
     public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
         idValidation(id);
-        adoptionRequestRepository.findById(id).orElseThrow();
-        return requestDetailService.createRequestDetail(requestDetailCreationDTO);
+        adoptionRequestRepository.findById(id).orElseThrow(() -> new AdoptionRequestNotFound("AdoptionRequest not found"));
+        return requestDetailService.createRequestDetail(id, requestDetailCreationDTO);
     }
 
     public RequestDetailDTO getRequestDetailById(Long id, Long detailId) {

@@ -96,7 +96,7 @@ public class PersonService {
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
         personValidation(personCreationDTO);
 
-        if (personRepository.findByEmail(personCreationDTO.getEmail()) != null) {
+        if (personRepository.findByEmail(personCreationDTO.getEmail()) != null) { //TODO verificar se está sendo criado o não
             throw new PersonException(PersonsMessages.EMAIL_ALREADY_EXISTS);
         }
 

@@ -1,10 +1,7 @@
 package org.mindera.fur.code.dto.requestDetail;
 
 import lombok.Data;
-import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.model.State;
-import org.mindera.fur.code.service.AdoptionRequestService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
@@ -16,17 +13,18 @@ public class RequestDetailDTO {
     private Date date;
     private String observation;
 
-    @Autowired
-    private AdoptionRequestService adoptionRequestService;
+    //@Autowired
+    //private AdoptionRequestService adoptionRequestService;
 
-    public RequestDetailDTO(Long personId, State state, Date date, String observation) {
+    public RequestDetailDTO(Long id, Long personId, State state, Date date, String observation) {
+        this.id = id;
         this.personId = personId;
         this.state = state;
         this.date = date;
         this.observation = observation;
     }
 
-    public AdoptionRequestDTO getAdoptionRequestById(Long id) {
-        return adoptionRequestService.getAdoptionRequestById(id);
-    }
+    //public AdoptionRequestDTO getAdoptionRequestById(Long id) {
+    //    return adoptionRequestService.getAdoptionRequestById(id);
+    //}
 }
