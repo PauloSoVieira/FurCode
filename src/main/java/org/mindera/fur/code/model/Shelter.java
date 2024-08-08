@@ -38,4 +38,9 @@ public class Shelter {
 
     @OneToMany(mappedBy = "shelter")
     private Set<Pet> pet;
+
+    @OneToOne
+    @JoinColumn(name = "shelter_personalization_id", nullable = false)
+    private ShelterPersonalization shelterPersonalization;
+
 }
