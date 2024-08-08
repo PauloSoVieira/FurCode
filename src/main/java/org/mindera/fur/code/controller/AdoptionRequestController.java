@@ -2,6 +2,8 @@ package org.mindera.fur.code.controller;
 
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
+import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
+import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.service.AdoptionRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,5 +48,23 @@ public class AdoptionRequestController {
     public ResponseEntity<AdoptionRequestDTO> deleteAdoptionRequestById(@PathVariable Long id) {
         adoptionRequestService.deleteAdoptionRequestById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    //Get all details of the adoption request
+    @GetMapping("/{id}/details")
+    public ResponseEntity<List<RequestDetailDTO>> getAllRequestDetails(@PathVariable Long id) {
+        return new ResponseEntity<>(adoptionRequestService.getAllRequestDetails(id), HttpStatus.OK);
+    }
+
+    //Create a new request detail
+    @PostMapping("/{id}/detail-request")
+    public ResponseEntity<RequestDetailDTO> createRequestDetail(@PathVariable Long id, @RequestBody RequestDetailCreationDTO requestDetailCreationDTO) {
+        return new ResponseEntity<>(adoptionRequestService.createRequestDetail(id, requestDetailCreationDTO), HttpStatus.CREATED);
+    }
+
+    //Get request detail by id
+    @GetMapping("/{id}/detail-request/{detailId}")
+    public ResponseEntity<RequestDetailDTO> getRequestDetailById(@PathVariable Long id, @PathVariable Long detailId) {
+        return new ResponseEntity<>(adoptionRequestService.getRequestDetailById(id, detailId), HttpStatus.OK);
     }
 }

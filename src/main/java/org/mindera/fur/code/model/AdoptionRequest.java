@@ -3,7 +3,6 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.mindera.fur.code.model.RequestDetails.RequestDetail;
 import org.mindera.fur.code.model.form.AdoptionForm;
 import org.mindera.fur.code.model.pet.Pet;
 
@@ -37,6 +36,6 @@ public class AdoptionRequest {
     @OneToOne
     private AdoptionForm adoptionForm;
 
-    @OneToMany(mappedBy = "requestDetail", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "adoptionRequest", fetch = FetchType.EAGER)
     private Set<RequestDetail> requestDetails;
 }

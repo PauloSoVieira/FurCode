@@ -2,7 +2,11 @@ package org.mindera.fur.code.service;
 
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
+import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
+import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
+import org.mindera.fur.code.exceptions.adoptionRequest.AdoptionRequestNotFound;
 import org.mindera.fur.code.mapper.AdoptionRequestMapper;
+import org.mindera.fur.code.messages.adoptionRequest.AdoptionRequestMessage;
 import org.mindera.fur.code.model.AdoptionRequest;
 import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mindera.fur.code.repository.PersonRepository;
@@ -16,18 +20,34 @@ import java.util.List;
 @Service
 public class AdoptionRequestService {
 
-    @Autowired
     public AdoptionRequestRepository adoptionRequestRepository;
+    private PetRepository petRepository;
+    private AdoptionRequestMapper adoptionRequestMapper;
+    private ShelterRepository shelterRepository;
+    private PersonRepository personRepository;
+    private RequestDetailService requestDetailService;
 
+    @Autowired
+    public AdoptionRequestService(AdoptionRequestRepository adoptionRequestRepository,
+                                  PetRepository petRepository,
+                                  ShelterRepository shelterRepository,
+                                  PersonRepository personRepository,
+                                  RequestDetailService requestDetailService) {
+        this.adoptionRequestRepository = adoptionRequestRepository;
+        this.petRepository = petRepository;
+        this.shelterRepository = shelterRepository;
+        this.personRepository = personRepository;
+        this.requestDetailService = requestDetailService;
+    }
 
-    //TODO CONSTRUCTOR URGENT
-    public PetRepository petRepository;
-
-    public ShelterRepository shelterRepository;
-
-    public PersonRepository personRepository;
-
-    public AdoptionRequestMapper adoptionRequestMapper;
+    private static void idValidation(Long id) {
+        if (id == null) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.ADOPTION_REQUEST_ID_CANT_BE_EMPTY);
+        }
+        if (id <= 0) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.ADOPTION_REQUEST_ID_CANT_BE_ZERO_OR_LOWER);
+        }
+    }
 
     public AdoptionRequestDTO createAdoptionRequest(AdoptionRequestCreationDTO dto) {
         System.out.println("Service received DTO: " + dto);
@@ -42,6 +62,7 @@ public class AdoptionRequestService {
     }
 
     public AdoptionRequestDTO updateAdoptionRequest(Long id, AdoptionRequestDTO adoptionRequestDTO) {
+        idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
         AdoptionRequest updateAdoptionRequest = adoptionRequestMapper.INSTANCE.toModel(adoptionRequestDTO);
         updateAdoptionRequest.setShelter(adoptionRequest.getShelter());
@@ -56,16 +77,41 @@ public class AdoptionRequestService {
     }
 
     public AdoptionRequestDTO getAdoptionRequestById(Long id) {
+        idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
         return adoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
     }
 
     public void deleteAdoptionRequestById(Long id) {
+        idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
         adoptionRequestRepository.delete(adoptionRequest);
     }
 
     public void deleteAllAdoptionRequests() {
         adoptionRequestRepository.deleteAll();
+    }
+
+    public List<RequestDetailDTO> getAllRequestDetails(Long id) {
+        idValidation(id);
+        AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
+        return requestDetailService.getAllRequestDetails()
+                .stream()
+                .filter(requestDetail -> requestDetail.getAdoptionRequestById(id)
+                        .equals(adoptionRequest
+                                .getId()))
+                .toList();
+    }
+
+    public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
+        idValidation(id);
+        adoptionRequestRepository.findById(id).orElseThrow();
+        return requestDetailService.createRequestDetail(requestDetailCreationDTO);
+    }
+
+    public RequestDetailDTO getRequestDetailById(Long id, Long detailId) {
+        idValidation(id);
+        adoptionRequestRepository.findById(id).orElseThrow();
+        return requestDetailService.getRequestDetailById(detailId);
     }
 }

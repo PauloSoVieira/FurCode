@@ -4,9 +4,7 @@ import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.mapper.ShelterMapper;
-import org.mindera.fur.code.mapper.pet.PetMapper;
 import org.mindera.fur.code.model.Shelter;
-import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
@@ -27,7 +25,6 @@ public class ShelterService {
     private PetRepository petRepository;
 
     private ShelterMapper shelterMapper;
-    private PetMapper petMapper;
 
     @Autowired
     public ShelterService(ShelterRepository shelterRepository,
@@ -83,14 +80,6 @@ public class ShelterService {
         shelterRepository.deleteAll();
     }
 
-    public void addPetToShelter(Long shelterId, Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow();
-        pet.setShelter(shelterRepository.findById(shelterId)
-                .orElseThrow());
-        petRepository.save(pet);
-    }
-
     public List<PetDTO> getAllPetsInShelter(Long id) {
         return petService.findAllPets()
                 .stream()
@@ -99,29 +88,4 @@ public class ShelterService {
                         .equals(id))
                 .toList();
     }
-
-   /* public List<Request> getAllRequests() {
-        List<Person> persons = personRepository.findAll();
-        return persons.stream()
-                .filter(person -> person.getShelter().getId().equals(personId))
-                .map(this::convertToPersonDTO)
-                .collect(Collectors.toList());
-    }
-
-    public void requestAdoption(Long id, Long petId, Long personId) {
-        Shelter shelter = shelterRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Shelter not found"));
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new IllegalArgumentException("Pet not found"));
-        Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found"));
-        pet.setShelter(shelter);
-        person.setShelter(shelter);
-        person.setPet(pet);
-        shelter.getPets().add(pet);
-        shelter.getPeople().add(person);
-        petRepository.save(pet);
-        personRepository.save(person);
-        shelterRepository.save(shelter);
-    }*/
 }

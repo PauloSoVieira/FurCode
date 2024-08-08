@@ -53,18 +53,6 @@ public class ShelterController {
         return new ResponseEntity<>(shelterService.updateShelter(id, shelterDTO), HttpStatus.OK);
     }
 
-    /*//Request Adoption
-    @GetMapping("/{id}/request/{petId}/{personId}")
-    public void requestAdoption(@PathVariable Long id, @PathVariable Long petId, @PathVariable Long personId) {
-        shelterService.requestAdoption(id, petId, personId);
-    }*/
-
-    //Add pet to shelter
-    @GetMapping("/{id}/addPet")
-    public void addPetToShelter(@PathVariable Long id, @PathVariable Long petId) {
-        shelterService.addPetToShelter(id, petId);
-    }
-
     //Get all pets in shelter
     @GetMapping("/{id}/allPets")
     public ResponseEntity<List<PetDTO>> getAllPetsInShelter(@PathVariable Long id) {
