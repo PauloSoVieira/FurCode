@@ -1,5 +1,6 @@
 package org.mindera.fur.code.infra.security;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.person.LoginResponseDTO;
 import org.mindera.fur.code.dto.person.PersonAuthenticationDTO;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Schema(description = "Authentication controller")
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
+
 
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
@@ -32,6 +35,13 @@ public class AuthenticationController {
         this.personRepository = personRepository;
     }
 
+    @Schema(description = "Login a person")
+    /**
+     * Login a person
+     *
+     * @param personAuthenticationDTO The person authentication information
+     * @return The login response
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid PersonAuthenticationDTO personAuthenticationDTO) {
         if (personRepository.findByEmail(personAuthenticationDTO.getEmail()) == null) {

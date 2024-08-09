@@ -1,6 +1,6 @@
 package org.mindera.fur.code.infra.security;
 
-import org.mindera.fur.code.model.Role;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +17,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Component;
 
 @Component
-
+@Schema(description = "Security configuration")
 @Configuration //just a class of configuration
 @EnableWebSecurity //this annotation is used to enable the security
 public class SecurityConfiguration {
 
     @Autowired
     SecurityFilter securityFilter;
+
+    /**
+     * Security configuration
+     *
+     * @param httpSecurity The http security
+     * @return The security filter chain
+     * @throws Exception The exception
+     */
 
     //filters to check the authentication
     @Bean
@@ -41,7 +49,7 @@ public class SecurityConfiguration {
 
                         //Person authorizations
                         //anyone can create a person
-                        .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/create-shelter").hasAnyAuthority(String.valueOf(Role.USER))
+                        .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/create-shelter").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/all").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/person/update/{id}").hasAnyAuthority("ADMIN")
@@ -69,11 +77,23 @@ public class SecurityConfiguration {
                 .build();
     }
 
+    /**
+     * Authentication manager
+     *
+     * @param authenticationConfiguration The authentication configuration
+     * @return The authentication manager
+     * @throws Exception The exception
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Password encoder
+     *
+     * @return The password encoder
+     */
     //usa algoritimo de hash para criptografar a password
     @Bean
     public PasswordEncoder passwordEncoder() {

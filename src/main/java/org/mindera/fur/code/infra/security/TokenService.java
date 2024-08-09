@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.messages.token.TokenMessage;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,21 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Schema(description = "Token service")
 @Service
 public class TokenService {
 
+    /**
+     * The secret password
+     */
     private final String SECRET = "my-secret-key";
 
+    /**
+     * Generate token
+     *
+     * @param personDTO The person dto
+     * @return The token
+     */
     public String generateToken(PersonDTO personDTO) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
@@ -31,6 +42,12 @@ public class TokenService {
         }
     }
 
+    /**
+     * Validate token
+     *
+     * @param token The token
+     * @return The email
+     */
     public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
@@ -44,6 +61,11 @@ public class TokenService {
         }
     }
 
+    /**
+     * Generate expiration date
+     *
+     * @return The expiration date
+     */
     private Instant generateExpirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("+0"));
     }
