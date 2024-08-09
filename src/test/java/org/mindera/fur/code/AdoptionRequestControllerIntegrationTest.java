@@ -58,7 +58,7 @@ public class AdoptionRequestControllerIntegrationTest {
     class crudAdoptionRequest {
         @Test
         public void createAdoptionRequestShouldReturn201() {
-            
+
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "John",
                     "Doe",
@@ -85,7 +85,17 @@ public class AdoptionRequestControllerIntegrationTest {
                     date
             );
 
-            PetCreateDTO petCreationDTO = new PetCreateDTO();
+            PetCreateDTO petCreationDTO = new PetCreateDTO(
+                    "Buddy",
+                    1L,
+                    1L,
+                    false,
+                    "MEDIUM",
+                    20.0,
+                    "Brown",
+                    3,
+                    "Healthy and active"
+            );
 
             AdoptionRequestCreationDTO request = new AdoptionRequestCreationDTO(
                     1L,
