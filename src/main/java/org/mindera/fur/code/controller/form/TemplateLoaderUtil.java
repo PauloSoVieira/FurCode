@@ -1,7 +1,7 @@
-package org.mindera.fur.code.controller.formTESTE;
+package org.mindera.fur.code.controller.form;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mindera.fur.code.dto.formTESTEDTO.FormTemplateDTO;
+import org.mindera.fur.code.dto.form.FormTemplateDTO;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;

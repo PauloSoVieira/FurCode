@@ -1,9 +1,9 @@
-package org.mindera.fur.code.controller.formTESTE;
+package org.mindera.fur.code.controller.form;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.mindera.fur.code.dto.formTESTEDTO.FormFieldCreateDTO;
-import org.mindera.fur.code.dto.formTESTEDTO.FormFieldDTO;
-import org.mindera.fur.code.service.formTESTE.FormFieldService;
+import org.mindera.fur.code.dto.form.FormFieldCreateDTO;
+import org.mindera.fur.code.dto.form.FormFieldDTO;
+import org.mindera.fur.code.service.form.FormFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

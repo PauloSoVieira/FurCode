@@ -1,14 +1,12 @@
-package org.mindera.fur.code.service.formTESTE;
+package org.mindera.fur.code.service.form;
 
 import jakarta.transaction.Transactional;
-import org.mindera.fur.code.controller.formTESTE.TemplateLoaderUtil;
-import org.mindera.fur.code.dto.formTESTEDTO.*;
-import org.mindera.fur.code.mapper.formMapper.FormFieldMapper;
+import org.mindera.fur.code.controller.form.TemplateLoaderUtil;
+import org.mindera.fur.code.dto.form.*;
 import org.mindera.fur.code.mapper.formMapper.FormMapper;
-import org.mindera.fur.code.model.formTest.Form;
-import org.mindera.fur.code.model.formTest.FormField;
-import org.mindera.fur.code.model.formTest.FormFieldAnswer;
-import org.mindera.fur.code.model.formTest.FormTemplate;
+import org.mindera.fur.code.model.form.Form;
+import org.mindera.fur.code.model.form.FormField;
+import org.mindera.fur.code.model.form.FormFieldAnswer;
 import org.mindera.fur.code.repository.formTest.FormFieldAnswerRepository;
 import org.mindera.fur.code.repository.formTest.FormFieldRepository;
 import org.mindera.fur.code.repository.formTest.FormRepository;
@@ -61,14 +59,6 @@ public class FormService {
         return FormMapper.INSTANCE.toDTO(form);
     }
 
-//    public FormDTO createForm(String name, String type) {
-//        Form form = new Form();
-//        form.setName(name);
-//        form.setType(type);
-//        form.setCreatedAt(LocalDateTime.now());
-//        Form savedForm = formRepository.save(form);
-//        return FormMapper.INSTANCE.toDTO(savedForm);
-//    }
 
     public FormDTO addFieldToForm(Long formId, Long fieldId, String answer) {
         Form form = formRepository.findById(formId)
@@ -86,49 +76,11 @@ public class FormService {
         return FormMapper.INSTANCE.toDTO(savedForm);
     }
 
-//    public List<FormDTO> getFormsByType(String type) {
-//        List<Form> forms = formRepository.findByType(type);
-//        return FormMapper.INSTANCE.toDTOList(forms);
-//    }
-
-    public FormFieldDTO createFormField(FormFieldCreateDTO createDTO) {
-        return formFieldService.createFormField(createDTO);
-    }
-
-
-        public List<FormFieldDTO> getFieldsForForm(Long formId) {
-            Form form = formRepository.findById(formId)
-                    .orElseThrow(() -> new RuntimeException("Form not found"));
-
-            List<FormField> formFields = form.getFormFieldAnswers().stream()
-                    .map(FormFieldAnswer::getFormField)
-                    .collect(Collectors.toList());
-
-            return FormFieldMapper.INSTANCE.toDTOList(formFields);
-    }
 
 
 
-//
-//    public FormDTO createFormFromTemplate(String name, Long templateId) {
-//        FormTemplate template = formTemplateService.getFormTemplate(templateId);
-//
-//        Form form = new Form();
-//        form.setName(name);
-//        form.setCreatedAt(LocalDateTime.now());
-//        form.setType("TEMPLATE_BASED");
-//        form.setFormTemplate(template);
-//
-//        for (FormField field : template.getFormFields()) {
-//            FormFieldAnswer answer = new FormFieldAnswer();
-//            answer.setFormField(field);
-//            answer.setAnswer(""); // Empty answer to be filled by user
-//            form.addFormFieldAnswer(answer);
-//        }
-//
-//        Form savedForm = formRepository.save(form);
-//        return FormMapper.INSTANCE.toDTO(savedForm);
-//    }
+
+
 
 
     @Transactional
@@ -233,8 +185,6 @@ public class FormService {
         return templateLoader.loadTemplate(templateName);
     }
 
-    public FormTemplateDTO getTemplate(Long templateId) throws IOException {
-        return templateLoader.loadTemplate(String.valueOf(templateId));
-    }
+
 
 }

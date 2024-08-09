@@ -3,8 +3,8 @@ package org.mindera.fur.code.mapper.formMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.mindera.fur.code.dto.formTESTEDTO.FormFieldAnswerDTO;
-import org.mindera.fur.code.model.formTest.FormFieldAnswer;
+import org.mindera.fur.code.dto.form.FormFieldAnswerDTO;
+import org.mindera.fur.code.model.form.FormFieldAnswer;
 
 @Mapper
 public interface FormFieldAnswerMapper {

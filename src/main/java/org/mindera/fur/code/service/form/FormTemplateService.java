@@ -1,7 +1,7 @@
-package org.mindera.fur.code.service.formTESTE;
+package org.mindera.fur.code.service.form;
 
-import org.mindera.fur.code.model.formTest.FormField;
-import org.mindera.fur.code.model.formTest.FormTemplate;
+import org.mindera.fur.code.model.form.FormField;
+import org.mindera.fur.code.model.form.FormTemplate;
 import org.mindera.fur.code.repository.formTest.FormFieldRepository;
 import org.mindera.fur.code.repository.formTest.FormTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;

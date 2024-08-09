@@ -1,4 +1,4 @@
-package org.mindera.fur.code.model.formTest;
+package org.mindera.fur.code.model.form;
 
 import jakarta.persistence.*;
 import lombok.Data;

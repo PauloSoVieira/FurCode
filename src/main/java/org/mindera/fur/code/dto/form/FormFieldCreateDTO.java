@@ -1,4 +1,4 @@
-package org.mindera.fur.code.dto.formTESTEDTO;
+package org.mindera.fur.code.dto.form;
 
 import lombok.Data;
 

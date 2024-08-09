@@ -3,12 +3,10 @@ package org.mindera.fur.code.mapper.formMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.mindera.fur.code.dto.formTESTEDTO.FormDTO;
-import org.mindera.fur.code.dto.formTESTEDTO.FormFieldAnswerDTO;
-import org.mindera.fur.code.dto.formTESTEDTO.FormFieldDTO;
-import org.mindera.fur.code.model.formTest.Form;
-import org.mindera.fur.code.model.formTest.FormField;
-import org.mindera.fur.code.model.formTest.FormFieldAnswer;
+import org.mindera.fur.code.dto.form.FormDTO;
+import org.mindera.fur.code.dto.form.FormFieldAnswerDTO;
+import org.mindera.fur.code.model.form.Form;
+import org.mindera.fur.code.model.form.FormFieldAnswer;
 
 import java.util.List;
 

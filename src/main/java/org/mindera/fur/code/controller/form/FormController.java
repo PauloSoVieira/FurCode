@@ -1,15 +1,13 @@
-package org.mindera.fur.code.controller.formTESTE;
+package org.mindera.fur.code.controller.form;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.mindera.fur.code.dto.formTESTEDTO.*;
-import org.mindera.fur.code.service.formTESTE.FormService;
+import org.mindera.fur.code.dto.form.*;
+import org.mindera.fur.code.service.form.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/forms")
@@ -80,11 +78,7 @@ public class FormController {
         return ResponseEntity.ok(formService.getTemplate(templateName));
     }
 
-    @GetMapping("/{templateId}")
-    @Operation(summary = "Get a template")
-    public ResponseEntity<FormTemplateDTO> getTemplate(@PathVariable Long templateId) throws IOException {
-        return ResponseEntity.ok(formService.getTemplate(templateId));
-    }
+
 
     @GetMapping("/forms/{formId}")
     @Operation(summary = "Get a form")

@@ -1,9 +1,9 @@
-package org.mindera.fur.code.service.formTESTE;
+package org.mindera.fur.code.service.form;
 
-import org.mindera.fur.code.dto.formTESTEDTO.FormFieldCreateDTO;
-import org.mindera.fur.code.dto.formTESTEDTO.FormFieldDTO;
+import org.mindera.fur.code.dto.form.FormFieldCreateDTO;
+import org.mindera.fur.code.dto.form.FormFieldDTO;
 import org.mindera.fur.code.mapper.formMapper.FormFieldMapper;
-import org.mindera.fur.code.model.formTest.FormField;
+import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.repository.formTest.FormFieldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
