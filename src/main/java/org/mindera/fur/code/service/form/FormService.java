@@ -7,9 +7,9 @@ import org.mindera.fur.code.mapper.formMapper.FormMapper;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.model.form.FormFieldAnswer;
-import org.mindera.fur.code.repository.formTest.FormFieldAnswerRepository;
-import org.mindera.fur.code.repository.formTest.FormFieldRepository;
-import org.mindera.fur.code.repository.formTest.FormRepository;
+import org.mindera.fur.code.repository.form.FormFieldAnswerRepository;
+import org.mindera.fur.code.repository.form.FormFieldRepository;
+import org.mindera.fur.code.repository.form.FormRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -148,7 +148,6 @@ public class FormService {
         template.getFields().add(newField);
         templateLoader.saveTemplate(templateName, template);
 
-        // Update all existing forms based on this template
         List<Form> existingForms = formRepository.findByType(templateName);
         for (Form form : existingForms) {
             addFieldToForm(form, newField);
@@ -186,5 +185,22 @@ public class FormService {
     }
 
 
+
+    @Transactional
+    public FormDTO removeFieldFromForm(Long formId, Long fieldId) {
+        Form form = formRepository.findById(formId)
+                .orElseThrow(() -> new RuntimeException("Form not found"));
+
+        FormFieldAnswer fieldAnswerToRemove = form.getFormFieldAnswers().stream()
+                .filter(answer -> answer.getFormField().getId().equals(fieldId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Field not found in form"));
+
+        form.getFormFieldAnswers().remove(fieldAnswerToRemove);
+        formFieldAnswerRepository.delete(fieldAnswerToRemove);
+
+        Form updatedForm = formRepository.save(form);
+        return FormMapper.INSTANCE.toDTO(updatedForm);
+    }
 
 }

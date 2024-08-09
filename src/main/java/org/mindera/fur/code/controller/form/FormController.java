@@ -24,25 +24,6 @@ public class FormController {
         return ResponseEntity.ok(formService.createForm(name));
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<FormDTO> getForm(@PathVariable Long id) {
-//        return ResponseEntity.ok(formService.getForm(id));
-//    }
-//
-//    @PostMapping("/{formId}/fields/{fieldId}")
-//    @Operation(summary = "Add a field to a form with an answer")
-//    public ResponseEntity<FormDTO> addFieldToForm(
-//            @PathVariable Long formId,
-//            @PathVariable Long fieldId,
-//            @RequestBody FieldAnswerDTO answerDTO) {
-//        return ResponseEntity.ok(formService.addFieldToForm(formId, fieldId, answerDTO.getAnswer()));
-//    }
-//
-//    @GetMapping("/{formId}/fields")
-//    @Operation(summary = "Get all fields for a form")
-//    public ResponseEntity<List<FormFieldDTO>> getFieldsForForm(@PathVariable Long formId) {
-//        return ResponseEntity.ok(formService.getFieldsForForm(formId));
-//    }
 
 
     @PostMapping("/template/{templateName}")
@@ -84,5 +65,11 @@ public class FormController {
     @Operation(summary = "Get a form")
     public ResponseEntity<FormDTO> getForm(@PathVariable Long formId) {
         return ResponseEntity.ok(formService.getForm(formId));
+    }
+
+    @DeleteMapping("/{formId}/field/{fieldId}")
+    @Operation(summary = "Remove a field from a specific form")
+    public ResponseEntity<FormDTO> removeFieldFromForm(@PathVariable Long formId, @PathVariable Long fieldId) {
+        return ResponseEntity.ok(formService.removeFieldFromForm(formId, fieldId));
     }
 }

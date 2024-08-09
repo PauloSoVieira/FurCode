@@ -1,4 +1,4 @@
-package org.mindera.fur.code.repository.formTest;
+package org.mindera.fur.code.repository.form;
 
 import org.mindera.fur.code.model.form.Form;
 import org.springframework.data.jpa.repository.JpaRepository;

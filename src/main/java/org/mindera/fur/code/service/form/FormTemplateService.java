@@ -2,8 +2,8 @@ package org.mindera.fur.code.service.form;
 
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.model.form.FormTemplate;
-import org.mindera.fur.code.repository.formTest.FormFieldRepository;
-import org.mindera.fur.code.repository.formTest.FormTemplateRepository;
+import org.mindera.fur.code.repository.form.FormFieldRepository;
+import org.mindera.fur.code.repository.form.FormTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package org.mindera.fur.code.repository.formTest;
+package org.mindera.fur.code.repository.form;
 
 import jdk.jfr.Registered;
 import org.mindera.fur.code.model.form.FormFieldAnswer;
