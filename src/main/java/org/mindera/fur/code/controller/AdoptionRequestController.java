@@ -1,5 +1,6 @@
 package org.mindera.fur.code.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
@@ -12,31 +13,48 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller class for handling adoption request related requests.
+ */
 @RestController
 @RequestMapping("/api/v1/adoption-request")
 public class AdoptionRequestController {
 
     private final AdoptionRequestService adoptionRequestService;
 
-
+    /**
+     * Constructor for the AdoptionRequestController
+     *
+     * @param adoptionRequestService
+     */
     @Autowired
     public AdoptionRequestController(AdoptionRequestService adoptionRequestService) {
         this.adoptionRequestService = adoptionRequestService;
     }
 
     //Create an adoption request
+
+    /**
+     * Endpoint to create an adoption request.
+     *
+     * @param adoptionRequestCreationDTO The AdoptionRequestCreationDTO object.
+     * @return The created AdoptionRequestDTO object.
+     */
+    @Operation(summary = "Create an adoption request")
     @PostMapping
     public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@RequestBody AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
         return new ResponseEntity<>(adoptionRequestService.createAdoptionRequest(adoptionRequestCreationDTO), HttpStatus.CREATED);
     }
 
     //Change some info from the request
+    @Operation(summary = "Update an adoption request")
     @PatchMapping("/update/{id}")
     public ResponseEntity<AdoptionRequestDTO> updateAdoptionRequest(@PathVariable Long id, @RequestBody AdoptionRequestDTO adoptionRequestDTO) {
         return new ResponseEntity<>(adoptionRequestService.updateAdoptionRequest(id, adoptionRequestDTO), HttpStatus.OK);
     }
 
     //Get all requests
+    @Operation(summary = "Get all adoption requests")
     @GetMapping("/all")
     public ResponseEntity<List<AdoptionRequestDTO>> getAllAdoptionRequests() {
         return new ResponseEntity<>(adoptionRequestService.getAllAdoptionRequests(), HttpStatus.OK);

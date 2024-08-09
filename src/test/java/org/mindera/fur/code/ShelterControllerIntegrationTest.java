@@ -94,7 +94,7 @@ public class ShelterControllerIntegrationTest {
             String shelterId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(shelterDTO)
+                            .body(shelterCreationDTO)
                             .when()
                             .post("/api/v1/shelter")
                             .then()
@@ -171,7 +171,7 @@ public class ShelterControllerIntegrationTest {
             String shelterId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(shelterDTO)
+                            .body(shelterCreationDTO)
                             .when()
                             .post("/api/v1/shelter")
                             .then()
@@ -216,7 +216,7 @@ public class ShelterControllerIntegrationTest {
             String shelterId =
                     given()
                             .contentType(ContentType.JSON)
-                            .body(shelterDTO)
+                            .body(shelterCreationDTO)
                             .when()
                             .post("/api/v1/shelter")
                             .then()
