@@ -34,4 +34,16 @@ public class Form {
         formFieldAnswers.add(answer);
         answer.setForm(this);
     }
+
+    @ManyToOne
+    @JoinColumn(name = "form_template_id")
+    private FormTemplate formTemplate;
+
+    public FormTemplate getFormTemplate() {
+        return formTemplate;
+    }
+
+    public void setFormTemplate(FormTemplate formTemplate) {
+        this.formTemplate = formTemplate;
+    }
 }

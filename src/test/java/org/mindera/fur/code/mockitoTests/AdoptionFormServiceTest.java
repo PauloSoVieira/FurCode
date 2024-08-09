@@ -8,7 +8,6 @@ import org.mindera.fur.code.mapper.adoptionMapper.AdoptionFormMapper;
 import org.mindera.fur.code.model.form.AdoptionForm;
 import org.mindera.fur.code.model.form.FormField1;
 import org.mindera.fur.code.repository.AdoptionFormRepository;
-import org.mindera.fur.code.service.AdoptionFormService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
