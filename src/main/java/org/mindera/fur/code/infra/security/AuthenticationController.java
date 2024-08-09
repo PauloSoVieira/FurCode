@@ -42,26 +42,6 @@ public class AuthenticationController {
         String token = tokenService.generateToken(personDTO);
 
         return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
-
-//        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-//                new UsernamePasswordAuthenticationToken(personAuthenticationDTO.getEmail(), personAuthenticationDTO.getPassword());
-//            Authentication auth = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-
-
-//        var usernamePassoword = new UsernamePasswordAuthenticationToken(personAuthenticationDTO.getEmail(),
-//                personAuthenticationDTO.getPassword());
-//
-//        var auth = authenticationManager.authenticate(usernamePassoword);
-//        System.out.println("login realizado");
-//        return ResponseEntity.ok().build();
-
-//        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-//                new UsernamePasswordAuthenticationToken(personAuthenticationDTO.getEmail(), personAuthenticationDTO.getPassword());
-//        Authentication auth = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-//
-//        String token = tokenService.generateToken((PersonDTO) auth.getPrincipal());
-//
-//        return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
     }
 
 }
