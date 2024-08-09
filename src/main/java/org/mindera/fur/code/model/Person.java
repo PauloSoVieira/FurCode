@@ -88,21 +88,21 @@ public class Person implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == Role.MASTER) {
-            return List.of(new SimpleGrantedAuthority("ROLE_MASTER"),
-                    new SimpleGrantedAuthority("ROLE_MANAGER"),
-                    new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(new SimpleGrantedAuthority("MASTER"),
+                    new SimpleGrantedAuthority("MANAGER"),
+                    new SimpleGrantedAuthority("ADMIN"),
+                    new SimpleGrantedAuthority("USER"));
         }
         if (this.role == Role.MANAGER) {
-            return List.of(new SimpleGrantedAuthority("ROLE_MANAGER"),
-                    new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(new SimpleGrantedAuthority("MANAGER"),
+                    new SimpleGrantedAuthority("ADMIN"),
+                    new SimpleGrantedAuthority("USER"));
         }
         if (this.role == Role.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(new SimpleGrantedAuthority("ADMIN"),
+                    new SimpleGrantedAuthority("USER"));
         }
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("USER"));
     }
 
     /**

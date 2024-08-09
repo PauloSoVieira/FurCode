@@ -15,12 +15,14 @@ import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
 import org.mindera.fur.code.messages.person.PersonMessages;
 import org.mindera.fur.code.model.Person;
+import org.mindera.fur.code.model.Role;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.ShelterPersonRoles;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -141,10 +143,13 @@ public class PersonService {
         }
 
         Person person = personMapper.INSTANCE.toModel(personCreationDTO);
+        person.setRole(Role.USER);
+
         String encryptedPassword = new BCryptPasswordEncoder().encode(personCreationDTO.getPassword());
-        person.setPassword(encryptedPassword); //TODO verificar se está sendo criado o não
+        person.setPassword(encryptedPassword);
 
         personRepository.save(person);
+        ResponseEntity.ok().build();
         return personMapper.INSTANCE.toDTO(person);
     }
 
