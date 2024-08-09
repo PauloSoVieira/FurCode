@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,19 +30,18 @@ public class FormService {
     private final FormFieldService formFieldService;
     private final TemplateLoaderUtil templateLoader;
 
-    private final FormTemplateService formTemplateService;
 
 
 
     @Autowired
-    public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService, TemplateLoaderUtil templateLoader, FormTemplateService formTemplateService) {
+  public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService, TemplateLoaderUtil templateLoader) {
         this.formRepository = formRepository;
         this.formFieldRepository = formFieldRepository;
         this.formFieldAnswerRepository = formFieldAnswerRepository;
         this.formFieldService = formFieldService;
         this.templateLoader = templateLoader;
 
-        this.formTemplateService = formTemplateService;
+//        this.formTemplateService = formTemplateService;
     }
 
     public FormDTO createForm(String name) {
@@ -127,20 +127,43 @@ public class FormService {
         Form form = formRepository.findById(formAnswerDTO.getFormId())
                 .orElseThrow(() -> new RuntimeException("Form not found"));
 
+        if ("DONATION_TEMPLATE".equals(form.getType())) {
+            validateDonationForm(formAnswerDTO);
+        }
+
         Map<Long, FormFieldAnswer> answerMap = form.getFormFieldAnswers().stream()
                 .collect(Collectors.toMap(a -> a.getFormField().getId(), a -> a));
 
         for (FieldAnswerDTO fieldAnswer : formAnswerDTO.getAnswers()) {
             FormFieldAnswer answer = answerMap.get(fieldAnswer.getFieldId());
             if (answer == null) {
-                throw new RuntimeException("Field not found in form");
+                throw new RuntimeException("Field not found in form: " + fieldAnswer.getFieldId());
             }
             answer.setAnswer(fieldAnswer.getAnswer());
-            formFieldAnswerRepository.save(answer);
         }
 
-        return FormMapper.INSTANCE.toDTO(form);
+        Form savedForm = formRepository.save(form);
+        return FormMapper.INSTANCE.toDTO(savedForm);
     }
+
+    private void validateDonationForm(FormAnswerDTO formAnswerDTO) {
+        for (FieldAnswerDTO fieldAnswer : formAnswerDTO.getAnswers()) {
+            FormField field = formFieldRepository.findById(fieldAnswer.getFieldId())
+                    .orElseThrow(() -> new RuntimeException("Field not found: " + fieldAnswer.getFieldId()));
+
+            if ("Donation Amount ($)".equals(field.getQuestion())) {
+                try {
+                    BigDecimal amount = new BigDecimal(fieldAnswer.getAnswer());
+                    if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                        throw new IllegalArgumentException("Donation amount must be positive");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid donation amount");
+                }
+            }
+        }
+    }
+
 
     @Transactional
     public FormDTO addFieldToTemplate(String templateName, FormFieldCreateDTO newField) throws IOException {
@@ -202,5 +225,7 @@ public class FormService {
         Form updatedForm = formRepository.save(form);
         return FormMapper.INSTANCE.toDTO(updatedForm);
     }
+
+
 
 }

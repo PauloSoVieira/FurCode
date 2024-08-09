@@ -6,7 +6,7 @@ import org.junit.jupiter.api.*;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.model.Person;
-import org.mindera.fur.code.model.Pet;
+import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.State;
 import org.mindera.fur.code.service.AdoptionRequestService;

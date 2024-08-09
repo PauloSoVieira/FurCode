@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.mapper.AdoptionRequestMapper;
 import org.mindera.fur.code.model.*;
+import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
