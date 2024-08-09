@@ -6,9 +6,7 @@ import org.mindera.fur.code.dto.forms.AdoptionFormCreateDTO;
 import org.mindera.fur.code.dto.forms.AdoptionFormDTO;
 import org.mindera.fur.code.mapper.adoptionMapper.AdoptionFormMapper;
 import org.mindera.fur.code.model.form.AdoptionForm;
-import org.mindera.fur.code.model.form.FormField;
-import org.mindera.fur.code.repository.AdoptionFormRepository;
-import org.mindera.fur.code.service.AdoptionFormService;
+import org.mindera.fur.code.model.form.FormField1;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -55,7 +53,7 @@ public class AdoptionFormServiceTest {
         adoptionForm.setId(1L);
         adoptionForm.setName("jojo");
         adoptionForm.setShelterId(1L);
-        adoptionForm.setFormFields(Set.of(new FormField()));
+        adoptionForm.setFormField1s(Set.of(new FormField1()));
 
         when(adoptionFormRepository.findById(1L)).thenReturn(Optional.of(adoptionForm));
 
@@ -77,7 +75,7 @@ public class AdoptionFormServiceTest {
         adoptionForm.setId(1L);
         adoptionForm.setName("jojo");
         adoptionForm.setShelterId(1L);
-        adoptionForm.setFormFields(Set.of(new FormField()));
+        adoptionForm.setFormField1s(Set.of(new FormField1()));
 
         when(adoptionFormRepository.findAll()).thenReturn(List.of(adoptionForm));
 
@@ -100,7 +98,7 @@ public class AdoptionFormServiceTest {
         adoptionForm.setId(1L);
         adoptionForm.setName("jojo");
         adoptionForm.setShelterId(1L);
-        adoptionForm.setFormFields(Set.of(new FormField()));
+        adoptionForm.setFormField1s(Set.of(new FormField1()));
 
         when(adoptionFormRepository.findById(1L)).thenReturn(Optional.of(adoptionForm));
         AdoptionFormDTO adoptionFormDTO = AdoptionFormMapper.INSTANCE.toDTO(adoptionForm);
@@ -122,7 +120,7 @@ public class AdoptionFormServiceTest {
         adoptionForm.setId(1L);
         adoptionForm.setName("jojo");
         adoptionForm.setShelterId(1L);
-        adoptionForm.setFormFields(Set.of(new FormField()));
+        adoptionForm.setFormField1s(Set.of(new FormField1()));
 
         when(adoptionFormRepository.findById(1L)).thenReturn(Optional.of(adoptionForm));
 
