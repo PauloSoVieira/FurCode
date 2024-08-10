@@ -33,7 +33,7 @@ public class AdoptionRequest {
     @JoinColumn(name = "adopter_id", nullable = false)
     private Person person;
 
-    @OneToOne
+@OneToOne
     private AdoptionForm adoptionForm;
 
     @OneToMany(mappedBy = "adoptionRequest", cascade = CascadeType.ALL, orphanRemoval = true)

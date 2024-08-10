@@ -5,7 +5,6 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 import org.mindera.fur.code.dto.forms.AdoptionFormCreateDTO;
 import org.mindera.fur.code.dto.forms.AdoptionFormDTO;
-import org.mindera.fur.code.service.AdoptionFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;

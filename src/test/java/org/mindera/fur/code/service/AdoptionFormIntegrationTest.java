@@ -5,7 +5,7 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 import org.mindera.fur.code.dto.forms.AdoptionFormCreateDTO;
 import org.mindera.fur.code.dto.forms.AdoptionFormDTO;
-import org.mindera.fur.code.dto.forms.FormFieldDTO;
+import org.mindera.fur.code.dto.forms.FormFieldDTO1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -44,7 +44,7 @@ public class AdoptionFormIntegrationTest {
                 1L,
                 1L,
                 1L,
-                Set.of(new FormFieldDTO(1L, "1", "1")));
+                Set.of(new FormFieldDTO1(1L, "1", "1")));
 
         String adoptionId = given()
                 .contentType(ContentType.JSON)
@@ -67,7 +67,7 @@ public class AdoptionFormIntegrationTest {
                 .extract().body().as(AdoptionFormDTO.class);
 
         adoptionForm.setName("Pablo");
-        adoptionForm.setFormFields(Set.of(new FormFieldDTO(2L, "2", "2")));
+        adoptionForm.setFormFields(Set.of(new FormFieldDTO1(2L, "2", "2")));
 
         adoptionFormService.updateAdoptionForm(adoptionFormDTO, Long.valueOf(adoptionId));
 
