@@ -1,11 +1,9 @@
 package org.mindera.fur.code.service.pet;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.mindera.fur.code.dto.pet.PetCreateDTO;
-import org.mindera.fur.code.dto.pet.PetDTO;
-import org.mindera.fur.code.dto.pet.PetRecordCreateDTO;
-import org.mindera.fur.code.dto.pet.PetRecordDTO;
+import org.mindera.fur.code.dto.pet.*;
 import org.mindera.fur.code.mapper.pet.PetMapper;
 import org.mindera.fur.code.mapper.pet.PetRecordMapper;
 import org.mindera.fur.code.messages.pet.PetMessages;
@@ -59,21 +57,22 @@ public class PetService {
         return PetMapper.INSTANCE.toDTO(pet);
     }
 
+    @Transactional
     public PetDTO addPet(@Valid PetCreateDTO petCreateDTO) {
         Pet pet = PetMapper.INSTANCE.toModel(petCreateDTO);
 
-//        PetBreed breed = new PetBreed();
-//        breed.setName("Labrador");
-//        petBreedRepository.save(breed);
-//
-//        Shelter shelter = new Shelter();
-//        shelter.setName("Shelter");
-//        shelterRepository.save(shelter);
-//
-//        PetType newPetType = new PetType();
-//        newPetType.setType(petCreateDTO.getPetTypeId().toString());
-//        newPetType.setBreed(petBreedRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Breed not found with ID: " + 1L)));
-//        petTypeRepository.save(newPetType);
+        PetBreed breed = new PetBreed();
+        breed.setName("Labrador");
+        petBreedRepository.save(breed);
+
+        Shelter shelter = new Shelter();
+        shelter.setName("Shelter");
+        shelterRepository.save(shelter);
+
+        PetType newPetType = new PetType();
+        newPetType.setType(petCreateDTO.getPetTypeId().toString());
+        newPetType.setBreed(petBreedRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Breed not found with ID: " + 1L)));
+        petTypeRepository.save(newPetType);
 
         pet.setPetType(petTypeRepository.findById(petCreateDTO.getPetTypeId()).orElseThrow(() -> new EntityNotFoundException("Pet type not found with ID: " + petCreateDTO.getPetTypeId())));
         pet.setShelter(shelterRepository.findById(petCreateDTO.getShelterId()).orElseThrow(() -> new EntityNotFoundException("Shelter not found with ID: " + petCreateDTO.getShelterId())));
@@ -82,29 +81,34 @@ public class PetService {
         return PetMapper.INSTANCE.toDTO(pet);
     }
 
-    public void updatePet(@Valid Long id, @Valid PetCreateDTO petCreateDTO) {
+    @Transactional
+    public void updatePet(@Valid Long id, @Valid PetUpdateDTO petUpdateDTO) {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + id));
 
-        // Use the mapper to update fields that are not null
-        PetMapper.INSTANCE.updatePetFromDTO(petCreateDTO, pet);
+        // TODO: Find a way to use the mapper here
 
-        // Update fields conditionally
-        pet.setName(petCreateDTO.getName() != null && !petCreateDTO.getName().trim().isEmpty() ? petCreateDTO.getName() : pet.getName());
+        if (petUpdateDTO.getIsAdopted() != null) {
+            pet.setIsAdopted(petUpdateDTO.getIsAdopted());
+        }
+        if (petUpdateDTO.getIsVaccinated() != null) {
+            pet.setIsVaccinated(petUpdateDTO.getIsVaccinated());
+        }
+        if (petUpdateDTO.getSize() != null) {
+            pet.setSize(petUpdateDTO.getSize());
+        }
+        if (petUpdateDTO.getWeight() != null) {
+            pet.setWeight(petUpdateDTO.getWeight());
+        }
+        if (petUpdateDTO.getColor() != null) {
+            pet.setColor(petUpdateDTO.getColor());
+        }
+        if (petUpdateDTO.getAge() != null) {
+            pet.setAge(petUpdateDTO.getAge());
+        }
+        if (petUpdateDTO.getObservations() != null) {
+            pet.setObservations(petUpdateDTO.getObservations());
+        }
 
-        pet.setPetType(petCreateDTO.getPetTypeId() != null ?
-                petTypeRepository.findById(petCreateDTO.getPetTypeId()).orElseThrow(() -> new EntityNotFoundException("Pet type not found with ID: " + petCreateDTO.getPetTypeId())) :
-                pet.getPetType());
-
-        pet.setShelter(petCreateDTO.getShelterId() != null ?
-                shelterRepository.findById(petCreateDTO.getShelterId()).orElseThrow(() -> new EntityNotFoundException("Shelter not found with ID: " + petCreateDTO.getShelterId())) :
-                pet.getShelter());
-
-        pet.setIsAdopted(petCreateDTO.getIsAdopted() != null ? petCreateDTO.getIsAdopted() : pet.getIsAdopted());
-        pet.setSize(petCreateDTO.getSize() != null && !petCreateDTO.getSize().trim().isEmpty() ? petCreateDTO.getSize() : pet.getSize());
-        pet.setWeight(petCreateDTO.getWeight() != null ? petCreateDTO.getWeight() : pet.getWeight());
-        pet.setColor(petCreateDTO.getColor() != null && !petCreateDTO.getColor().trim().isEmpty() ? petCreateDTO.getColor() : pet.getColor());
-        pet.setAge(petCreateDTO.getAge() != null ? petCreateDTO.getAge() : pet.getAge());
-        pet.setObservations(petCreateDTO.getObservations() != null && !petCreateDTO.getObservations().trim().isEmpty() ? petCreateDTO.getObservations() : pet.getObservations());
         petRepository.save(pet);
     }
 
@@ -119,6 +123,7 @@ public class PetService {
 
         PetRecord petRecord = PetRecordMapper.INSTANCE.toModel(petRecordCreateDTO);
         petRecord.setPet(pet);
+
         petRecord = petRecordRepository.save(petRecord);
         return PetRecordMapper.INSTANCE.toDTO(petRecord);
     }

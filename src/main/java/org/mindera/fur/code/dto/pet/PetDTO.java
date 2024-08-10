@@ -1,7 +1,11 @@
 package org.mindera.fur.code.dto.pet;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
 @Data
 public class PetDTO {
@@ -22,9 +26,13 @@ public class PetDTO {
     @NotNull(message = "Adopted status must be provided")
     private Boolean isAdopted;
 
+    @NotNull(message = "Vaccination status is required")
+    @Column(nullable = false)
+    private Boolean isVaccinated;
+
     @NotNull(message = "Size must be provided")
-    //@Enumerated(EnumType.STRING)
-    private String size;
+    @Enumerated(EnumType.STRING)
+    private PetSizeEnum size;
 
     @NotNull(message = "Pet weight must be provided")
     @DecimalMin(value = "0.01", message = "Pet weight must be greater than 0.01 kilos")
@@ -43,7 +51,4 @@ public class PetDTO {
     @NotBlank(message = "Pet observation must be provided")
     @Size(min = 1, max = 999, message = "Pet observation must be between 1 and 999 characters")
     private String observations;
-
-    // This field maybe not needed if the medical record are manage separately
-    //private Long medicalRecordId;
 }

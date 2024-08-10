@@ -15,8 +15,7 @@ public class PetType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Pet type name must be provided")
-    //@NotNull(message = "Pet type name must be provided")
+    @NotNull(message = "Pet type name must be provided")
     //@Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private String type;
