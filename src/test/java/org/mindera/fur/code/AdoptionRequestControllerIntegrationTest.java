@@ -10,6 +10,8 @@ import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.pet.PetCreateDTO;
+import org.mindera.fur.code.dto.pet.PetRecordCreateDTO;
+import org.mindera.fur.code.dto.pet.PetTypeDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.RequestDetailRepository;
@@ -98,6 +100,18 @@ public class AdoptionRequestControllerIntegrationTest {
                     "Brown",
                     3,
                     "Healthy and active"
+            );
+
+            PetRecordCreateDTO petRecordCreateDTO = new PetRecordCreateDTO(
+                    true,
+                    "Vaccinated",
+                    new Date(),
+                    "Observation");
+
+            PetTypeDTO petTypeDTO = new PetTypeDTO(
+                    1L,
+                    "Dog",
+                    1L
             );
 
             AdoptionRequestCreationDTO request = new AdoptionRequestCreationDTO(
