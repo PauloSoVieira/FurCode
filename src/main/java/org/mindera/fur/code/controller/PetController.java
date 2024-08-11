@@ -3,7 +3,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.pet.*;
-import org.mindera.fur.code.service.pet.PetService;
+import org.mindera.fur.code.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,7 +17,6 @@ import java.util.List;
 @Tag(name = "Pet", description = "Operations for pets")
 @RestController
 @RequestMapping(path = "/api/v1/pet")
-
 public class PetController {
     private final PetService petService;
 
@@ -25,11 +24,12 @@ public class PetController {
     public PetController(PetService petService) {
         this.petService = petService;
     }
+
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetDTO>> getAllPets() {
-        List<PetDTO> petDTOs = petService.findAllPets();
-        return new ResponseEntity<>(petDTOs, HttpStatus.OK);
+        List<PetDTO> petDTO = petService.findAllPets();
+        return new ResponseEntity<>(petDTO, HttpStatus.OK);
     }
 
     @Operation(summary = "Get a pet by ID")

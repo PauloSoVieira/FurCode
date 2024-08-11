@@ -1,4 +1,4 @@
-package org.mindera.fur.code.service.pet;
+package org.mindera.fur.code.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -118,6 +118,7 @@ public class PetService {
         petRepository.delete(pet);
     }
 
+    @Transactional
     public PetRecordDTO addPetRecord(@Valid Long id, @Valid PetRecordCreateDTO petRecordCreateDTO) {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + id));
 
@@ -134,6 +135,7 @@ public class PetService {
     }
 
     // For testing purposes only
+    @Transactional
     public void deleteAllPets() {
         petRepository.deleteAll();
         petRecordRepository.deleteAll();
