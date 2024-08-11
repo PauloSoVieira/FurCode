@@ -7,6 +7,7 @@ import org.mindera.fur.code.dto.pet.PetCreateDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.pet.PetRecordCreateDTO;
 import org.mindera.fur.code.dto.pet.PetRecordDTO;
+import org.mindera.fur.code.service.AIService;
 import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -24,10 +24,12 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/pet")
 public class PetController {
     private final PetService petService;
+    private final AIService aiService;
 
     @Autowired
-    public PetController(PetService petService) {
+    public PetController(PetService petService, AIService aiService) {
         this.petService = petService;
+        this.aiService = aiService;
     }
 
     @Operation(summary = "Get all pets")
@@ -82,16 +84,12 @@ public class PetController {
     @Operation(summary = "Generate a new pet description")
     @PostMapping(value = "/{id}/new-description")
     public ResponseEntity<String> generatePetDescription(@PathVariable @Valid Long id) {
-        RestClient restClient = RestClient.create();
-        String url = "https://llmc.ducknexus.com/api/v1/generation/send-details";
-        String prompt = "Please make a simple intro text, about 100 words, to adopt this animal. I just need the text nothing more.";
-        String request = String.format("%s?prompt=%s", url, prompt);
-        String result = restClient.post()
-                .uri(request)
-                .body(petService.findPetById(id))
-                .retrieve()
-                .body(String.class);
+        return new ResponseEntity<>(aiService.generateNewPetDescription(petService.findPetById(id)), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    @Operation(summary = "Search a pet with natural language")
+    @PostMapping(value = "/search/nl/{searchQuery}")
+    public ResponseEntity<String> searchPetWithNaturalLanguage(@PathVariable @Valid String searchQuery) {
+        return new ResponseEntity<>(aiService.generateNewPetSearchQuery(searchQuery), HttpStatus.OK);
     }
 }
