@@ -44,15 +44,12 @@ public class FormService {
 //        this.formTemplateService = formTemplateService;
     }
 
-    public FormDTO createForm(String name) {
-        Form form = new Form();
-        form.setName(name.replaceAll("^\"|\"$", ""));
-        form.setCreatedAt(LocalDateTime.now());
-        form.setType("DEFAULT"); // TODO: Add a default type
+    public FormDTO createForm(FormCreateDTO formCreateDTO) {
+
+        Form form = FormMapper.INSTANCE.toModelFromCreateDTO(formCreateDTO);
         Form savedForm = formRepository.save(form);
         return FormMapper.INSTANCE.toDTO(savedForm);
     }
-
     public FormDTO getForm(Long formId) {
         Form form = formRepository.findById(formId)
                 .orElseThrow(() -> new RuntimeException("Form not found"));
@@ -227,5 +224,7 @@ public class FormService {
     }
 
 
-
+    public void deleteAllForms() {
+        formRepository.deleteAll();
+    }
 }
