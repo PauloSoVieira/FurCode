@@ -73,10 +73,12 @@ public class FormController {
         return new ResponseEntity<>(formService.getForm(formId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{formId}/field/{fieldId}")
-    @Operation(summary = "Remove a field from a specific form")
-    public ResponseEntity<FormDTO> removeFieldFromForm(@PathVariable Long formId, @PathVariable Long fieldId) {
-        return new ResponseEntity<>(formService.removeFieldFromForm(formId, fieldId), HttpStatus.NO_CONTENT);
+    @DeleteMapping("/template/{templateName}/field")
+    @Operation(summary = "Remove a field from a template")
+    public ResponseEntity<FormDTO> removeFieldFromTemplate(
+            @PathVariable String templateName,
+            @RequestParam String question) throws IOException {
+        return ResponseEntity.ok(formService.removeFieldFromTemplate(templateName, question));
     }
 
     @DeleteMapping("/{formId}")

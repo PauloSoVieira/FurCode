@@ -208,23 +208,49 @@ public class FormService {
 
 
 
+//    @Transactional
+//    public FormDTO removeFieldFromForm(Long formId, Long fieldId) {
+//        Form form = formRepository.findById(formId)
+//                .orElseThrow(() -> new RuntimeException("Form not found"));
+//
+//        FormFieldAnswer fieldAnswerToRemove = form.getFormFieldAnswers().stream()
+//                .filter(answer -> answer.getFormField().getId().equals(fieldId))
+//                .findFirst()
+//                .orElseThrow(() -> new RuntimeException("Field not found in form"));
+//
+//        form.getFormFieldAnswers().remove(fieldAnswerToRemove);
+//        formFieldAnswerRepository.delete(fieldAnswerToRemove);
+//
+//        Form updatedForm = formRepository.save(form);
+//        return FormMapper.INSTANCE.toDTO(updatedForm);
+//    }
+
     @Transactional
-    public FormDTO removeFieldFromForm(Long formId, Long fieldId) {
-        Form form = formRepository.findById(formId)
-                .orElseThrow(() -> new RuntimeException("Form not found"));
+    //Soft delete to keep history
+    public FormDTO removeFieldFromTemplate(String templateName, String questionToRemove) throws IOException {
+        FormTemplateDTO template = templateLoader.loadTemplate(templateName);
 
-        FormFieldAnswer fieldAnswerToRemove = form.getFormFieldAnswers().stream()
-                .filter(answer -> answer.getFormField().getId().equals(fieldId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Field not found in form"));
+        FormField fieldToInactivate = formFieldRepository.findByQuestion(questionToRemove)
+                .orElseThrow(() -> new RuntimeException("Field not found: " + questionToRemove));
 
-        form.getFormFieldAnswers().remove(fieldAnswerToRemove);
-        formFieldAnswerRepository.delete(fieldAnswerToRemove);
+        fieldToInactivate.setActive(false);
+        formFieldRepository.save(fieldToInactivate);
 
-        Form updatedForm = formRepository.save(form);
-        return FormMapper.INSTANCE.toDTO(updatedForm);
+        template.setFields(template.getFields().stream()
+                .filter(field -> !field.getQuestion().equals(questionToRemove))
+                .collect(Collectors.toList()));
+        templateLoader.saveTemplate(templateName, template);
+
+        List<Form> existingForms = formRepository.findByType(templateName);
+        for (Form form : existingForms) {
+            form.getFormFieldAnswers().stream()
+                    .filter(answer -> answer.getFormField().getQuestion().equals(questionToRemove))
+                    .forEach(answer -> answer.getFormField().setActive(false));
+            formRepository.save(form);
+        }
+
+        return createFormFromTemplate(templateName);
     }
-
 
     public void deleteAllForms() {
         formRepository.deleteAll();

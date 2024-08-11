@@ -19,4 +19,7 @@ public class FormField {
 
     @OneToMany(mappedBy = "formField")
     private List<FormFieldAnswer> formFieldAnswers = new ArrayList<>();
+
+    private boolean active = true;
+
 }

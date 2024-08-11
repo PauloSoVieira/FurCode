@@ -11,6 +11,7 @@ import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
 import org.mindera.fur.code.messages.PersonsMessages;
+import org.mindera.fur.code.model.Gmailer;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.ShelterPersonRoles;
@@ -32,15 +33,21 @@ public class PersonService {
     private final ShelterService shelterService;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
     private PersonMapper personMapper;
+    private final Gmailer gmailer;
+
+    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
+
+
     private ShelterPersonRolesMapper shelterPersonRolesMapper;
 
     @Autowired
     public PersonService(PersonRepository personRepository, ShelterService shelterService,
-                         ShelterPersonRolesRepository shelterPersonRolesRepository, ShelterRepository shelterRepository) {
+                         ShelterPersonRolesRepository shelterPersonRolesRepository, ShelterRepository shelterRepository, Gmailer gmailer) throws Exception {
         this.personRepository = personRepository;
         this.shelterService = shelterService;
         this.shelterPersonRolesRepository = shelterPersonRolesRepository;
         this.shelterRepository = shelterRepository;
+        this.gmailer = new Gmailer();
     }
 
     private static void idValidation(Long id) {
@@ -102,12 +109,30 @@ public class PersonService {
 
         Person person = personMapper.INSTANCE.toModel(personCreationDTO);
         String encryptedPassword = new BCryptPasswordEncoder().encode(personCreationDTO.getPassword());
-        person.setPassword(encryptedPassword); //TODO verificar se está sendo criado o não
+        person.setPassword(encryptedPassword);
 
-        personRepository.save(person);
-        return personMapper.INSTANCE.toDTO(person);
+        Person savedPerson = personRepository.save(person);
+
+        try {
+            try {
+                // Send welcome email to the user
+                gmailer.sendMail(savedPerson.getEmail(), "Welcome to FurCode",
+                        "Dear " + savedPerson.getFirstName() + ",\n\nWelcome to FurCode! We're excited to have you on board.");
+
+                // Send notification to the company
+                gmailer.sendMail(COMPANY_EMAIL, "New user registration",
+                        "A new user has registered:\nName: " + savedPerson.getFirstName() + " " + savedPerson.getLastName() +
+                                "\nEmail: " + savedPerson.getEmail());
+            } catch (Exception e) {
+                // Log the error, but don't prevent user creation if email sending fails
+                System.err.println("Failed to send email: " + e.getMessage());
+            }
+
+            return personMapper.INSTANCE.toDTO(savedPerson);
+        } catch (Exception e) {
+            throw new PersonException(PersonsMessages.FAILED_TO_CREATE_PERSON);
+        }
     }
-
     public ShelterPersonRolesDTO addPersonToShelter(ShelterPersonRolesCreationDTO shelterPersonRolesCreationDTO) {
 
         Person person = personRepository.findById(shelterPersonRolesCreationDTO.getPersonId()).orElseThrow(PersonException::new);

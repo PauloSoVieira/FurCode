@@ -18,4 +18,5 @@ public class PersonsMessages {
     public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
     public static final String NOT_ROLE = "Not a valid role";
     public static final String PERSON_NOT_FOUND = "Person not found";
+    public static final String FAILED_TO_CREATE_PERSON = "Failed to create person";
 }
