@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/forms")
@@ -36,7 +37,7 @@ public class FormController {
         return new ResponseEntity<>(formService.createFormFromTemplate(templateName), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{formId}/submit")
+    @PostMapping("/{formId}")
     @Operation(summary = "Submit answers for a form")
     public ResponseEntity<FormDTO> submitFormAnswers(@PathVariable Long formId, @RequestBody FormAnswerDTO formAnswerDTO) {
         formAnswerDTO.setFormId(formId);
@@ -76,5 +77,17 @@ public class FormController {
     @Operation(summary = "Remove a field from a specific form")
     public ResponseEntity<FormDTO> removeFieldFromForm(@PathVariable Long formId, @PathVariable Long fieldId) {
         return new ResponseEntity<>(formService.removeFieldFromForm(formId, fieldId), HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{formId}")
+    @Operation(summary = "Delete a form")
+    public ResponseEntity<FormDTO> deleteForm(@PathVariable Long formId) {
+        return new ResponseEntity<>(formService.deleteForm(formId), HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "Get all forms")
+    public ResponseEntity<List<FormDTO>> getAllForms() {
+        return new ResponseEntity<>(formService.getAllForms(), HttpStatus.OK);
     }
 }

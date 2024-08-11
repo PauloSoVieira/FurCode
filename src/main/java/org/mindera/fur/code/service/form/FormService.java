@@ -11,7 +11,9 @@ import org.mindera.fur.code.repository.form.FormFieldAnswerRepository;
 import org.mindera.fur.code.repository.form.FormFieldRepository;
 import org.mindera.fur.code.repository.form.FormRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -226,5 +228,18 @@ public class FormService {
 
     public void deleteAllForms() {
         formRepository.deleteAll();
+    }
+
+    public FormDTO deleteForm(Long formId) {
+        Form form = formRepository.findById(formId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form not found"));
+
+        formRepository.delete(form);
+        return FormMapper.INSTANCE.toDTO(form);
+    }
+
+    public List<FormDTO> getAllForms() {
+        List<Form> forms = formRepository.findAll();
+        return FormMapper.INSTANCE.toDTOList(forms);
     }
 }
