@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.pet.*;
+import org.mindera.fur.code.service.AIService;
 import org.mindera.fur.code.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,12 +24,13 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/pet")
 public class PetController {
     private final PetService petService;
+    private final AIService aiService;
 
     @Autowired
-    public PetController(PetService petService) {
+    public PetController(PetService petService, AIService aiService) {
         this.petService = petService;
+        this.aiService = aiService;
     }
-
 
 
     @Operation(summary = "Get all pets")
@@ -40,7 +42,7 @@ public class PetController {
     }
 
     @Operation(summary = "Get a pet by id")
-   
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
         PetDTO petDTO = petService.findPetById(id);
@@ -89,5 +91,17 @@ public class PetController {
     public ResponseEntity<PetBreedDTO> createOrFetchBreed(@RequestBody @Valid PetBreedCreateDTO petBreedCreateDTO) {
         PetBreedDTO breedDTO = petService.addOrFetchBreed(petBreedCreateDTO);
         return new ResponseEntity<>(breedDTO, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Generate a new pet description with AI")
+    @PostMapping(value = "/{id}/new-description")
+    public ResponseEntity<String> generatePetDescription(@PathVariable @Valid Long id) {
+        return new ResponseEntity<>(aiService.generateNewPetDescription(petService.findPetById(id)), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Search a pet with natural language")
+    @PostMapping(value = "/search/nl/{searchQuery}")
+    public ResponseEntity<String> searchPetWithNaturalLanguage(@PathVariable @Valid String searchQuery) {
+        return new ResponseEntity<>(aiService.generateNewPetSearchQuery(searchQuery), HttpStatus.OK);
     }
 }
