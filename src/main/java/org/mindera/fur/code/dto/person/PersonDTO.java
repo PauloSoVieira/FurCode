@@ -3,9 +3,11 @@ package org.mindera.fur.code.dto.person;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Schema(description = "A person")
-public class PersonDTO {
+public class PersonDTO implements Serializable {
     @Schema(description = "The unique identifier of the person", example = "1", required = true)
 
     private Long id;
