@@ -141,7 +141,7 @@ public class ShelterService {
         shelter.setEmail(updateShelter.getEmail());
         shelter.setAddress1(updateShelter.getAddress1());
         shelter.setAddress2(updateShelter.getAddress2());
-        shelter.setPostCode(updateShelter.getPostCode());
+        shelter.setPostalCode(updateShelter.getPostalCode());
         shelter.setPhone(updateShelter.getPhone());
         shelter.setSize(updateShelter.getSize());
         shelter.setIsActive(updateShelter.getIsActive());
