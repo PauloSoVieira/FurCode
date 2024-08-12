@@ -30,8 +30,8 @@ public class ShelterController {
     //Create Shelter
     @PostMapping
     @CacheEvict(cacheNames = "shelters", allEntries = true)
-    public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
-        return new ResponseEntity<>(shelterService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
+    public ShelterDTO createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
+        return shelterService.createShelter(shelterCreationDTO);
     }
 
     //Get all shelters

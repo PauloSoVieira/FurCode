@@ -1,11 +1,14 @@
 package org.mindera.fur.code.infra.security;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.person.PersonDTO;
-import org.mindera.fur.code.exceptions.person.PersonException;
+import org.mindera.fur.code.exceptions.token.TokenException;
 import org.mindera.fur.code.messages.token.TokenMessage;
 import org.springframework.stereotype.Service;
 
@@ -52,14 +55,27 @@ public class TokenService {
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("fur-code")
+                    .build();
+
+            verifier.verify(token);
+
             return JWT.require(algorithm)
                     .withIssuer("fur-code")
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (PersonException exception) {
-            throw new RuntimeException("You don't have permission ", exception);
+
+        } catch (SignatureVerificationException e) {
+            throw new TokenException(TokenMessage.INVALID_TOKEN_SIGNATURE);
+        } catch (TokenExpiredException e) {
+            throw new TokenException(TokenMessage.TOKEN_EXPIRED);
+        } catch (Exception e) {
+            throw new TokenException(TokenMessage.TOKEN_VALIDATION_FAILED);
         }
+
     }
 
     /**

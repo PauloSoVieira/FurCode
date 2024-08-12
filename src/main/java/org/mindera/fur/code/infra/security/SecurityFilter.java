@@ -72,6 +72,12 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
         }
-        return authHeader.replace("Bearer ", "").trim();
+        String token = authHeader.replace("Bearer ", "").trim();
+
+//        if (!isValidTokenFormat(token)) { // Verifica o formato do token
+//            throw new InvalidTokenFormatException("Token format is invalid.");
+//        }
+
+        return token;
     }
 }
