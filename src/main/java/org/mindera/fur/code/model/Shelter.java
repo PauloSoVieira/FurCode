@@ -40,7 +40,7 @@ public class Shelter {
     private Set<Pet> pet;
 
     @OneToOne
-    @JoinColumn(name = "shelter_theme_id", nullable = false)
+    @JoinColumn(name = "shelter_theme_id")
     private ShelterTheme shelterTheme;
 
 }
