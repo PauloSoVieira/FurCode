@@ -10,6 +10,7 @@ import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 @Data
 public class PetDTO {
 
+    @NotEmpty(message = "Pet ID must be provided")
     private Long id;
 
     @NotBlank(message = "Pet name must be provided")

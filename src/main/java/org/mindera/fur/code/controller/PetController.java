@@ -73,4 +73,11 @@ public class PetController {
         PetRecordDTO petRecordDTO = petService.addPetRecord(id, petRecordCreateDTO);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
     }
+
+    @Operation(summary = "Create or fetch a pet breed from external DOG API")
+    @PostMapping(value = "/breed", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PetBreedDTO> createOrFetchBreed(@RequestBody @Valid PetBreedCreateDTO petBreedCreateDTO) {
+        PetBreedDTO breedDTO = petService.addOrFetchBreed(petBreedCreateDTO);
+        return new ResponseEntity<>(breedDTO, HttpStatus.CREATED);
+    }
 }

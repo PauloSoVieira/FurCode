@@ -3,11 +3,12 @@ package org.mindera.fur.code.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.mindera.fur.code.dto.external_apis.dog_api.DogBreedDTO;
 import org.mindera.fur.code.dto.pet.*;
+import org.mindera.fur.code.mapper.pet.PetBreedMapper;
 import org.mindera.fur.code.mapper.pet.PetMapper;
 import org.mindera.fur.code.mapper.pet.PetRecordMapper;
 import org.mindera.fur.code.messages.pet.PetMessages;
-import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.model.pet.PetBreed;
 import org.mindera.fur.code.model.pet.PetRecord;
@@ -17,6 +18,7 @@ import org.mindera.fur.code.repository.pet.PetBreedRepository;
 import org.mindera.fur.code.repository.pet.PetRecordRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.repository.pet.PetTypeRepository;
+import org.mindera.fur.code.service.external_apis.DogApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +33,7 @@ public class PetService {
     private final PetRecordRepository petRecordRepository;
     private final ShelterRepository shelterRepository;
     private final PetBreedRepository petBreedRepository;
+    private final DogApiService dogApiService;
 
     @Autowired
     public PetService(
@@ -38,13 +41,15 @@ public class PetService {
             PetRecordRepository petRecordRepository,
             PetTypeRepository petTypeRepository,
             ShelterRepository shelterRepository,
-            PetBreedRepository petBreedRepository
+            PetBreedRepository petBreedRepository,
+            DogApiService dogApiService
     ) {
         this.petRepository = petRepository;
         this.petRecordRepository = petRecordRepository;
         this.petTypeRepository = petTypeRepository;
         this.shelterRepository = shelterRepository;
         this.petBreedRepository = petBreedRepository;
+        this.dogApiService = dogApiService;
     }
 
     public List<PetDTO> findAllPets() {
@@ -60,19 +65,6 @@ public class PetService {
     @Transactional
     public PetDTO addPet(@Valid PetCreateDTO petCreateDTO) {
         Pet pet = PetMapper.INSTANCE.toModel(petCreateDTO);
-
-        PetBreed breed = new PetBreed();
-        breed.setName("Labrador");
-        petBreedRepository.save(breed);
-
-        Shelter shelter = new Shelter();
-        shelter.setName("Shelter");
-        shelterRepository.save(shelter);
-
-        PetType newPetType = new PetType();
-        newPetType.setType(petCreateDTO.getPetTypeId().toString());
-        newPetType.setBreed(petBreedRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Breed not found with ID: " + 1L)));
-        petTypeRepository.save(newPetType);
 
         pet.setPetType(petTypeRepository.findById(petCreateDTO.getPetTypeId()).orElseThrow(() -> new EntityNotFoundException("Pet type not found with ID: " + petCreateDTO.getPetTypeId())));
         pet.setShelter(shelterRepository.findById(petCreateDTO.getShelterId()).orElseThrow(() -> new EntityNotFoundException("Shelter not found with ID: " + petCreateDTO.getShelterId())));
@@ -132,6 +124,37 @@ public class PetService {
     public List<PetRecordDTO> getAllPetRecordsByPetId(@Valid Long id) {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + id));
         return pet.getPetRecords().stream().map(PetRecordMapper.INSTANCE::toDTO).toList();
+    }
+
+    @Transactional
+    public PetBreedDTO addOrFetchBreed(@Valid PetBreedCreateDTO petBreedCreateDTO) {
+        // First, check if the breed already exists in the local database
+        PetBreed existingBreed = petBreedRepository.findByName(petBreedCreateDTO.getName());
+        if (existingBreed != null) {
+            return PetBreedMapper.INSTANCE.toDTO(existingBreed);
+        }
+
+        // If not found, query the external API for the breed information
+        DogBreedDTO dogBreedDTO = dogApiService.getBreedByName(petBreedCreateDTO.getName());
+        if (dogBreedDTO == null) {
+            throw new EntityNotFoundException("Breed not found in external API with name: " + petBreedCreateDTO.getName());
+        }
+
+        // Create a new PetBreed entity and save it to the local database
+        PetBreed newBreed = new PetBreed();
+        newBreed.setName(dogBreedDTO.getName());
+        newBreed.setDescription(dogBreedDTO.getDescription());
+
+        // Save the new breed to the database
+        petBreedRepository.save(newBreed);
+
+        // Now create a new PetType associated with this breed
+        PetType petType = new PetType();
+        petType.setType(petBreedCreateDTO.getType());
+        petType.setBreed(newBreed);
+        petTypeRepository.save(petType);
+
+        return PetBreedMapper.INSTANCE.toDTO(newBreed);
     }
 
     // For testing purposes only
