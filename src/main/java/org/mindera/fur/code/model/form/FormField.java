@@ -1,24 +1,22 @@
 package org.mindera.fur.code.model.form;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "form_field")
+@Table(name = "form_fields")
 @Data
 public class FormField {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "adoption_form_id")
-    private AdoptionForm adoptionForm;
+    private String question;
+    private String fieldType;  // e.g., "text", "number", "date", etc.
 
-    private String name;
-    //Criar Enum para os tipos de campos e tirar Strng para o type
-    private String type; // TODO: enum de numbers, text, etc
-
+    @OneToMany(mappedBy = "formField")
+    private List<FormFieldAnswer> formFieldAnswers = new ArrayList<>();
 }

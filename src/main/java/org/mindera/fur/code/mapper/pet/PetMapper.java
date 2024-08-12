@@ -2,7 +2,6 @@ package org.mindera.fur.code.mapper.pet;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import org.mindera.fur.code.dto.pet.PetCreateDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
@@ -19,14 +18,12 @@ public interface PetMapper {
     @Mapping(source = "shelter.id", target = "shelterId")
     PetDTO toDTO(Pet pet);
 
-    Pet toModel(PetDTO petDTO);
+    Pet toModel(PetDTO dto);
 
     @Mapping(source = "petTypeId", target = "petType.id")
     @Mapping(source = "shelterId", target = "shelter.id")
-    Pet toModel(PetCreateDTO petCreateDTO);
+    Pet toModel(PetCreateDTO dto);
 
-    void updatePetFromDTO(PetCreateDTO dto, @MappingTarget Pet model);
 
     List<PetDTO> toDto(List<Pet> pet);
-
 }

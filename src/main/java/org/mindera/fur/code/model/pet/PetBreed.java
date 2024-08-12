@@ -16,4 +16,8 @@ public class PetBreed {
     @NotBlank(message = "Breed name must be provided")
     @Column(nullable = false)
     private String name;
+
+    @NotBlank(message = "Breed description must be provided")
+    @Column(nullable = false, length = 2048)
+    private String description;
 }

@@ -4,14 +4,16 @@ import lombok.Getter;
 
 @Getter
 public enum PetSizeEnum {
-    SMALL(1),
-    MEDIUM(2),
-    LARGE(3);
+    SMALL(1, "Small"),
+    MEDIUM(2, "Medium"),
+    LARGE(3, "Large");
 
     private final int id;
+    private final String name;
 
-    PetSizeEnum(int id) {
+    PetSizeEnum(int id, String name) {
         this.id = id;
+        this.name = name;
     }
 
 //    public static PetSizeEnum fromId(int id) {
