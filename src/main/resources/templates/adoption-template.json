@@ -1,0 +1,16 @@
+{
+  "name": "Pet Adoption Application",
+  "type": "ADOPTION_TEMPLATE",
+  "fields": [
+    {"fieldType": "TEXT", "question": "Full Name"},
+    {"fieldType": "NUMBER", "question": "Age"},
+    {"fieldType": "TEXT", "question": "Address"},
+    {"fieldType": "TEXT", "question": "Phone Number"},
+    {"fieldType": "TEXT", "question": "Email"},
+    {"fieldType": "TEXTAREA", "question": "Why do you want to adopt a pet?"},
+    {"fieldType": "CHECKBOX", "question": "Do you have other pets?"},
+    {"fieldType": "TEXTAREA", "question": "If yes, please describe your current pets"},
+    {"fieldType": "RADIO", "question": "Housing Type: House, Apartment, Other"},
+    {"fieldType": "TEXTAREA", "question": "Additional Comments"}
+  ]
+}

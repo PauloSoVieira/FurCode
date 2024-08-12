@@ -13,7 +13,6 @@ import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
-import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -142,7 +141,7 @@ public class ShelterService {
         shelter.setEmail(updateShelter.getEmail());
         shelter.setAddress1(updateShelter.getAddress1());
         shelter.setAddress2(updateShelter.getAddress2());
-        shelter.setPostCode(updateShelter.getPostCode());
+        shelter.setPostalCode(updateShelter.getPostalCode());
         shelter.setPhone(updateShelter.getPhone());
         shelter.setSize(updateShelter.getSize());
         shelter.setIsActive(updateShelter.getIsActive());

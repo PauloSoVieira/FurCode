@@ -1,7 +1,10 @@
 package org.mindera.fur.code.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
+import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
+import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.service.AdoptionRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,26 +13,48 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller class for handling adoption request related requests.
+ */
 @RestController
 @RequestMapping("/api/v1/adoption-request")
 public class AdoptionRequestController {
 
+    private final AdoptionRequestService adoptionRequestService;
+
+    /**
+     * Constructor for the AdoptionRequestController
+     *
+     * @param adoptionRequestService
+     */
     @Autowired
-    AdoptionRequestService adoptionRequestService;
+    public AdoptionRequestController(AdoptionRequestService adoptionRequestService) {
+        this.adoptionRequestService = adoptionRequestService;
+    }
 
     //Create an adoption request
+
+    /**
+     * Endpoint to create an adoption request.
+     *
+     * @param adoptionRequestCreationDTO The AdoptionRequestCreationDTO object.
+     * @return The created AdoptionRequestDTO object.
+     */
+    @Operation(summary = "Create an adoption request")
     @PostMapping
     public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@RequestBody AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
         return new ResponseEntity<>(adoptionRequestService.createAdoptionRequest(adoptionRequestCreationDTO), HttpStatus.CREATED);
     }
 
     //Change some info from the request
+    @Operation(summary = "Update an adoption request")
     @PatchMapping("/update/{id}")
     public ResponseEntity<AdoptionRequestDTO> updateAdoptionRequest(@PathVariable Long id, @RequestBody AdoptionRequestDTO adoptionRequestDTO) {
         return new ResponseEntity<>(adoptionRequestService.updateAdoptionRequest(id, adoptionRequestDTO), HttpStatus.OK);
     }
 
     //Get all requests
+    @Operation(summary = "Get all adoption requests")
     @GetMapping("/all")
     public ResponseEntity<List<AdoptionRequestDTO>> getAllAdoptionRequests() {
         return new ResponseEntity<>(adoptionRequestService.getAllAdoptionRequests(), HttpStatus.OK);
@@ -46,5 +71,25 @@ public class AdoptionRequestController {
     public ResponseEntity<AdoptionRequestDTO> deleteAdoptionRequestById(@PathVariable Long id) {
         adoptionRequestService.deleteAdoptionRequestById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    //Get all details of the adoption request
+    @GetMapping("/{id}/details")
+    public ResponseEntity<List<RequestDetailDTO>> getAllRequestDetails(@PathVariable Long id) {
+        return new ResponseEntity<>(adoptionRequestService.getAllRequestDetails(id), HttpStatus.OK);
+    }
+
+
+    //Create a new request detail
+    @PostMapping("/{id}/detail-request")
+    public ResponseEntity<RequestDetailDTO> createRequestDetail(@PathVariable Long id, @RequestBody RequestDetailCreationDTO requestDetailCreationDTO) {
+        return new ResponseEntity<>(adoptionRequestService.createRequestDetail(id, requestDetailCreationDTO), HttpStatus.CREATED);
+    }
+
+    //Get request detail by id
+    @GetMapping("/{id}/detail-request/{detailId}")
+    public ResponseEntity<RequestDetailDTO> getRequestDetailById(@PathVariable Long id, @PathVariable Long detailId) {
+        return new ResponseEntity<>(adoptionRequestService.getRequestDetailById(id, detailId), HttpStatus.OK);
     }
 }

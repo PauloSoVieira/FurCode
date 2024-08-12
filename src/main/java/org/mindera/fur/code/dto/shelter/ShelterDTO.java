@@ -2,7 +2,9 @@ package org.mindera.fur.code.dto.shelter;
 
 import lombok.Data;
 
+
 import java.io.Serializable;
+
 
 @Data
 public class ShelterDTO implements Serializable {
@@ -16,9 +18,11 @@ public class ShelterDTO implements Serializable {
     private Long phone;
     private Long size;
     private Boolean isActive;
+    private Date creationDate;
 
 
-    public ShelterDTO(String name, Long vat, String email, String address1, String address2, String postalCode, Long phone, Long size, Boolean isActive) {
+    public ShelterDTO(String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive, Date creationDate) {
+
         this.name = name;
         this.vat = vat;
         this.email = email;
@@ -28,6 +32,6 @@ public class ShelterDTO implements Serializable {
         this.phone = phone;
         this.size = size;
         this.isActive = isActive;
-
+        this.creationDate = creationDate;
     }
 }
