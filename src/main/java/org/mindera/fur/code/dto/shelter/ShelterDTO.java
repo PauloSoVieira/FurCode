@@ -2,8 +2,10 @@ package org.mindera.fur.code.dto.shelter;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class ShelterDTO {
+public class ShelterDTO implements Serializable {
     private Long id;
     private String name;
     private Long vat;

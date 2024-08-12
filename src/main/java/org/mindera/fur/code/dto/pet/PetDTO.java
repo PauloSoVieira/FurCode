@@ -3,8 +3,10 @@ package org.mindera.fur.code.dto.pet;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class PetDTO {
+public class PetDTO implements Serializable {
 
     private Long id;
 
