@@ -3,7 +3,6 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.mindera.fur.code.model.form.AdoptionForm;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.util.Set;
@@ -32,9 +31,6 @@ public class AdoptionRequest {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "adopter_id", nullable = false)
     private Person person;
-
-@OneToOne
-    private AdoptionForm adoptionForm;
 
     @OneToMany(mappedBy = "adoptionRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RequestDetail> requestDetails;
