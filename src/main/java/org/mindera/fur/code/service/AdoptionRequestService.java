@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service class for handling AdoptionRequests.
+ */
 @Service
 public class AdoptionRequestService {
 
@@ -32,6 +35,16 @@ public class AdoptionRequestService {
     private RequestDetailService requestDetailService;
     private RequestDetailRepository requestDetailRepository;
 
+    /**
+     * Constructor for the AdoptionRequestService.
+     *
+     * @param adoptionRequestRepository the adoptionRequestRepository
+     * @param petRepository             the petRepository
+     * @param shelterRepository         the shelterRepository
+     * @param personRepository          the personRepository
+     * @param requestDetailService      the requestDetailService
+     * @param requestDetailRepository   the requestDetailRepository
+     */
     @Autowired
     public AdoptionRequestService(AdoptionRequestRepository adoptionRequestRepository,
                                   PetRepository petRepository,
@@ -47,6 +60,11 @@ public class AdoptionRequestService {
         this.requestDetailRepository = requestDetailRepository;
     }
 
+    /**
+     * Validates the id.
+     *
+     * @param id the id
+     */
     private static void idValidation(Long id) {
         if (id == null) {
             throw new AdoptionRequestNotFound(AdoptionRequestMessage.ADOPTION_REQUEST_ID_CANT_BE_EMPTY);
@@ -56,6 +74,12 @@ public class AdoptionRequestService {
         }
     }
 
+    /**
+     * Creates an adoption request.
+     *
+     * @param dto the adoption request creation dto
+     * @return the adoption request dto
+     */
     public AdoptionRequestDTO createAdoptionRequest(AdoptionRequestCreationDTO dto) {
         System.out.println("Service received DTO: " + dto);
         AdoptionRequest request = new AdoptionRequest();
@@ -68,6 +92,13 @@ public class AdoptionRequestService {
         return adoptionRequestMapper.INSTANCE.toDTO(savedRequest);
     }
 
+    /**
+     * Updates an adoption request.
+     *
+     * @param id                 the id
+     * @param adoptionRequestDTO the adoption request dto
+     * @return the adoption request dto
+     */
     public AdoptionRequestDTO updateAdoptionRequest(Long id, AdoptionRequestDTO adoptionRequestDTO) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
@@ -78,28 +109,52 @@ public class AdoptionRequestService {
         return adoptionRequestMapper.INSTANCE.toDTO(updateAdoptionRequest);
     }
 
+    /**
+     * Gets all adoption requests.
+     *
+     * @return the list of adoption request dtos
+     */
     public List<AdoptionRequestDTO> getAllAdoptionRequests() {
         List<AdoptionRequest> adoptionRequest = adoptionRequestRepository.findAll();
         return adoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
     }
 
+    /**
+     * Gets an adoption request by id.
+     *
+     * @param id the id
+     * @return the adoption request dto
+     */
     public AdoptionRequestDTO getAdoptionRequestById(Long id) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
         return adoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
     }
 
+    /**
+     * Deletes an adoption request by id.
+     *
+     * @param id the id
+     */
     public void deleteAdoptionRequestById(Long id) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
         adoptionRequestRepository.delete(adoptionRequest);
     }
 
+    /**
+     * Deletes all adoption requests.
+     */
     public void deleteAllAdoptionRequests() {
         adoptionRequestRepository.deleteAll();
     }
 
-
+    /**
+     * Gets all request details by id.
+     *
+     * @param id the id
+     * @return the list of request detail dtos
+     */
     public List<RequestDetailDTO> getAllRequestDetails(Long id) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
@@ -108,12 +163,26 @@ public class AdoptionRequestService {
 
     }
 
+    /**
+     * Creates a request detail.
+     *
+     * @param id
+     * @param requestDetailCreationDTO
+     * @return
+     */
     public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
         idValidation(id);
         adoptionRequestRepository.findById(id).orElseThrow(() -> new AdoptionRequestNotFound("AdoptionRequest not found"));
         return requestDetailService.createRequestDetail(id, requestDetailCreationDTO);
     }
 
+    /**
+     * Gets a request detail by id.
+     *
+     * @param id       the id
+     * @param detailId the detail id
+     * @return the request detail dto
+     */
     public RequestDetailDTO getRequestDetailById(Long id, Long detailId) {
         idValidation(id);
         adoptionRequestRepository.findById(id).orElseThrow();
