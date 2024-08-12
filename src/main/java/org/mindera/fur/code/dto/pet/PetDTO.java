@@ -7,8 +7,10 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
+import java.io.Serializable;
+
 @Data
-public class PetDTO {
+public class PetDTO implements Serializable {
 
     @NotEmpty(message = "Pet ID must be provided")
     private Long id;
