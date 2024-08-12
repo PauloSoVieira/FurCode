@@ -98,7 +98,7 @@ public class Gmailer {
     public static void main(String[] args) {
         try {
             Gmailer gmailer = new Gmailer();
-            gmailer.sendMail("vitoria.carvalho@minderacodeacademy.com", "Não é scam ", "Queres ganhar um iphone? Click aqui https://www.apple.com/pt/iphone/");
+            gmailer.sendMail("rui.teixeira@minderacodeacademy.com", "Não é scam ", "Queres ganhar um iphone? Click aqui https://www.apple.com/pt/iphone/");
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
