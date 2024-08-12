@@ -8,9 +8,11 @@ import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
 import org.mindera.fur.code.exceptions.file.FileException;
 import org.mindera.fur.code.exceptions.person.PersonException;
+import org.mindera.fur.code.exceptions.token.TokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -26,7 +28,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+
 import java.util.*;
+
 import static org.springframework.http.HttpStatus.*;
 
 
@@ -295,4 +299,10 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
                 details,
                 timestamp);
     }
+
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<String> handleInvalidTokenException(TokenException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }
