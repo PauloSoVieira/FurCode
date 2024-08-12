@@ -143,7 +143,6 @@ public class PersonController {
      * @param personDTO The person DTO.
      * @return The person DTO.
      */
-    //Only Managers can set roles
     @PatchMapping("/set-person-role/{id}")
     @Schema(description = "Set the role of a person")
     public ResponseEntity<PersonDTO> setPersonRole(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
