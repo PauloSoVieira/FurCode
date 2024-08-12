@@ -2,6 +2,7 @@ package org.mindera.fur.code.controller;
 
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.dto.shelter.ShelterThemeDTO;
 import org.mindera.fur.code.service.ShelterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,5 +63,23 @@ public class ShelterController {
     @GetMapping("/{id}/addPet")
     public void addPetToShelter(@PathVariable Long id, @PathVariable Long petId) {
         shelterService.addPetToShelter(id, petId);
+    }
+
+    // Get all shelter themes
+    @GetMapping("/theme/all")
+    public ResponseEntity<List<ShelterThemeDTO>> getAllShelterThemes() {
+        return new ResponseEntity<>(shelterService.getAllShelterThemes(), HttpStatus.OK);
+    }
+
+    // Get shelter theme by id
+    @GetMapping("/theme/{id}")
+    public ResponseEntity<ShelterThemeDTO> getShelterThemeById(@PathVariable Long id) {
+        return new ResponseEntity<>(shelterService.getShelterThemeById(id), HttpStatus.OK);
+    }
+
+    // Change shelter theme
+    @PatchMapping("/{id}/theme/{themeId}")
+    public ResponseEntity<ShelterDTO> updateShelterToTheme(@PathVariable Long id, @PathVariable Long themeId) {
+        return new ResponseEntity<>(shelterService.changeShelterTheme(id, themeId), HttpStatus.OK);
     }
 }

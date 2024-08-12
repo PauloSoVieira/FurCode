@@ -2,12 +2,15 @@ package org.mindera.fur.code.service;
 
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.dto.shelter.ShelterThemeDTO;
 import org.mindera.fur.code.mapper.ShelterMapper;
 import org.mindera.fur.code.model.Pet;
 import org.mindera.fur.code.model.Shelter;
+import org.mindera.fur.code.model.ShelterTheme;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.PetRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
+import org.mindera.fur.code.repository.ShelterThemeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +19,20 @@ import java.util.List;
 
 @Service
 public class ShelterService {
-    
+
     private ShelterRepository shelterRepository;
     private PersonRepository personRepository;
     private PetRepository petRepository;
+    private ShelterThemeRepository shelterThemeRepository;
 
     private ShelterMapper shelterMapper;
 
     @Autowired
-    public ShelterService(ShelterRepository shelterRepository, PersonRepository personRepository, PetRepository petRepository) {
+    public ShelterService(ShelterRepository shelterRepository, PersonRepository personRepository, PetRepository petRepository, ShelterThemeRepository shelterThemeRepository) {
         this.shelterRepository = shelterRepository;
         this.personRepository = personRepository;
         this.petRepository = petRepository;
+        this.shelterThemeRepository = shelterThemeRepository;
     }
 
     public List<ShelterDTO> getAllShelters() {
@@ -77,6 +82,37 @@ public class ShelterService {
         pet.setShelter(shelterRepository.findById(shelterId)
                 .orElseThrow());
         petRepository.save(pet);
+    }
+
+    public List<ShelterThemeDTO> getAllShelterThemes() {
+        return shelterThemeRepository.findAll().stream()
+                .map(st -> shelterMapper.INSTANCE.toDto(st))
+                .toList();
+    }
+
+    public ShelterThemeDTO getShelterThemeById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Shelter Theme ID must be provided");
+        }
+        ShelterTheme theme = shelterThemeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Shelter theme not found"));
+        return shelterMapper.INSTANCE.toDto(theme);
+    }
+
+    public ShelterDTO changeShelterTheme(Long id, Long themeId) {
+        if (id == null) {
+            throw new IllegalArgumentException("Shelter ID must be provided");
+        }
+        if (themeId == null) {
+            throw new IllegalArgumentException("Shelter Theme ID must be provided");
+        }
+        Shelter shelter = shelterRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Shelter not found"));
+        ShelterTheme theme = shelterThemeRepository.findById(themeId)
+                .orElseThrow(() -> new IllegalArgumentException("Shelter theme not found"));
+        shelter.setShelterTheme(theme);
+        shelterRepository.save(shelter);
+        return shelterMapper.INSTANCE.toDto(shelter);
     }
 
    /* public List<Request> getAllRequests() {

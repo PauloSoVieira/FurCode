@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "shelter_personalization")
-public class ShelterPersonalization {
+@Table(name = "shelter_theme")
+public class ShelterTheme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
