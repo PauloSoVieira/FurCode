@@ -2,8 +2,8 @@ package org.mindera.fur.code.dto.shelter;
 
 import lombok.Data;
 
-
 import java.io.Serializable;
+import java.util.Date;
 
 
 @Data
