@@ -3,6 +3,7 @@ package org.mindera.fur.code.infra.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;

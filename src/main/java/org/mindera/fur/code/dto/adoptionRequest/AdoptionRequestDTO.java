@@ -1,9 +1,6 @@
 package org.mindera.fur.code.dto.adoptionRequest;
 
 import lombok.Data;
-import org.mindera.fur.code.model.State;
-
-import java.util.Date;
 
 @Data
 public class AdoptionRequestDTO {
@@ -11,14 +8,13 @@ public class AdoptionRequestDTO {
     private Long shelterId;
     private Long personId;
     private Long petId;
-    private State state;
-    private Date date;
+    //private Set<RequestDetailDTO> requestDetails;
 
-    public AdoptionRequestDTO(Long shelterId, Long personId, Long petId, State state, Date date) {
+    public AdoptionRequestDTO(Long id, Long shelterId, Long personId, Long petId) {
+        this.id = id;
         this.shelterId = shelterId;
         this.personId = personId;
         this.petId = petId;
-        this.state = state;
-        this.date = date;
+        //this.requestDetails = requestDetails;
     }
 }

@@ -33,8 +33,8 @@ public class Shelter {
     private String address1;
     @Schema(description = "The address2 of the shelter", example = "Apartment 1", required = true)
     private String address2;
-    @Schema(description = "The post code of the shelter", example = "12345", required = true)
-    private String postCode;
+    @Schema(description = "The postal code of the shelter", example = "12345", required = true)
+    private String postalCode;
     @Schema(description = "The phone of the shelter", example = "1234567890", required = true)
     private Integer phone;
     @Schema(description = "The size of the shelter", example = "10", required = true)
