@@ -6,8 +6,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Spring Data JPA repository for the RequestDetail entity.
+ */
 @Repository
 public interface RequestDetailRepository extends JpaRepository<RequestDetail, Long> {
 
+    /**
+     * Find all RequestDetails by adoptionRequestId.
+     *
+     * @param adoptionRequestId the adoptionRequestId
+     * @return the list of RequestDetails
+     */
     List<RequestDetail> findAllByAdoptionRequestId(Long adoptionRequestId);
 }
