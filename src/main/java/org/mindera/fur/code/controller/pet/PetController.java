@@ -37,7 +37,7 @@ public class PetController {
         return new ResponseEntity<>(petDTOs, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get a pet by id")
+    @Operation(summary = "Get a pet by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
         PetDTO petDTO = petService.findPetById(id);

@@ -32,42 +32,6 @@ public class DogApiService {
         this.restTemplate = restTemplate;
     }
 
-    public List<DogBreedDTO> fetchAllBreeds() {
-        String url = apiBaseUrl + breedsUrl;
-        List<DogBreedDTO> allBreeds = new ArrayList<>();
-        boolean hasNextPage = true;
-
-        try {
-            while (hasNextPage) {
-                DogBreedResponse response = restTemplate.getForObject(url, DogBreedResponse.class);
-
-                if (response != null && response.getData() != null) {
-                    // Convert the current page's data to DTOs and add them to the list
-                    allBreeds.addAll(DogBreedMapper.INSTANCE.toBreedDTOList(response.getData()));
-
-                    // Check if there is a next page
-                    if (response.getLinks() != null && response.getLinks().getNext() != null) {
-                        url = response.getLinks().getNext();
-                    } else {
-                        hasNextPage = false;
-                    }
-                } else {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch breeds from the external API");
-                }
-            }
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Breeds not found", e);
-            } else {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Client error occurred while fetching breeds from the external API", e);
-            }
-        } catch (RestClientException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while communicating with the external API", e);
-        }
-
-        return allBreeds;
-    }
-
     public DogBreedDTO fetchBreedById(@Valid String id) {
         String url = apiBaseUrl + breedsUrl + id;
         try {

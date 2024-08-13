@@ -73,4 +73,18 @@ public class Pet {
     @Valid
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRecord> petRecords;
+
+    /*
+    // TODO: Uncomment the following lines when the PetChip and PetCage entities are implemented
+//    @Valid
+//    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "chip_id")
+//    private PetChip chip;
+//
+//    @Valid
+//    @ManyToOne
+//    @JoinColumn(name = "cage_id")
+//    private PetCage cage;
+
+     */
 }

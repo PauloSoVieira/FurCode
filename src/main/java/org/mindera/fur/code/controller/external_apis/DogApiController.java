@@ -26,13 +26,6 @@ public class DogApiController {
         this.dogApiService = dogApiService;
     }
 
-    @Operation(summary = "Get all dog breeds and descriptions - only the first page")
-    @GetMapping(value = "/all-breeds-and-descriptions", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DogBreedDTO>> getAllBreedsAndDescriptions() {
-        List<DogBreedDTO> dto = dogApiService.fetchAllBreeds();
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
-
     @Operation(summary = "Get a dog breed and description by ID")
     @GetMapping(value = "/breed-and-description/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DogBreedDTO> getBreedAndDescriptionById(@PathVariable @Valid String id) {

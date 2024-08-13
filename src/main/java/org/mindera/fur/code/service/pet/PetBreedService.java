@@ -34,6 +34,7 @@ public class PetBreedService {
         this.dogApiService = dogApiService;
     }
 
+    // TODO: Check if is a DOG, CAT or other type of pet and if exist in the database
     @Transactional
     public PetBreedDTO addOrFetchBreed(@Valid PetBreedCreateDTO petBreedCreateDTO) {
         // First, check if the breed already exists in the local database
