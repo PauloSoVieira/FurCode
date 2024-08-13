@@ -29,7 +29,7 @@ public class ShelterController {
     @PostMapping
     @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
-        System.out.println("Cache");
+        // System.out.println("User authorized" + authentication.getAuthorities());
         return shelterService.createShelter(shelterCreationDTO);
     }
 
