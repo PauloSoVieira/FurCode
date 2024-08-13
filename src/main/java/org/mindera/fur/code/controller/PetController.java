@@ -29,8 +29,6 @@ public class PetController {
         this.petService = petService;
     }
 
-
-
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     @Cacheable(cacheNames = "pets")

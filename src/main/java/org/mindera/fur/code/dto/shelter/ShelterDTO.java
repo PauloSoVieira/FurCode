@@ -3,6 +3,7 @@ package org.mindera.fur.code.dto.shelter;
 import lombok.Data;
 
 import java.io.Serializable;
+
 import java.util.Date;
 
 
@@ -41,6 +42,7 @@ public class ShelterDTO implements Serializable {
      */
     public ShelterDTO(Long id, String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive, Date creationDate) {
         this.id = id;
+
         this.name = name;
         this.vat = vat;
         this.email = email;
