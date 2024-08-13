@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service class for handling RequestDetails.
+ */
 @Service
 public class RequestDetailService {
 
@@ -23,6 +26,13 @@ public class RequestDetailService {
     private final PersonRepository personRepository;
     private final AdoptionRequestRepository adoptionRequestRepository;
 
+    /**
+     * Constructor for the RequestDetailService.
+     *
+     * @param requestDetailRepository   the requestDetailRepository
+     * @param personRepository          the personRepository
+     * @param adoptionRequestRepository the adoptionRequestRepository
+     */
     @Autowired
     public RequestDetailService(RequestDetailRepository requestDetailRepository,
                                 PersonRepository personRepository,
@@ -32,6 +42,11 @@ public class RequestDetailService {
         this.adoptionRequestRepository = adoptionRequestRepository;
     }
 
+    /**
+     * Validates the id.
+     *
+     * @param id the id
+     */
     private static void idValidation(Long id) {
         if (id == null) {
             throw new RequestDetailNotFound(RequestDetailMessage.DETAIL_ID_CANT_BE_EMPTY);
@@ -41,17 +56,35 @@ public class RequestDetailService {
         }
     }
 
+    /**
+     * Gets all request details.
+     *
+     * @return the list of request detail dtos
+     */
     public List<RequestDetailDTO> getAllRequestDetails() {
         List<RequestDetail> requestDetails = requestDetailRepository.findAll();
         return RequestDetailMapper.INSTANCE.toDTO(requestDetails);
     }
 
+    /**
+     * Gets a request detail by id.
+     *
+     * @param id the id
+     * @return the request detail dto
+     */
     public RequestDetailDTO getRequestDetailById(Long id) {
         idValidation(id);
         RequestDetail requestDetail = requestDetailRepository.findById(id).orElseThrow();
         return RequestDetailMapper.INSTANCE.toDTO(requestDetail);
     }
 
+    /**
+     * Creates a request detail.
+     *
+     * @param id
+     * @param requestDetailCreationDTO
+     * @return
+     */
     public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
 
