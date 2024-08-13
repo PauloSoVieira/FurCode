@@ -9,6 +9,8 @@ import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
 import java.io.Serializable;
 
+import java.io.Serializable;
+
 @Data
 public class PetDTO implements Serializable {
 
