@@ -2,6 +2,7 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,7 +30,7 @@ public class RequestDetail {
     @DateTimeFormat
     private Date date;
 
-    @Max(value = 1000, message = "Observation must be less than 1000 characters")
+    @Size(max = 1000, message = "Observation must be less than 1000 characters")
     private String observation;
     /**
      * The id of the AdoptionRequest.
