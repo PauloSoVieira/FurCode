@@ -65,7 +65,9 @@ public class SecurityFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(TokenMessage.TOKEN_CREATION_ERROR);
         }
+
         filterChain.doFilter(request, response);
+
     }
 
     /**
@@ -79,6 +81,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
         }
+
         String token = authHeader.replace("Bearer ", "").trim();
 
 //        if (!isValidTokenFormat(token)) { // Verifica o formato do token
@@ -86,5 +89,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 //        }
 
         return token;
+
     }
 }

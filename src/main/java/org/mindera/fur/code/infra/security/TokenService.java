@@ -8,7 +8,10 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.person.PersonDTO;
+
 import org.mindera.fur.code.exceptions.token.TokenException;
+
+import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.messages.token.TokenMessage;
 import org.springframework.stereotype.Service;
 
@@ -68,12 +71,14 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
 
+
         } catch (SignatureVerificationException e) {
             throw new TokenException(TokenMessage.INVALID_TOKEN_SIGNATURE);
         } catch (TokenExpiredException e) {
             throw new TokenException(TokenMessage.TOKEN_EXPIRED);
         } catch (Exception e) {
             throw new TokenException(TokenMessage.TOKEN_VALIDATION_FAILED);
+
         }
 
     }
