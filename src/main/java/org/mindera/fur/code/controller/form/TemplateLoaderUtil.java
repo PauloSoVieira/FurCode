@@ -33,10 +33,8 @@ public class TemplateLoaderUtil {
         String templatePath = resourceLoader.getResource("classpath:templates").getFile().getPath();
         Path path = Paths.get(templatePath, templateName + ".json");
 
-        // Ensure the directory exists
         Files.createDirectories(path.getParent());
 
-        // Write the updated template to the file
         objectMapper.writeValue(path.toFile(), template);
     }
 }

@@ -3,6 +3,9 @@ package org.mindera.fur.code.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.util.Set;
@@ -15,7 +18,7 @@ import java.util.Set;
 @Data
 public class AdoptionRequest {
 
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,4 +49,12 @@ public class AdoptionRequest {
      */
     @OneToMany(mappedBy = "adoptionRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RequestDetail> requestDetails;
+    @Enumerated(EnumType.STRING)
+    private State state;
+
+    @DateTimeFormat
+    private Date date;
+
+
+
 }

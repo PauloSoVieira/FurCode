@@ -13,6 +13,7 @@ import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
+import org.mindera.fur.code.model.Gmailer;
 import org.mindera.fur.code.messages.person.PersonMessages;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.model.Role;
@@ -22,9 +23,10 @@ import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -37,16 +39,21 @@ public class PersonService {
     private final DonationService donationService;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
     private PersonMapper personMapper;
+    private final Gmailer gmailer;
+
+    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
+
+
     private ShelterPersonRolesMapper shelterPersonRolesMapper;
 
     @Autowired
     public PersonService(PersonRepository personRepository, ShelterService shelterService,
-                         ShelterPersonRolesRepository shelterPersonRolesRepository, ShelterRepository shelterRepository,
-                         DonationService donationService) {
+                         ShelterPersonRolesRepository shelterPersonRolesRepository, DonationService donationService, ShelterRepository shelterRepository, Gmailer gmailer) throws Exception {
         this.personRepository = personRepository;
         this.shelterService = shelterService;
         this.shelterPersonRolesRepository = shelterPersonRolesRepository;
         this.shelterRepository = shelterRepository;
+        this.gmailer = new Gmailer();
         this.donationService = donationService;
     }
 
@@ -148,11 +155,28 @@ public class PersonService {
         String encryptedPassword = new BCryptPasswordEncoder().encode(personCreationDTO.getPassword());
         person.setPassword(encryptedPassword);
 
-        personRepository.save(person);
-        ResponseEntity.ok().build();
-        return personMapper.INSTANCE.toDTO(person);
-    }
+        Person savedPerson = personRepository.save(person);
 
+        try {
+            try {
+                // Send welcome email to the user
+                gmailer.sendMail(savedPerson.getEmail(), "Welcome to FurCode",
+                        "Dear " + savedPerson.getFirstName() + ",\n\nWelcome to FurCode! We're excited to have you on board.");
+
+                // Send notification to the company
+                gmailer.sendMail(COMPANY_EMAIL, "New user registration",
+                        "A new user has registered:\nName: " + savedPerson.getFirstName() + " " + savedPerson.getLastName() +
+                                "\nEmail: " + savedPerson.getEmail());
+            } catch (Exception e) {
+                // Log the error, but don't prevent user creation if email sending fails
+                System.err.println("Failed to send email: " + e.getMessage());
+            }
+
+            return personMapper.INSTANCE.toDTO(savedPerson);
+        } catch (Exception e) {
+            throw new PersonException(PersonMessages.FAILED_TO_CREATE_PERSON);
+        }
+    }
     /**
      * Adds a person to a shelter based on the provided ShelterPersonRolesCreationDTO.
      *

@@ -7,13 +7,16 @@ import org.mindera.fur.code.mapper.formMapper.FormMapper;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.model.form.FormFieldAnswer;
-import org.mindera.fur.code.repository.formTest.FormFieldAnswerRepository;
-import org.mindera.fur.code.repository.formTest.FormFieldRepository;
-import org.mindera.fur.code.repository.formTest.FormRepository;
+import org.mindera.fur.code.repository.form.FormFieldAnswerRepository;
+import org.mindera.fur.code.repository.form.FormFieldRepository;
+import org.mindera.fur.code.repository.form.FormRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,26 +32,23 @@ public class FormService {
     private final FormFieldService formFieldService;
     private final TemplateLoaderUtil templateLoader;
 
-    private final FormTemplateService formTemplateService;
 
 
 
     @Autowired
-    public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService, TemplateLoaderUtil templateLoader, FormTemplateService formTemplateService) {
+  public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService, TemplateLoaderUtil templateLoader) {
         this.formRepository = formRepository;
         this.formFieldRepository = formFieldRepository;
         this.formFieldAnswerRepository = formFieldAnswerRepository;
         this.formFieldService = formFieldService;
         this.templateLoader = templateLoader;
 
-        this.formTemplateService = formTemplateService;
+//        this.formTemplateService = formTemplateService;
     }
 
-    public FormDTO createForm(String name) {
-        Form form = new Form();
-        form.setName(name.replaceAll("^\"|\"$", ""));
-        form.setCreatedAt(LocalDateTime.now());
-        form.setType("DEFAULT"); // TODO: Add a default type
+    public FormDTO createForm(FormCreateDTO formCreateDTO) {
+
+        Form form = FormMapper.INSTANCE.toModelFromCreateDTO(formCreateDTO);
         Form savedForm = formRepository.save(form);
         return FormMapper.INSTANCE.toDTO(savedForm);
     }
@@ -127,20 +127,43 @@ public class FormService {
         Form form = formRepository.findById(formAnswerDTO.getFormId())
                 .orElseThrow(() -> new RuntimeException("Form not found"));
 
+        if ("DONATION_TEMPLATE".equals(form.getType())) {
+            validateDonationForm(formAnswerDTO);
+        }
+
         Map<Long, FormFieldAnswer> answerMap = form.getFormFieldAnswers().stream()
                 .collect(Collectors.toMap(a -> a.getFormField().getId(), a -> a));
 
         for (FieldAnswerDTO fieldAnswer : formAnswerDTO.getAnswers()) {
             FormFieldAnswer answer = answerMap.get(fieldAnswer.getFieldId());
             if (answer == null) {
-                throw new RuntimeException("Field not found in form");
+                throw new RuntimeException("Field not found in form: " + fieldAnswer.getFieldId());
             }
             answer.setAnswer(fieldAnswer.getAnswer());
-            formFieldAnswerRepository.save(answer);
         }
 
-        return FormMapper.INSTANCE.toDTO(form);
+        Form savedForm = formRepository.save(form);
+        return FormMapper.INSTANCE.toDTO(savedForm);
     }
+
+    private void validateDonationForm(FormAnswerDTO formAnswerDTO) {
+        for (FieldAnswerDTO fieldAnswer : formAnswerDTO.getAnswers()) {
+            FormField field = formFieldRepository.findById(fieldAnswer.getFieldId())
+                    .orElseThrow(() -> new RuntimeException("Field not found: " + fieldAnswer.getFieldId()));
+
+            if ("Donation Amount ($)".equals(field.getQuestion())) {
+                try {
+                    BigDecimal amount = new BigDecimal(fieldAnswer.getAnswer());
+                    if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                        throw new IllegalArgumentException("Donation amount must be positive");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid donation amount");
+                }
+            }
+        }
+    }
+
 
     @Transactional
     public FormDTO addFieldToTemplate(String templateName, FormFieldCreateDTO newField) throws IOException {
@@ -187,4 +210,64 @@ public class FormService {
 
 
 
+//    @Transactional
+//    public FormDTO removeFieldFromForm(Long formId, Long fieldId) {
+//        Form form = formRepository.findById(formId)
+//                .orElseThrow(() -> new RuntimeException("Form not found"));
+//
+//        FormFieldAnswer fieldAnswerToRemove = form.getFormFieldAnswers().stream()
+//                .filter(answer -> answer.getFormField().getId().equals(fieldId))
+//                .findFirst()
+//                .orElseThrow(() -> new RuntimeException("Field not found in form"));
+//
+//        form.getFormFieldAnswers().remove(fieldAnswerToRemove);
+//        formFieldAnswerRepository.delete(fieldAnswerToRemove);
+//
+//        Form updatedForm = formRepository.save(form);
+//        return FormMapper.INSTANCE.toDTO(updatedForm);
+//    }
+
+    @Transactional
+    //Soft delete to keep history
+    public FormDTO removeFieldFromTemplate(String templateName, String questionToRemove) throws IOException {
+        FormTemplateDTO template = templateLoader.loadTemplate(templateName);
+
+        FormField fieldToInactivate = formFieldRepository.findByQuestion(questionToRemove)
+                .orElseThrow(() -> new RuntimeException("Field not found: " + questionToRemove));
+
+        fieldToInactivate.setActive(false);
+        formFieldRepository.save(fieldToInactivate);
+
+        template.setFields(template.getFields().stream()
+                .filter(field -> !field.getQuestion().equals(questionToRemove))
+                .collect(Collectors.toList()));
+        templateLoader.saveTemplate(templateName, template);
+
+        List<Form> existingForms = formRepository.findByType(templateName);
+        for (Form form : existingForms) {
+            form.getFormFieldAnswers().stream()
+                    .filter(answer -> answer.getFormField().getQuestion().equals(questionToRemove))
+                    .forEach(answer -> answer.getFormField().setActive(false));
+            formRepository.save(form);
+        }
+
+        return createFormFromTemplate(templateName);
+    }
+
+    public void deleteAllForms() {
+        formRepository.deleteAll();
+    }
+
+    public FormDTO deleteForm(Long formId) {
+        Form form = formRepository.findById(formId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form not found"));
+
+        formRepository.delete(form);
+        return FormMapper.INSTANCE.toDTO(form);
+    }
+
+    public List<FormDTO> getAllForms() {
+        List<Form> forms = formRepository.findAll();
+        return FormMapper.INSTANCE.toDTOList(forms);
+    }
 }

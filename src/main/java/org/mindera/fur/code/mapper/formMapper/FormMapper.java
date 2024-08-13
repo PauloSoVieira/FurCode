@@ -3,6 +3,7 @@ package org.mindera.fur.code.mapper.formMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.mindera.fur.code.dto.form.FormCreateDTO;
 import org.mindera.fur.code.dto.form.FormDTO;
 import org.mindera.fur.code.dto.form.FormFieldAnswerDTO;
 import org.mindera.fur.code.model.form.Form;
@@ -23,4 +24,6 @@ public interface FormMapper {
     FormFieldAnswerDTO toFormFieldAnswerDTO(FormFieldAnswer formFieldAnswer);
 
     List<FormDTO> toDTOList(List<Form> forms);
+
+    Form toModelFromCreateDTO(FormCreateDTO formCreateDTO);
 }

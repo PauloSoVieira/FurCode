@@ -1,0 +1,46 @@
+{
+  "name": "Donation Form",
+  "type": "DONATION_TEMPLATE",
+  "fields": [
+    {
+      "fieldType": "TEXT",
+      "question": "Full Name"
+    },
+    {
+      "fieldType": "EMAIL",
+      "question": "Email Address"
+    },
+    {
+      "fieldType": "TEXT",
+      "question": "Phone Number"
+    },
+    {
+      "fieldType": "NUMBER",
+      "question": "Donation Amount (€)"
+    },
+    {
+      "fieldType": "RADIO",
+      "question": "Donation Frequency: One-time, Monthly, Annually"
+    },
+    {
+      "fieldType": "DROPDOWN",
+      "question": "Donation Category: General Fund, Specific Pet, Emergency Relief"
+    },
+    {
+      "fieldType": "TEXTAREA",
+      "question": "Personal Message (Optional)"
+    },
+    {
+      "fieldType": "CHECKBOX",
+      "question": "I would like to receive updates about how my donation is being used"
+    },
+    {
+      "fieldType": "CHECKBOX",
+      "question": "I would like my donation to remain anonymous"
+    },
+    {
+      "fieldType": "TEXT",
+      "question": "If donating in honor/memory of someone, please enter their name"
+    }
+  ]
+}

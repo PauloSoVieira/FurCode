@@ -1,0 +1,45 @@
+{
+  "formId": 1,
+  "answers": [
+    {
+      "fieldId": 1,
+      "answer": "Paulo Vieira"
+    },
+    {
+      "fieldId": 2,
+      "answer": "paulo@example.com"
+    },
+    {
+      "fieldId": 3,
+      "answer": "555-1234"
+    },
+    {
+      "fieldId": 4,
+      "answer": "100.00"
+    },
+    {
+      "fieldId": 5,
+      "answer": "One-time"
+    },
+    {
+      "fieldId": 6,
+      "answer": "General Fund"
+    },
+    {
+      "fieldId": 7,
+      "answer": "Thank you for your great work!"
+    },
+    {
+      "fieldId": 8,
+      "answer": "true"
+    },
+    {
+      "fieldId": 9,
+      "answer": "false"
+    },
+    {
+      "fieldId": 10,
+      "answer": ""
+    }
+  ]
+}
