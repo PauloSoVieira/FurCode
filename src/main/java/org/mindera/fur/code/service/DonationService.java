@@ -6,7 +6,6 @@ import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.form.FormDTO;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
-import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
 import org.mindera.fur.code.mapper.DonationMapper;
 import org.mindera.fur.code.messages.donation.DonationMessages;
 import org.mindera.fur.code.messages.person.PersonMessages;
@@ -65,47 +64,45 @@ public class DonationService {
         }
     }
 
+
     /**
-     * Creates a new donation record based on the provided DonationDTO.
+     * Creates a new donation based on the provided donation creation details.
      *
-     * <p>This method performs several validation checks on the provided DonationDTO:
-     * <ul>
-     *   <li>Ensures that the donation ID, total amount, date, pet ID, and person ID
-     *       are not null and that the total amount is greater than 0.</li>
-     *   <li>Validates that the donation date is in the future.</li>
-     *   <li>Ensures that the total donation amount is less than 999999.</li>
-     * </ul>
-     * If any of these conditions are not met, an appropriate exception is thrown.
-     *
-     * <p>After successful validation, the donation is mapped to a Donation model object
-     * and saved to the repository.
-     *
-     * @param donationCreateDTO the DonationDTO containing the donation details
-     * @return the saved Donation object
-     * @throws IllegalArgumentException       if any required fields are null or invalid
-     * @throws InvalidDonationDateException   if the donation date is not in the future
-     * @throws InvalidDonationAmountException if the donation amount is too large
-     */
+     * @param donationCreateDTO the data transfer object containing the details for creating a donation.
+     *                          This includes information such as the donor's ID, the shelter's ID, and donation specifics.
+     * @return DonationDTO the data transfer object representing the saved donation, including the associated form details.
+     * @throws IOException              if there is an issue during the donation validation or form creation process.
+     * @throws IllegalArgumentException if the specified person or shelter cannot be found.
+     * @throws RuntimeException         if the form associated with the donation cannot be found.
+     * @apiNote This method performs several operations:
+     * - Validates the donation creation details.
+     * - Generates a donation form from the "donation-template".
+     * - Maps the donation creation DTO to a new Donation entity.
+     * - Associates the Donation entity with the specified Person and Shelter.
+     * - Links the Donation with the generated Form.
+     * - Saves the Donation entity and returns the corresponding DTO.
+     * @operationId createDonation
+     * @summary Creates a new donation.
+     * @description This operation creates a new donation record, links it with a generated form,
+     * and associates it with a donor and a shelter. The created donation is then saved
+     * and the resulting donation DTO is returned.
+     **/
     public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) throws IOException {
         donationValidations(donationCreateDTO);
 
-        // Create the form from template
         FormDTO formDTO = formService.createFormFromTemplate("donation-template");
 
         Donation newDonation = DonationMapper.INSTANCE.toModel(donationCreateDTO);
 
-        // Set the person and shelter
         newDonation.setPerson(personRepository.findById(donationCreateDTO.getPersonId())
                 .orElseThrow(() -> new IllegalArgumentException(PersonMessages.PERSON_NOT_FOUND)));
         newDonation.setShelter(shelterRepository.findById(donationCreateDTO.getShelterId())
                 .orElseThrow(() -> new IllegalArgumentException(ShelterMessages.SHELTER_NOT_FOUND)));
 
-        // Set the form
         Form form = formRepository.findById(formDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Form not found"));
         newDonation.setForm(form);
 
-        // Save the donation
         Donation savedDonation = donationRepository.save(newDonation);
         return DonationMapper.INSTANCE.toDTO(savedDonation);
     }
