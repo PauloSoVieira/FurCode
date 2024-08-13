@@ -5,12 +5,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.exceptions.token.TokenException;
 import org.mindera.fur.code.messages.token.TokenMessage;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -50,10 +49,9 @@ public class SecurityFilter extends OncePerRequestFilter {
             String email = tokenService.validateToken(token);
             UserDetails person = personRepository.findByEmail(email);
 
-            if (person == null) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(person, null, person.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (person == null || person.equals(" ")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                throw new PersonException(TokenMessage.PERSON_NOT_FOUND);
             }
         } catch (TokenException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
