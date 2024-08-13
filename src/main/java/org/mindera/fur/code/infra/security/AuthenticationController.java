@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,10 +45,17 @@ public class AuthenticationController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid PersonAuthenticationDTO personAuthenticationDTO) {
+        Person person = personRepository.findByEmail(personAuthenticationDTO.getEmail());
+
         if (personRepository.findByEmail(personAuthenticationDTO.getEmail()) == null) {
             return ResponseEntity.badRequest().build();
         }
-        Person person = personRepository.findByEmail(personAuthenticationDTO.getEmail());
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(personAuthenticationDTO.getPassword(), person.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         PersonDTO personDTO = personMapper.INSTANCE.toDTO(person);
         String token = tokenService.generateToken(personDTO);
 
