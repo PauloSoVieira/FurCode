@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.messages.token.TokenMessage;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,7 @@ public class TokenService {
      * @return The email
      */
     public String validateToken(String token) {
+
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
             return JWT.require(algorithm)
@@ -56,8 +58,8 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (JWTVerificationException exception) {
-            throw new RuntimeException(" ", exception);
+        } catch (PersonException exception) {
+            throw new RuntimeException("You don't have permission ", exception);
         }
     }
 

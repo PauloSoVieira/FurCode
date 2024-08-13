@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * DTO for creating an adoption request.
+ */
 @Data
 public class AdoptionRequestCreationDTO {
 
@@ -24,9 +27,19 @@ public class AdoptionRequestCreationDTO {
     //@NotBlank
     //private Set<RequestDetailDTO> requestDetails;
 
+    /**
+     * Default constructor.
+     */
     public AdoptionRequestCreationDTO() {
     }
 
+    /**
+     * Constructor with parameters.
+     *
+     * @param shelterId The id of the shelter.
+     * @param personId  The id of the person.
+     * @param petId     The id of the pet.
+     */
     public AdoptionRequestCreationDTO(Long shelterId, Long personId, Long petId) {
         this.shelterId = shelterId;
         this.personId = personId;

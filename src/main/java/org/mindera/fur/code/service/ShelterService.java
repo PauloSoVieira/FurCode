@@ -20,7 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-
+/**
+ * Service class for handling Shelters.
+ */
 @Service
 public class ShelterService {
 
@@ -33,6 +35,15 @@ public class ShelterService {
     private ShelterMapper shelterMapper;
     private PetMapper petMapper;
 
+    /**
+     * Constructor for the ShelterService.
+     *
+     * @param shelterRepository
+     * @param personRepository
+     * @param petRepository
+     * @param petService
+     * @param donationService
+     */
     @Autowired
     public ShelterService(ShelterRepository shelterRepository,
                           PersonRepository personRepository,
@@ -47,6 +58,11 @@ public class ShelterService {
         this.donationService = donationService;
     }
 
+    /**
+     * Validates the id.
+     *
+     * @param id
+     */
     private static void idValidation(Long id) {
         if (id == null) {
             throw new PersonException(ShelterMessages.ID_CANT_BE_NULL);
@@ -56,6 +72,11 @@ public class ShelterService {
         }
     }
 
+    /**
+     * Validates the shelter creation dto.
+     *
+     * @param shelterCreationDTO
+     */
     private static void shelterValidation(ShelterCreationDTO shelterCreationDTO) {
 
         if (shelterCreationDTO.getName() == null) {
@@ -108,17 +129,34 @@ public class ShelterService {
         }
     }
 
+    /**
+     * Gets all shelters.
+     *
+     * @return
+     */
     public List<ShelterDTO> getAllShelters() {
         List<Shelter> shelters = shelterRepository.findAll();
         return shelterMapper.INSTANCE.toDto(shelters);
     }
 
+    /**
+     * Gets a shelter by id.
+     *
+     * @param id
+     * @return
+     */
     public ShelterDTO getShelterById(Long id) {
         idValidation(id);
         Shelter shelter = shelterRepository.findById(id).orElseThrow();
         return shelterMapper.INSTANCE.toDto(shelter);
     }
 
+    /**
+     * Creates a shelter.
+     *
+     * @param shelterCreationDTO
+     * @return
+     */
     public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
         shelterValidation(shelterCreationDTO);
         Shelter shelter = shelterMapper.INSTANCE.toModel(shelterCreationDTO);
@@ -126,6 +164,12 @@ public class ShelterService {
         return ShelterMapper.INSTANCE.toDto(shelter);
     }
 
+    /**
+     * Deletes a shelter by id.
+     *
+     * @param id
+     * @return
+     */
     public ShelterDTO deleteShelter(Long id) {
         idValidation(id);
         Shelter shelter = shelterRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Error"));
@@ -133,6 +177,13 @@ public class ShelterService {
         return ShelterMapper.INSTANCE.toDto(shelter);
     }
 
+    /**
+     * Updates a shelter.
+     *
+     * @param id
+     * @param shelterDTO
+     * @return
+     */
     public ShelterDTO updateShelter(Long id, ShelterDTO shelterDTO) {
         idValidation(id);
         Shelter shelter = shelterRepository.findById(id).orElseThrow();
@@ -149,10 +200,19 @@ public class ShelterService {
         return shelterMapper.INSTANCE.toDto(shelter);
     }
 
+    /**
+     * Deletes all shelters.
+     */
     public void deleteAllShelters() {
         shelterRepository.deleteAll();
     }
 
+    /**
+     * Adds a pet to a shelter.
+     *
+     * @param shelterId
+     * @param petId
+     */
     public void addPetToShelter(Long shelterId, Long petId) {
         idValidation(shelterId);
         Pet pet = petRepository.findById(petId)
@@ -162,6 +222,12 @@ public class ShelterService {
         petRepository.save(pet);
     }
 
+    /**
+     * Gets all pets in a shelter.
+     *
+     * @param id
+     * @return
+     */
     public List<PetDTO> getAllPetsInShelter(Long id) {
         idValidation(id);
         return petService.findAllPets()
@@ -172,6 +238,12 @@ public class ShelterService {
                 .toList();
     }
 
+    /**
+     * Gets all donations by id.
+     *
+     * @param id
+     * @return
+     */
     public List<DonationDTO> getAllDonationsById(Long id) {
         idValidation(id);
         return donationService.getAllDonationsByShelterId(id);

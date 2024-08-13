@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * DTO for creating a shelter.
+ */
 @Data
 public class ShelterCreationDTO {
     @NotNull
@@ -43,8 +46,23 @@ public class ShelterCreationDTO {
     private Boolean isActive;
 
     @NotNull
+    @NotBlank
     private Date createdAt;
 
+    /**
+     * Constructor with parameters.
+     *
+     * @param name       The name of the shelter.
+     * @param vat        The vat number of the shelter.
+     * @param email      The email of the shelter.
+     * @param address1   The address1 of the shelter.
+     * @param address2   The address2 of the shelter.
+     * @param postalCode The postal code of the shelter.
+     * @param phone      The phone number of the shelter.
+     * @param size       The size of the shelter.
+     * @param isActive   The isActive status of the shelter.
+     * @param createdAt  The creation date of the shelter.
+     */
     public ShelterCreationDTO(String name, Long vat, String email, String address1, String address2, String postalCode, Long phone, Long size, Boolean isActive, Date createdAt) {
         this.name = name;
         this.vat = vat;
@@ -58,9 +76,17 @@ public class ShelterCreationDTO {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Default constructor.
+     */
     public ShelterCreationDTO() {
     }
 
+    /**
+     * Constructor with parameters.
+     *
+     * @param name The name of the shelter.
+     */
     public ShelterCreationDTO(String name) {
         this.name = name;
     }

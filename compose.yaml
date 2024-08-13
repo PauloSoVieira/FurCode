@@ -26,8 +26,17 @@ services:
     volumes:
       - minio-data:/data
 
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
 volumes:
   db-data:
   minio-data:
 networks:
   spring-postgres:
+
+

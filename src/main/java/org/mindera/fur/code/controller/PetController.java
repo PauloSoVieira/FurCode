@@ -32,7 +32,6 @@ public class PetController {
         this.aiService = aiService;
     }
 
-
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     @Cacheable(cacheNames = "pets")
