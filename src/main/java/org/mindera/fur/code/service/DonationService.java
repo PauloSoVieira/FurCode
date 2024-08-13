@@ -30,7 +30,8 @@ import java.util.Optional;
 @Service
 @Schema(description = "The donation service")
 public class DonationService {
-
+    private static final Integer DONATION_AMOUNT_MAX = 999999;
+    private static final Integer DONATION_AMOUNT_MIN = 0;
     private final DonationRepository donationRepository;
     private final ShelterRepository shelterRepository;
     private final PersonRepository personRepository;
@@ -47,7 +48,7 @@ public class DonationService {
     }
 
     private static void donationValidations(DonationCreateDTO donationCreateDTO) {
-        if (donationCreateDTO.getTotal() <= 0 ||
+        if (donationCreateDTO.getTotal() <= DONATION_AMOUNT_MIN ||
                 donationCreateDTO.getDate() == null ||
                 donationCreateDTO.getShelterId() == null ||
                 donationCreateDTO.getPersonId() == null) {
@@ -59,7 +60,7 @@ public class DonationService {
 //            throw new InvalidDonationDateException("Donation date must be in the future");
 //         }
 
-        if (donationCreateDTO.getTotal() >= 999999) {
+        if (donationCreateDTO.getTotal() >= DONATION_AMOUNT_MAX) {
             throw new InvalidDonationAmountException("Donation total must be less than 999999");
         }
     }
@@ -89,20 +90,15 @@ public class DonationService {
      **/
     public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) throws IOException {
         donationValidations(donationCreateDTO);
-
         FormDTO formDTO = formService.createFormFromTemplate("donation-template");
-
         Donation newDonation = DonationMapper.INSTANCE.toModel(donationCreateDTO);
-
         newDonation.setPerson(personRepository.findById(donationCreateDTO.getPersonId())
                 .orElseThrow(() -> new IllegalArgumentException(PersonMessages.PERSON_NOT_FOUND)));
         newDonation.setShelter(shelterRepository.findById(donationCreateDTO.getShelterId())
                 .orElseThrow(() -> new IllegalArgumentException(ShelterMessages.SHELTER_NOT_FOUND)));
-
         Form form = formRepository.findById(formDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Form not found"));
         newDonation.setForm(form);
-
         Donation savedDonation = donationRepository.save(newDonation);
         return DonationMapper.INSTANCE.toDTO(savedDonation);
     }
