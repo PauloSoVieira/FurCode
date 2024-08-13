@@ -31,10 +31,10 @@ public class PetController {
 
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    //@Cacheable(cacheNames = "pets")
-    public ResponseEntity<List<PetDTO>> getAllPets() {
+    @Cacheable(cacheNames = "pets")
+    public List<PetDTO> getAllPets() {
         List<PetDTO> petDTOs = petService.findAllPets();
-        return new ResponseEntity<>(petDTOs, HttpStatus.OK);
+        return petDTOs;
     }
 
     @Operation(summary = "Get a pet by ID")
@@ -46,7 +46,7 @@ public class PetController {
 
     @Operation(summary = "Create a new pet")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    //@CacheEvict(cacheNames = "pets", allEntries = true)
+    @CacheEvict(cacheNames = "pets", allEntries = true)
     public ResponseEntity<PetDTO> createPet(@RequestBody @Valid PetCreateDTO petCreateDTO) {
         PetDTO petDTO = petService.addPet(petCreateDTO);
         return new ResponseEntity<>(petDTO, HttpStatus.CREATED);
@@ -54,7 +54,7 @@ public class PetController {
 
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    //@CachePut(cacheNames = "pets", key = "#petDTO.id")
+    @CachePut(cacheNames = "pets", key = "#petDTO.id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         petService.updatePet(id, petUpdateDTO);
