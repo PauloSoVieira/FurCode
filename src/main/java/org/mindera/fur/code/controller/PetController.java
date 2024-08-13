@@ -38,7 +38,7 @@ public class PetController {
     }
 
     @Operation(summary = "Get a pet by id")
-   
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
         PetDTO petDTO = petService.findPetById(id);

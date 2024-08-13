@@ -10,6 +10,9 @@ import org.mindera.fur.code.exceptions.token.TokenException;
 import org.mindera.fur.code.messages.token.TokenMessage;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -53,10 +56,16 @@ public class SecurityFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 throw new PersonException(TokenMessage.PERSON_NOT_FOUND);
             }
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    person, null, person.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
         } catch (TokenException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(TokenMessage.TOKEN_CREATION_ERROR);
         }
+        filterChain.doFilter(request, response);
     }
 
     /**
