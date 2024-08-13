@@ -29,7 +29,7 @@ public class FileController {
     public ResponseEntity<Void> uploadImagePet(@PathVariable("id") Long id, @RequestBody FileUploadDTO file) {
         String filePath = String.format("/pet/%s/image/", id);
         fileService.uploadImagePet(filePath, file, id);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Download a pet image")

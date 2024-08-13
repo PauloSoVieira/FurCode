@@ -5,9 +5,9 @@ import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
+import org.apache.commons.lang3.StringUtils;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
 import org.mindera.fur.code.exceptions.file.FileException;
-import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -20,11 +20,13 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 public class FileService {
 
     private static final String BUCKET_NAME = "furcode";
+    private static final int MAX_FILE_UPLOAD_SIZE = 10000000;
 
     private final MinioClient minioClient;
     private final PetService petService;
@@ -47,18 +49,14 @@ public class FileService {
             throw new IllegalArgumentException("Pet ID must be provided");
         }
 
-        // disable just for testing
-        /*
         if (petService.findPetById(id) == null) {
             throw new IllegalArgumentException("Pet not found");
         }
-         */
 
-        //check if the file is valid
         checkFileValidity(file);
-
+        checkImageType(file.getFileData());
+        // temporary file
         File newFile = convertBase64ToFile(file.getFileData(), file.getMd5());
-
         uploadFileToBucket(filePath, file, newFile);
         newFile.delete();
     }
@@ -79,6 +77,54 @@ public class FileService {
         }
 
         checkFileChecksum(file.getFileData(), file.getMd5());
+        checkFileSize(file.getFileData());
+    }
+
+    /**
+     * Checks the type of image.
+     * It uses the first 16 bytes of the file to check the type, using file signatures.
+     * PNG, JPG, and WEBP are supported. Others throw an exception.
+     *
+     * @param fileData Base64-encoded string.
+     * @throws FileException if the file type is not an image.
+     */
+    private void checkImageType(String fileData) {
+        String fileSignature = StringUtils.left(fileData, 16);
+        // Todo: change this to a better place
+        List<String> fileSignatures = List.of(
+                "iVBORw0KGgo", // png
+                "/9j/", //jpeg, jpg
+                "U"); //webp
+
+        if (fileSignatures.stream()
+                .noneMatch(fileSignature::startsWith)) {
+            throw new FileException("File type must be an image. Images allowed are png, jpg, and webp.");
+        }
+    }
+
+    /**
+     * Checks the size of a file.
+     *
+     * @param fileData the Base64-encoded string.
+     * @throws FileException if the file size is greater than the maximum allowed size.
+     */
+    private void checkFileSize(String fileData) {
+        int fileSize = fileSize(fileData);
+        if (fileSize > MAX_FILE_UPLOAD_SIZE) {
+            throw new FileException("File size must be less than " + MAX_FILE_UPLOAD_SIZE + " bytes. Current file size: " + fileSize + " bytes" +
+                    " Max upload in MB: " + (MAX_FILE_UPLOAD_SIZE / 1000000) + ". File size in MB: " + (fileSize / 1000000));
+        }
+    }
+
+    /**
+     * Calculates the size of a file.
+     *
+     * @param fileData the Base64-encoded string.
+     * @return the size of the file.
+     */
+    private int fileSize(String fileData) {
+        byte[] decodedContent = Base64.getDecoder().decode(fileData.getBytes(StandardCharsets.UTF_8));
+        return decodedContent.length;
     }
 
     /**
@@ -93,12 +139,9 @@ public class FileService {
             throw new IllegalArgumentException("Pet ID must be provided");
         }
 
-        // disable just for testing
-        /*
         if (petService.findPetById(id) == null) {
             throw new IllegalArgumentException("Pet not found");
         }
-         */
 
         return downloadFileFromBucket(filePath);
     }

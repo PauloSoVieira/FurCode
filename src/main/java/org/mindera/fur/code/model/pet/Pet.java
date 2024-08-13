@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.mindera.fur.code.model.Shelter;
+import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
 import java.util.List;
 
@@ -38,19 +39,19 @@ public class Pet {
     @Column(nullable = false)
     private Boolean isAdopted;
 
-    //@NotNull(message = "Size must be provided")
-    @NotBlank(message = "Size must be provided")
-    //@Enumerated(EnumType.STRING)
+    @NotNull(message = "Vaccination status is required")
     @Column(nullable = false)
-    private String size;
+    private Boolean isVaccinated;
 
-    // TODO: add isVacinated
+    @NotNull(message = "Size must be provided")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PetSizeEnum size;
 
     @NotNull(message = "Pet weight must be provided")
     @DecimalMin(value = "0.01", message = "Pet weight must be greater than 0.01 kilos")
     @DecimalMax(value = "999.99", message = "Pet weight must be less than 999.99 kilos")
     @Column(nullable = false)
-
     private Double weight;
 
     @NotBlank(message = "Pet color must be provided")
