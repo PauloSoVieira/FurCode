@@ -4,6 +4,7 @@ package org.mindera.fur.code.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.mindera.fur.code.model.form.Form;
 
 import java.util.Date;
 
@@ -35,5 +36,7 @@ public class Donation {
     @Schema(description = "The person who donated", required = true)
     private Person person;
 
-
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "form_id", nullable = false)
+    private Form form;
 }

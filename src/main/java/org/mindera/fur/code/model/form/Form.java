@@ -24,6 +24,8 @@ public class Form {
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormFieldAnswer> formFieldAnswers = new ArrayList<>();
+    @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FormField> fields = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

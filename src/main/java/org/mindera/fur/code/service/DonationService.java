@@ -3,6 +3,7 @@ package org.mindera.fur.code.service;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
+import org.mindera.fur.code.dto.form.FormDTO;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
@@ -11,13 +12,17 @@ import org.mindera.fur.code.messages.donation.DonationMessages;
 import org.mindera.fur.code.messages.person.PersonMessages;
 import org.mindera.fur.code.messages.shelter.ShelterMessages;
 import org.mindera.fur.code.model.Donation;
+import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.repository.DonationRepository;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
+import org.mindera.fur.code.repository.form.FormRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
+import org.mindera.fur.code.service.form.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,12 +35,16 @@ public class DonationService {
     private final DonationRepository donationRepository;
     private final ShelterRepository shelterRepository;
     private final PersonRepository personRepository;
+    private final FormService formService;
+    private final FormRepository formRepository;
 
     @Autowired
-    public DonationService(DonationRepository donationRepository, PersonRepository personRepository, ShelterRepository shelterRepository, PetRepository petRepository) {
+    public DonationService(DonationRepository donationRepository, PersonRepository personRepository, ShelterRepository shelterRepository, PetRepository petRepository, FormService formService, FormRepository formRepository) {
         this.donationRepository = donationRepository;
         this.shelterRepository = shelterRepository;
         this.personRepository = personRepository;
+        this.formService = formService;
+        this.formRepository = formRepository;
     }
 
     private static void donationValidations(DonationCreateDTO donationCreateDTO) {
@@ -77,18 +86,28 @@ public class DonationService {
      * @throws InvalidDonationDateException   if the donation date is not in the future
      * @throws InvalidDonationAmountException if the donation amount is too large
      */
-    public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) {
-        donationValidations(donationCreateDTO); // TODO: this is not working, please fix
+    public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) throws IOException {
+        donationValidations(donationCreateDTO);
+
+        // Create the form from template
+        FormDTO formDTO = formService.createFormFromTemplate("donation-template");
 
         Donation newDonation = DonationMapper.INSTANCE.toModel(donationCreateDTO);
 
-        newDonation.setPerson(personRepository.findById
-                (donationCreateDTO.getPersonId()).orElseThrow(() -> new IllegalArgumentException(PersonMessages.PERSON_NOT_FOUND)));
-        newDonation.setShelter(shelterRepository.findById(donationCreateDTO.getShelterId()).orElseThrow(() ->
-                new IllegalArgumentException(ShelterMessages.SHELTER_NOT_FOUND)));
+        // Set the person and shelter
+        newDonation.setPerson(personRepository.findById(donationCreateDTO.getPersonId())
+                .orElseThrow(() -> new IllegalArgumentException(PersonMessages.PERSON_NOT_FOUND)));
+        newDonation.setShelter(shelterRepository.findById(donationCreateDTO.getShelterId())
+                .orElseThrow(() -> new IllegalArgumentException(ShelterMessages.SHELTER_NOT_FOUND)));
 
-        donationRepository.save(newDonation);
-        return DonationMapper.INSTANCE.toDTO(newDonation);
+        // Set the form
+        Form form = formRepository.findById(formDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Form not found"));
+        newDonation.setForm(form);
+
+        // Save the donation
+        Donation savedDonation = donationRepository.save(newDonation);
+        return DonationMapper.INSTANCE.toDTO(savedDonation);
     }
 
     /**

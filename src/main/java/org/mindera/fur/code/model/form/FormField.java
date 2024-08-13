@@ -23,4 +23,8 @@ public class FormField {
 
     private boolean active = true;
 
+
+    @ManyToOne
+    @JoinColumn(name = "form_id")
+    private Form form;
 }

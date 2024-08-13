@@ -33,10 +33,8 @@ public class FormService {
     private final TemplateLoaderUtil templateLoader;
 
 
-
-
     @Autowired
-  public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService, TemplateLoaderUtil templateLoader) {
+    public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService, TemplateLoaderUtil templateLoader) {
         this.formRepository = formRepository;
         this.formFieldRepository = formFieldRepository;
         this.formFieldAnswerRepository = formFieldAnswerRepository;
@@ -75,12 +73,6 @@ public class FormService {
 
         return FormMapper.INSTANCE.toDTO(savedForm);
     }
-
-
-
-
-
-
 
 
     @Transactional
@@ -127,10 +119,6 @@ public class FormService {
         Form form = formRepository.findById(formAnswerDTO.getFormId())
                 .orElseThrow(() -> new RuntimeException("Form not found"));
 
-        if ("DONATION_TEMPLATE".equals(form.getType())) {
-            validateDonationForm(formAnswerDTO);
-        }
-
         Map<Long, FormFieldAnswer> answerMap = form.getFormFieldAnswers().stream()
                 .collect(Collectors.toMap(a -> a.getFormField().getId(), a -> a));
 
@@ -147,7 +135,15 @@ public class FormService {
     }
 
     private void validateDonationForm(FormAnswerDTO formAnswerDTO) {
+        if (formAnswerDTO.getAnswers() == null || formAnswerDTO.getAnswers().isEmpty()) {
+            throw new IllegalArgumentException("No answers provided for the donation form");
+        }
+
         for (FieldAnswerDTO fieldAnswer : formAnswerDTO.getAnswers()) {
+            if (fieldAnswer == null) {
+                continue; // Skip null answers
+            }
+
             FormField field = formFieldRepository.findById(fieldAnswer.getFieldId())
                     .orElseThrow(() -> new RuntimeException("Field not found: " + fieldAnswer.getFieldId()));
 
@@ -163,7 +159,6 @@ public class FormService {
             }
         }
     }
-
 
     @Transactional
     public FormDTO addFieldToTemplate(String templateName, FormFieldCreateDTO newField) throws IOException {
@@ -207,7 +202,6 @@ public class FormService {
     public FormTemplateDTO getTemplate(String templateName) throws IOException {
         return templateLoader.loadTemplate(templateName);
     }
-
 
 
 //    @Transactional

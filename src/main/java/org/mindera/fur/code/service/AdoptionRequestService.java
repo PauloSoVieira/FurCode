@@ -1,7 +1,9 @@
 package org.mindera.fur.code.service;
 
+import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
+import org.mindera.fur.code.dto.form.FormDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.exceptions.adoptionRequest.AdoptionRequestNotFound;
@@ -10,14 +12,18 @@ import org.mindera.fur.code.mapper.RequestDetailMapper;
 import org.mindera.fur.code.messages.adoptionRequest.AdoptionRequestMessage;
 import org.mindera.fur.code.model.AdoptionRequest;
 import org.mindera.fur.code.model.RequestDetail;
+import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.RequestDetailRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
+import org.mindera.fur.code.repository.form.FormRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
+import org.mindera.fur.code.service.form.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -34,6 +40,8 @@ public class AdoptionRequestService {
     private PersonRepository personRepository;
     private RequestDetailService requestDetailService;
     private RequestDetailRepository requestDetailRepository;
+    private FormService formService;
+    private FormRepository formRepository;
 
     /**
      * Constructor for the AdoptionRequestService.
@@ -51,13 +59,15 @@ public class AdoptionRequestService {
                                   ShelterRepository shelterRepository,
                                   PersonRepository personRepository,
                                   RequestDetailService requestDetailService,
-                                  RequestDetailRepository requestDetailRepository) {
+                                  RequestDetailRepository requestDetailRepository, FormService formService, FormRepository formRepository) {
         this.adoptionRequestRepository = adoptionRequestRepository;
         this.petRepository = petRepository;
         this.shelterRepository = shelterRepository;
         this.personRepository = personRepository;
         this.requestDetailService = requestDetailService;
         this.requestDetailRepository = requestDetailRepository;
+        this.formService = formService;
+        this.formRepository = formRepository;
     }
 
     /**
@@ -80,17 +90,26 @@ public class AdoptionRequestService {
      * @param dto the adoption request creation dto
      * @return the adoption request dto
      */
+    @Transactional
     public AdoptionRequestDTO createAdoptionRequest(AdoptionRequestCreationDTO dto) {
-        System.out.println("Service received DTO: " + dto);
         AdoptionRequest request = new AdoptionRequest();
         request.setPet(petRepository.findById(dto.getPetId()).orElseThrow(() -> new RuntimeException("Pet not found")));
         request.setShelter(shelterRepository.findById(dto.getShelterId()).orElseThrow(() -> new RuntimeException("Shelter not found")));
         request.setPerson(personRepository.findById(dto.getPersonId()).orElseThrow(() -> new RuntimeException("Person not found")));
-        System.out.println("AdoptionRequest before saving: " + request);
+
+        try {
+            FormDTO formDTO = formService.createFormFromTemplate("adoption-template");
+            Form form = formRepository.findById(formDTO.getId())
+                    .orElseThrow(() -> new RuntimeException("Form not found after creation"));
+            request.setForm(form);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create form for adoption request", e);
+        }
+
         AdoptionRequest savedRequest = adoptionRequestRepository.save(request);
-        System.out.println("AdoptionRequest after saving: " + savedRequest);
-        return adoptionRequestMapper.INSTANCE.toDTO(savedRequest);
+        return AdoptionRequestMapper.INSTANCE.toDTO(savedRequest);
     }
+
 
     /**
      * Updates an adoption request.

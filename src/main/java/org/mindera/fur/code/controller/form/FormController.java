@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/forms")
@@ -52,14 +53,25 @@ public class FormController {
     @PostMapping("/template/{templateName}")
     @Operation(summary = "Create a form from a predefined template")
     public ResponseEntity<FormDTO> createFormFromTemplate(@PathVariable String templateName) throws IOException {
-       // return ResponseEntity.ok(formService.createFormFromTemplate(templateName));
+        // return ResponseEntity.ok(formService.createFormFromTemplate(templateName));
         return new ResponseEntity<>(formService.createFormFromTemplate(templateName), HttpStatus.CREATED);
     }
 
     @PostMapping("/{formId}")
     @Operation(summary = "Submit answers for a form")
-    public ResponseEntity<FormDTO> submitFormAnswers(@PathVariable Long formId, @RequestBody FormAnswerDTO formAnswerDTO) {
+    public ResponseEntity<FormDTO> submitFormAnswers(@PathVariable Long formId, @RequestBody FormDTO formDTO) {
+        FormAnswerDTO formAnswerDTO = new FormAnswerDTO();
         formAnswerDTO.setFormId(formId);
+        List<FieldAnswerDTO> answers = formDTO.getFormFieldAnswers().stream()
+                .map(ffa -> {
+                    FieldAnswerDTO fieldAnswer = new FieldAnswerDTO();
+                    fieldAnswer.setFieldId(ffa.getFormFieldId());
+                    fieldAnswer.setAnswer(ffa.getAnswer());
+                    return fieldAnswer;
+                })
+                .collect(Collectors.toList());
+        formAnswerDTO.setAnswers(answers);
+
         return new ResponseEntity<>(formService.submitFormAnswers(formAnswerDTO), HttpStatus.CREATED);
     }
 
@@ -68,7 +80,7 @@ public class FormController {
     @Operation(summary = "Add a new field to a template and all its forms")
     public ResponseEntity<FormDTO> addFieldToTemplate(@PathVariable String templateName, @RequestBody FormFieldCreateDTO newField) throws IOException {
 
-            return    new ResponseEntity<>(formService.addFieldToTemplate(templateName, newField), HttpStatus.CREATED);
+        return new ResponseEntity<>(formService.addFieldToTemplate(templateName, newField), HttpStatus.CREATED);
     }
 
     @PostMapping("/{formId}/field")
@@ -83,7 +95,6 @@ public class FormController {
     public ResponseEntity<FormTemplateDTO> getTemplate(@PathVariable String templateName) throws IOException {
         return new ResponseEntity<>(formService.getTemplate(templateName), HttpStatus.OK);
     }
-
 
 
     @GetMapping("/{formId}")

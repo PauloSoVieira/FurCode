@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,37 +39,37 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        //Adoption Request authorizations
-                        .requestMatchers(HttpMethod.POST, "/api/v1/adoption-request").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/adoption-request/update/{id}").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/all").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/{id}").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/adoption-request/delete/{id}").hasAnyAuthority("MANAGER")
-
-                        //Person authorizations
-                        //anyone can create a person
-                        .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/create-shelter").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/person/all").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/person/update/{id}").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/person/set-person-role/{id}").hasAnyAuthority("MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/person/delete/{id}").hasAnyAuthority("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/add-person-to-shelter").hasAnyAuthority("MANAGER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}/get-all-donations").hasAnyAuthority("ADMIN")
-
-                        //Pet authorizations
-                        .requestMatchers(HttpMethod.POST, "/api/v1/pet").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/pet/update/{id}").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/pet/delete/{id}").hasAnyAuthority("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/pet/{id}/create-record").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/pet/{id}/record").hasAnyAuthority("ADMIN")
-
-                        //Shelter authorizations
-                        .requestMatchers(HttpMethod.POST, "/api/v1/shelter").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/shelter/all").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/shelter/{id}").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shelter/delete/{id}").hasAnyAuthority("MANAGER")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/shelter/update/{id}").hasAnyAuthority("MANAGER")
+//                        //Adoption Request authorizations
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/adoption-request").hasAnyAuthority("USER")
+//                        .requestMatchers(HttpMethod.PATCH, "/api/v1/adoption-request/update/{id}").hasAnyAuthority("USER")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/all").hasAnyAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/{id}").hasAnyAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/v1/adoption-request/delete/{id}").hasAnyAuthority("MANAGER")
+//
+//                        //Person authorizations
+//                        //anyone can create a person
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/create-shelter").hasAnyAuthority("USER")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/person/all").hasAnyAuthority("USER")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}").hasAnyAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.PATCH, "/api/v1/person/update/{id}").hasAnyAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.PATCH, "/api/v1/person/set-person-role/{id}").hasAnyAuthority("MANAGER")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/v1/person/delete/{id}").hasAnyAuthority("MANAGER")
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/add-person-to-shelter").hasAnyAuthority("MANAGER")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}/get-all-donations").hasAnyAuthority("ADMIN")
+//
+//                        //Pet authorizations
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/pet").hasAnyAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/api/v1/pet/update/{id}").hasAnyAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/v1/pet/delete/{id}").hasAnyAuthority("MANAGER")
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/pet/{id}/create-record").hasAnyAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/pet/{id}/record").hasAnyAuthority("ADMIN")
+//
+//                        //Shelter authorizations
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/shelter").hasAnyAuthority("USER")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/shelter/all").hasAnyAuthority("USER")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/shelter/{id}").hasAnyAuthority("USER")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shelter/delete/{id}").hasAnyAuthority("MANAGER")
+//                        .requestMatchers(HttpMethod.PATCH, "/api/v1/shelter/update/{id}").hasAnyAuthority("MANAGER")
 
                         .anyRequest().permitAll())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
