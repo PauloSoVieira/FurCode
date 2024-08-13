@@ -4,10 +4,10 @@ package org.mindera.fur.code.dto.adoptionRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.mindera.fur.code.model.State;
 
-import java.util.Date;
-
+/**
+ * DTO for creating an adoption request.
+ */
 @Data
 public class AdoptionRequestCreationDTO {
 
@@ -23,23 +23,28 @@ public class AdoptionRequestCreationDTO {
     @NotBlank
     private Long petId;
 
-    @NotNull
-    @NotBlank
-    private State state;
+    //@NotNull
+    //@NotBlank
+    //private Set<RequestDetailDTO> requestDetails;
 
-    @NotNull
-    @NotBlank
-    private Date date;
-
+    /**
+     * Default constructor.
+     */
     public AdoptionRequestCreationDTO() {
     }
 
-    public AdoptionRequestCreationDTO(Long shelterId, Long personId, Long petId, State state, Date date) {
+    /**
+     * Constructor with parameters.
+     *
+     * @param shelterId The id of the shelter.
+     * @param personId  The id of the person.
+     * @param petId     The id of the pet.
+     */
+    public AdoptionRequestCreationDTO(Long shelterId, Long personId, Long petId) {
         this.shelterId = shelterId;
         this.personId = personId;
         this.petId = petId;
-        this.state = state;
-        this.date = date;
+        //this.requestDetails = requestDetails;
     }
 
     //TODO VERIFY HOW TO LEAVE SOMETHING TO SENT BY DEFAULT

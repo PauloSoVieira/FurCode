@@ -6,32 +6,30 @@ import jakarta.validation.ConstraintViolationException;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
+import org.mindera.fur.code.exceptions.file.FileException;
+import org.mindera.fur.code.exceptions.person.PersonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-
 import java.util.*;
-
 import static org.springframework.http.HttpStatus.*;
 
 
-@Component
-@ControllerAdvice
+//@Component
+//@ControllerAdvice
 public class ExceptionAspect extends ResponseEntityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionAspect.class);
 
@@ -182,6 +180,9 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
             InvalidDonationAmountException.class,
             InvalidDonationDateException.class,
+            FileException.class,
+            PersonException.class
+
     })
     public ResponseEntity<String> InvalidResourceException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Invalid Request/Resource", e.getMessage());

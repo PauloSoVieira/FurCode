@@ -28,9 +28,9 @@ public class DonationCreateDTO {
 
     //@Schema(type = "long", example = "2")
     @NotNull
-    @NotBlank(message = "Pet id is required")
+    @NotBlank(message = "Shelter id is required")
     @Valid
-    private Long petId;
+    private Long shelterId;
 
     //@Schema(type = "long", example = "23")
     @NotNull

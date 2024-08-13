@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "form_fields")
+@Table(name = "form_field")
 @Data
 public class FormField {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

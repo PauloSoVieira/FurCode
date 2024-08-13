@@ -28,6 +28,25 @@ public class FormController {
         return new ResponseEntity<>(formService.createForm(formCreateDTO), HttpStatus.CREATED);
     }
 
+//    @GetMapping("/{id}")
+//    public ResponseEntity<FormDTO> getForm(@PathVariable Long id) {
+//        return ResponseEntity.ok(formService.getForm(id));
+//    }
+//
+//    @PostMapping("/{formId}/fields/{fieldId}")
+//    @Operation(summary = "Add a field to a form with an answer")
+//    public ResponseEntity<FormDTO> addFieldToForm(
+//            @PathVariable Long formId,
+//            @PathVariable Long fieldId,
+//            @RequestBody FieldAnswerDTO answerDTO) {
+//        return ResponseEntity.ok(formService.addFieldToForm(formId, fieldId, answerDTO.getAnswer()));
+//    }
+//
+//    @GetMapping("/{formId}/fields")
+//    @Operation(summary = "Get all fields for a form")
+//    public ResponseEntity<List<FormFieldDTO>> getFieldsForForm(@PathVariable Long formId) {
+//        return ResponseEntity.ok(formService.getFieldsForForm(formId));
+//    }
 
 
     @PostMapping("/template/{templateName}")

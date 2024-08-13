@@ -1,24 +1,31 @@
 package org.mindera.fur.code.dto.adoptionRequest;
 
 import lombok.Data;
-import org.mindera.fur.code.model.State;
 
-import java.util.Date;
-
+/**
+ * DTO for an adoption request.
+ */
 @Data
 public class AdoptionRequestDTO {
     private Long id;
     private Long shelterId;
     private Long personId;
     private Long petId;
-    private State state;
-    private Date date;
+    //private Set<RequestDetailDTO> requestDetails;
 
-    public AdoptionRequestDTO(Long shelterId, Long personId, Long petId, State state, Date date) {
+    /**
+     * Constructor with parameters.
+     *
+     * @param id        The id of the adoption request.
+     * @param shelterId The id of the shelter.
+     * @param personId  The id of the person.
+     * @param petId     The id of the pet.
+     */
+    public AdoptionRequestDTO(Long id, Long shelterId, Long personId, Long petId) {
+        this.id = id;
         this.shelterId = shelterId;
         this.personId = personId;
         this.petId = petId;
-        this.state = state;
-        this.date = date;
+        //this.requestDetails = requestDetails;
     }
 }

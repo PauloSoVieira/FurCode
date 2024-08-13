@@ -1,6 +1,6 @@
-package org.mindera.fur.code.messages;
+package org.mindera.fur.code.messages.person;
 
-public class PersonsMessages {
+public class PersonMessages {
     public static final String POSTAL_CODE_CANT_BE_ZERO = "Postal Code can't be zero";
     public static final String POSTAL_CODE_CANT_BE_NULL = "Postal Code can't be null";
     public static final String PASSWORD_CANT_BE_NULL = "Password can't be null";

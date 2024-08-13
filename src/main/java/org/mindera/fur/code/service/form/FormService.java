@@ -52,6 +52,7 @@ public class FormService {
         Form savedForm = formRepository.save(form);
         return FormMapper.INSTANCE.toDTO(savedForm);
     }
+
     public FormDTO getForm(Long formId) {
         Form form = formRepository.findById(formId)
                 .orElseThrow(() -> new RuntimeException("Form not found"));
@@ -170,6 +171,7 @@ public class FormService {
         template.getFields().add(newField);
         templateLoader.saveTemplate(templateName, template);
 
+        // Update all existing forms based on this template
         List<Form> existingForms = formRepository.findByType(templateName);
         for (Form form : existingForms) {
             addFieldToForm(form, newField);
