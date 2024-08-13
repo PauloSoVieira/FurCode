@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.mindera.fur.code.model.enums.pet.PetTypeEnum;
+import org.mindera.fur.code.model.enums.pet.PetSpeciesEnum;
 
 @Data
 @Entity
@@ -16,14 +16,14 @@ public class PetType {
     private Long id;
 
     @Valid
-    @NotNull(message = "Pet type name must be provided")
+    @NotNull(message = "Pet species name must be provided")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PetTypeEnum type;
+    private PetSpeciesEnum species;
 
     @Valid
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "breed_id", nullable = false)
+    @JoinColumn(name = "pet_breed_id", nullable = false)
     private PetBreed breed;
 }

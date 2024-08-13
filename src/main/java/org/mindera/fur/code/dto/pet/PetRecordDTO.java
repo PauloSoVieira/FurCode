@@ -1,10 +1,7 @@
 package org.mindera.fur.code.dto.pet;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,9 +9,10 @@ import java.util.Date;
 @Data
 public class PetRecordDTO {
 
+    @NotEmpty(message = "Pet ID is required")
     private Long id;
 
-    @NotNull(message = "Pet ID is required")
+    @NotEmpty(message = "Pet ID is required")
     private Long petId;
 
     // Criar um enum de intervenções

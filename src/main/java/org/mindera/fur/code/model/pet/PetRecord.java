@@ -29,7 +29,7 @@ public class PetRecord {
     @NotBlank(message = "Observation is required")
     @Size(max = 999, message = "Observation cannot be longer than 999 characters")
     @Column(length = 999)
-    private String observation;
+    private String observations;
 
     @Valid
     @NotNull(message = "Date is required")

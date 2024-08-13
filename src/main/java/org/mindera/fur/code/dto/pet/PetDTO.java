@@ -19,9 +19,8 @@ public class PetDTO implements Serializable {
     @Size(min = 1, max = 30, message = "Pet name must be between 1 and 30 characters")
     private String name;
 
-    @NotNull(message = "Pet typeId must be provided")
-    //@Enumerated(EnumType.ORDINAL)
-    private Long petTypeId; // changed to int-petTypeId from Pet-petType
+    @NotNull(message = "Pet type ID must be provided")
+    private Long petTypeId;
 
     @NotNull(message = "Shelter ID must be provided")
     private Long shelterId;

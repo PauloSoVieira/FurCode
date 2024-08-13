@@ -14,8 +14,7 @@ public class PetCreateDTO {
     @Size(min = 1, max = 30, message = "Pet name must be between 1 and 30 characters")
     private String name;
 
-    @NotNull(message = "Pet type must be provided")
-    //@Enumerated(EnumType.STRING)
+    @NotNull(message = "Pet type ID must be provided")
     private Long petTypeId;
 
     @NotNull(message = "Shelter ID must be provided")

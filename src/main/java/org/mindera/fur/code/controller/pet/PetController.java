@@ -1,10 +1,10 @@
-package org.mindera.fur.code.controller;
+package org.mindera.fur.code.controller.pet;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.pet.*;
-import org.mindera.fur.code.service.PetService;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -29,18 +29,15 @@ public class PetController {
         this.petService = petService;
     }
 
-
-
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Cacheable(cacheNames = "pets")
-    public List<PetDTO> getAllPets() {
+    //@Cacheable(cacheNames = "pets")
+    public ResponseEntity<List<PetDTO>> getAllPets() {
         List<PetDTO> petDTOs = petService.findAllPets();
-        return petDTOs;
+        return new ResponseEntity<>(petDTOs, HttpStatus.OK);
     }
 
     @Operation(summary = "Get a pet by id")
-   
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
         PetDTO petDTO = petService.findPetById(id);
@@ -49,7 +46,7 @@ public class PetController {
 
     @Operation(summary = "Create a new pet")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(cacheNames = "pets", allEntries = true)
+    //@CacheEvict(cacheNames = "pets", allEntries = true)
     public ResponseEntity<PetDTO> createPet(@RequestBody @Valid PetCreateDTO petCreateDTO) {
         PetDTO petDTO = petService.addPet(petCreateDTO);
         return new ResponseEntity<>(petDTO, HttpStatus.CREATED);
@@ -57,7 +54,7 @@ public class PetController {
 
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CachePut(cacheNames = "pets", key = "#petDTO.id")
+    //@CachePut(cacheNames = "pets", key = "#petDTO.id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         petService.updatePet(id, petUpdateDTO);
@@ -82,12 +79,5 @@ public class PetController {
     public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
         PetRecordDTO petRecordDTO = petService.addPetRecord(id, petRecordCreateDTO);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "Create or fetch a pet breed from external DOG API")
-    @PostMapping(value = "/breed", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PetBreedDTO> createOrFetchBreed(@RequestBody @Valid PetBreedCreateDTO petBreedCreateDTO) {
-        PetBreedDTO breedDTO = petService.addOrFetchBreed(petBreedCreateDTO);
-        return new ResponseEntity<>(breedDTO, HttpStatus.CREATED);
     }
 }
