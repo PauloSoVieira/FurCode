@@ -9,6 +9,7 @@ import org.mindera.fur.code.model.external_apis.dog_api.DogBreedByIdResponse;
 import org.mindera.fur.code.model.external_apis.dog_api.DogBreedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +24,7 @@ import java.util.List;
 @Validated
 @Service
 public class DogApiService {
-    private final String breedsUrl = "/breeds";
+    private static final String BREEDS_URL = "/breeds";
     private final RestTemplate restTemplate;
 
     @Value("${dog_api.base.url}")
@@ -34,15 +35,28 @@ public class DogApiService {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Fetches a dog breed by its ID.
+     *
+     * @param id the ID of the dog breed and description
+     * @return the dog breed
+     */
+    @Cacheable(value = "dogBreeds", key = "#id")
     public DogBreedDTO fetchBreedById(@Valid String id) {
         String url = buildUrlWithId(id);
         DogBreedByIdResponse response = executeGetRequest(url, DogBreedByIdResponse.class);
         return mapToBreedDTO(response, id);
     }
 
+    /**
+     * Fetches all dog breed names.
+     *
+     * @return the list of dog breed names
+     */
+    @Cacheable(value = "allBreedsNames")
     public DogBreedsNamesDTO fetchAllBreedsNames() {
         List<String> allBreedsNames = new ArrayList<>();
-        String url = apiBaseUrl + breedsUrl;
+        String url = apiBaseUrl + BREEDS_URL;
         boolean hasNextPage = true;
 
         while (hasNextPage) {
@@ -54,8 +68,15 @@ public class DogApiService {
         return new DogBreedsNamesDTO(allBreedsNames);
     }
 
+    /**
+     * Fetches a dog breed by its name.
+     *
+     * @param breedName the name of the dog breed
+     * @return the dog breed
+     */
+    @Cacheable(value = "dogBreedCache", key = "#breedName")
     public DogBreedDTO getBreedByName(@Valid String breedName) {
-        String url = apiBaseUrl + breedsUrl;
+        String url = apiBaseUrl + BREEDS_URL;
         boolean hasNextPage = true;
 
         while (hasNextPage) {
@@ -67,13 +88,12 @@ public class DogApiService {
             url = getNextPageUrl(response);
             hasNextPage = (url != null);
         }
-
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, PetMessages.BREED_NOT_FOUND_WITH_NAME + breedName);
     }
 
     // Helper Methods
     private String buildUrlWithId(String id) {
-        return apiBaseUrl + breedsUrl + "/" + id;
+        return apiBaseUrl + BREEDS_URL + "/" + id;
     }
 
     private <T> T executeGetRequest(String url, Class<T> responseType) {
