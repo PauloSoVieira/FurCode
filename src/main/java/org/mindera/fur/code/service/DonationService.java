@@ -38,6 +38,16 @@ public class DonationService {
     private final FormService formService;
     private final FormRepository formRepository;
 
+    /**
+     * Constructor for the DonationService.
+     *
+     * @param donationRepository the donationRepository
+     * @param personRepository   the personRepository
+     * @param shelterRepository  the shelterRepository
+     * @param petRepository      the petRepository
+     * @param formService        the formService
+     * @param formRepository     the formRepository
+     */
     @Autowired
     public DonationService(DonationRepository donationRepository, PersonRepository personRepository, ShelterRepository shelterRepository, PetRepository petRepository, FormService formService, FormRepository formRepository) {
         this.donationRepository = donationRepository;
@@ -47,6 +57,11 @@ public class DonationService {
         this.formRepository = formRepository;
     }
 
+    /**
+     * Validates the donation creation details.
+     *
+     * @param donationCreateDTO the donation creation details
+     */
     private static void donationValidations(DonationCreateDTO donationCreateDTO) {
         if (donationCreateDTO.getTotal() <= DONATION_AMOUNT_MIN ||
                 donationCreateDTO.getDate() == null ||
@@ -54,17 +69,10 @@ public class DonationService {
                 donationCreateDTO.getPersonId() == null) {
             throw new IllegalArgumentException(DonationMessages.DONATION_HAS_INVALID_DATA_FIELDS);
         }
-
-        // TODO: this is not working, please fix
-//        if (donation.getDate().getTime() < donation.getShelterId()) {
-//            throw new InvalidDonationDateException("Donation date must be in the future");
-//         }
-
         if (donationCreateDTO.getTotal() >= DONATION_AMOUNT_MAX) {
             throw new InvalidDonationAmountException("Donation total must be less than 999999");
         }
     }
-
 
     /**
      * Creates a new donation based on the provided donation creation details.
@@ -83,12 +91,8 @@ public class DonationService {
      * - Links the Donation with the generated Form.
      * - Saves the Donation entity and returns the corresponding DTO.
      * @operationId createDonation
-     * @summary Creates a new donation.
-     * @description This operation creates a new donation record, links it with a generated form,
-     * and associates it with a donor and a shelter. The created donation is then saved
-     * and the resulting donation DTO is returned.
-     **/
-    public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) throws IOException {
+     */
+    public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) {
         donationValidations(donationCreateDTO);
         FormDTO formDTO = formService.createFormFromTemplate("donation-template");
         Donation newDonation = DonationMapper.INSTANCE.toModel(donationCreateDTO);

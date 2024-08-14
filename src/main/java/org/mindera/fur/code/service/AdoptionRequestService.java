@@ -1,5 +1,6 @@
 package org.mindera.fur.code.service;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
@@ -74,6 +75,7 @@ public class AdoptionRequestService {
      *
      * @param id the id
      */
+    @Operation(summary = "Validates the id", description = "Validates the id")
     private static void idValidation(Long id) {
         if (id == null) {
             throw new AdoptionRequestNotFound(AdoptionRequestMessage.ADOPTION_REQUEST_ID_CANT_BE_EMPTY);
@@ -84,11 +86,15 @@ public class AdoptionRequestService {
     }
 
     /**
-     * Creates an adoption request.
+     * Creates a new adoption request based on the provided data.
+     * This method creates an adoption request, associates it with a pet, shelter, and person,
+     * and creates a form from the "adoption-template".
      *
-     * @param dto the adoption request creation dto
-     * @return the adoption request dto
+     * @param dto The DTO containing the data for creating the adoption request
+     * @return DTO representing the created adoption request
+     * @throws RuntimeException if the pet, shelter, person, or form is not found
      */
+    @Operation(summary = "Create a new adoption request", description = "Creates a new adoption request with associated pet, shelter, person, and form")
     @Transactional
     public AdoptionRequestDTO createAdoptionRequest(AdoptionRequestCreationDTO dto) {
         AdoptionRequest request = new AdoptionRequest();
@@ -113,6 +119,7 @@ public class AdoptionRequestService {
      * @param adoptionRequestDTO the adoption request dto
      * @return the adoption request dto
      */
+    @Operation(summary = "Update an adoption request", description = "Updates an adoption request with the provided data")
     public AdoptionRequestDTO updateAdoptionRequest(Long id, AdoptionRequestDTO adoptionRequestDTO) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
@@ -128,6 +135,7 @@ public class AdoptionRequestService {
      *
      * @return the list of adoption request dtos
      */
+    @Operation(summary = "Get all adoption requests", description = "Returns a list of all adoption requests")
     public List<AdoptionRequestDTO> getAllAdoptionRequests() {
         List<AdoptionRequest> adoptionRequest = adoptionRequestRepository.findAll();
         return adoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
@@ -139,6 +147,7 @@ public class AdoptionRequestService {
      * @param id the id
      * @return the adoption request dto
      */
+    @Operation(summary = "Get an adoption request by id", description = "Returns an adoption request with the specified id")
     public AdoptionRequestDTO getAdoptionRequestById(Long id) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
@@ -150,6 +159,7 @@ public class AdoptionRequestService {
      *
      * @param id the id
      */
+    @Operation(summary = "Delete an adoption request by id", description = "Deletes an adoption request with the specified id")
     public void deleteAdoptionRequestById(Long id) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
@@ -159,6 +169,7 @@ public class AdoptionRequestService {
     /**
      * Deletes all adoption requests.
      */
+    @Operation(summary = "Delete all adoption requests", description = "Deletes all adoption requests")
     public void deleteAllAdoptionRequests() {
         adoptionRequestRepository.deleteAll();
     }
@@ -169,6 +180,7 @@ public class AdoptionRequestService {
      * @param id the id
      * @return the list of request detail dtos
      */
+    @Operation(summary = "Get all request details by id", description = "Returns a list of request details for the specified adoption request")
     public List<RequestDetailDTO> getAllRequestDetails(Long id) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
@@ -184,6 +196,7 @@ public class AdoptionRequestService {
      * @param requestDetailCreationDTO
      * @return
      */
+    @Operation(summary = "Create a request detail", description = "Creates a new request detail for the specified adoption request")
     public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
         idValidation(id);
         adoptionRequestRepository.findById(id).orElseThrow(() -> new AdoptionRequestNotFound("AdoptionRequest not found"));
@@ -197,6 +210,7 @@ public class AdoptionRequestService {
      * @param detailId the detail id
      * @return the request detail dto
      */
+    @Operation(summary = "Get a request detail by id", description = "Returns a request detail with the specified id for the specified adoption request")
     public RequestDetailDTO getRequestDetailById(Long id, Long detailId) {
         idValidation(id);
         adoptionRequestRepository.findById(id).orElseThrow();
