@@ -1,5 +1,6 @@
 package org.mindera.fur.code.service.form;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 import org.mindera.fur.code.controller.form.TemplateLoaderUtil;
 import org.mindera.fur.code.dto.form.*;
@@ -26,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for managing forms and form templates.
+ * This class handles the business logic for creating, updating, and deleting forms and form templates.
+ */
 @Service
-
 public class FormService {
     private static final Logger logger = LoggerFactory.getLogger(FormService.class);
 
@@ -37,7 +41,9 @@ public class FormService {
     private final FormFieldService formFieldService;
     private final TemplateLoaderUtil templateLoader;
 
-
+    /**
+     * Constructs a new FormService with the necessary dependencies.
+     */
     @Autowired
     public FormService(FormRepository formRepository, FormFieldRepository formFieldRepository, FormFieldAnswerRepository formFieldAnswerRepository, FormFieldService formFieldService, TemplateLoaderUtil templateLoader) {
         this.formRepository = formRepository;
@@ -47,6 +53,13 @@ public class FormService {
         this.templateLoader = templateLoader;
     }
 
+    /**
+     * Creates a new form based on the provided data.
+     *
+     * @param formCreateDTO DTO containing the data for creating a new form
+     * @return DTO representing the created form
+     */
+    @Operation(summary = "Create a new form", description = "Creates a new form based on the provided data")
     @Transactional
     public FormDTO createForm(FormCreateDTO formCreateDTO) {
         if (formCreateDTO == null) {
@@ -78,19 +91,41 @@ public class FormService {
         return FormMapper.INSTANCE.toDTO(savedForm);
     }
 
+    /**
+     * Retrieves a form by its ID.
+     *
+     * @param formId ID of the form to retrieve
+     * @return DTO representing the retrieved form
+     * @throws ResponseStatusException if the form is not found
+     */
+    @Operation(summary = "Get a form", description = "Retrieves a form by its ID")
     public FormDTO getForm(Long formId) {
         Form form = formRepository.findById(formId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form not found"));
         return FormMapper.INSTANCE.toDTO(form);
     }
 
-
+    /**
+     * Checks if the provided template name is valid.
+     *
+     * @param templateName Name of the template to validate
+     * @return true if the template name is valid, false otherwise
+     */
+    @Operation(summary = "Check if a template name is valid", description = "Checks if the provided template name is valid")
     private boolean isValidTemplateName(String templateName) {
 
         List<String> validTemplateNames = Arrays.asList("adoption-template", "donation-template");
         return validTemplateNames.contains(templateName);
     }
 
+    /**
+     * Creates a new form from a template.
+     *
+     * @param templateName Name of the template to use
+     * @return DTO representing the created form
+     * @throws ResponseStatusException if the template is not found or there's an error creating the form
+     */
+    @Operation(summary = "Create a form from a template", description = "Creates a new form from a template")
     @Transactional
     public FormDTO createFormFromTemplate(String templateName) {
         if (!isValidTemplateName(templateName)) {
@@ -141,6 +176,14 @@ public class FormService {
         }
     }
 
+    /**
+     * Submits answers to a form.
+     *
+     * @param formAnswerDTO DTO containing the answers to submit
+     * @return DTO representing the updated form
+     * @throws ResponseStatusException if the form is not found or there's an error updating the form
+     */
+    @Operation(summary = "Submit answers to a form", description = "Submits answers to a form")
     @Transactional
     public FormDTO submitFormAnswers(FormAnswerDTO formAnswerDTO) {
         Form form = formRepository.findById(formAnswerDTO.getFormId())
@@ -161,7 +204,15 @@ public class FormService {
         return FormMapper.INSTANCE.toDTO(savedForm);
     }
 
-
+    /**
+     * Adds a field to a form template.
+     *
+     * @param templateName Name of the template to add the field to
+     * @param newField     DTO containing the data for creating the new field
+     * @return DTO representing the updated form template
+     * @throws ResponseStatusException if the template is not found or there's an error updating the template
+     */
+    @Operation(summary = "Add a field to a template", description = "Adds a field to a form template")
     @Transactional
     public FormDTO addFieldToTemplate(String templateName, FormFieldCreateDTO newField) {
         if (!isValidTemplateName(templateName)) {
@@ -184,6 +235,15 @@ public class FormService {
         }
     }
 
+    /**
+     * Adds a field to a form.
+     *
+     * @param formId   ID of the form to add the field to
+     * @param newField DTO containing the data for creating the new field
+     * @return DTO representing the updated form
+     * @throws ResponseStatusException if the form is not found or there's an error updating the form
+     */
+    @Operation(summary = "Add a field to a form", description = "Adds a field to a form")
     @Transactional
     public FormDTO addFieldToForm(Long formId, FormFieldCreateDTO newField) {
         Form form = formRepository.findById(formId)
@@ -192,6 +252,15 @@ public class FormService {
         return FormMapper.INSTANCE.toDTO(addFieldToForm(form, newField));
     }
 
+    /**
+     * Adds a field to a form.
+     *
+     * @param form     Form to add the field to
+     * @param newField DTO containing the data for creating the new field
+     * @return Form with the new field added
+     * @throws ResponseStatusException if the form is not found or there's an error updating the form
+     */
+    @Operation(summary = "Add a field to a form", description = "Adds a field to a form")
     private Form addFieldToForm(Form form, FormFieldCreateDTO newField) {
         if (form == null || form.getId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Form not found");
@@ -211,7 +280,14 @@ public class FormService {
         return formRepository.save(form);
     }
 
-
+    /**
+     * Retrieves a form template by its name.
+     *
+     * @param templateName Name of the template to retrieve
+     * @return DTO representing the retrieved template
+     * @throws ResponseStatusException if the template is not found
+     */
+    @Operation(summary = "Get a form template", description = "Retrieves a form template by its name")
     public FormTemplateDTO getTemplate(String templateName) {
         try {
             return templateLoader.loadTemplate(templateName);
@@ -220,7 +296,15 @@ public class FormService {
         }
     }
 
-
+    /**
+     * Removes a field from a form template.
+     *
+     * @param templateName     Name of the template to modify
+     * @param questionToRemove Question of the field to remove
+     * @return DTO representing the updated form template
+     * @throws ResponseStatusException if the template or field is not found, or if there's an error updating the template
+     */
+    @Operation(summary = "Remove a field from a template", description = "Removes a field from a form template and updates all related forms")
     @Transactional
     public FormDTO removeFieldFromTemplate(String templateName, String questionToRemove) {
         try {
@@ -262,10 +346,22 @@ public class FormService {
         }
     }
 
+    /**
+     * Deletes all forms.
+     */
+    @Operation(summary = "Delete all forms", description = "Deletes all forms")
     public void deleteAllForms() {
         formRepository.deleteAll();
     }
 
+    /**
+     * Deletes a form by its ID.
+     *
+     * @param formId ID of the form to delete
+     * @return DTO representing the deleted form
+     * @throws ResponseStatusException if the form is not found
+     */
+    @Operation(summary = "Delete a form", description = "Deletes a form by its ID")
     public FormDTO deleteForm(Long formId) {
         Form form = formRepository.findById(formId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form not found"));
@@ -274,6 +370,12 @@ public class FormService {
         return FormMapper.INSTANCE.toDTO(form);
     }
 
+    /**
+     * Retrieves all forms.
+     *
+     * @return List of DTOs representing all forms
+     */
+    @Operation(summary = "Get all forms", description = "Retrieves all forms")
     public List<FormDTO> getAllForms() {
         List<Form> forms = formRepository.findAll();
         return FormMapper.INSTANCE.toDTOList(forms);
