@@ -1,6 +1,7 @@
 package org.mindera.fur.code.mapper;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -13,6 +14,7 @@ import java.util.List;
  * Mapper class for the Shelter entity.
  */
 @Mapper
+@Schema(description = "The shelter mapper")
 public interface ShelterMapper {
 
     /**

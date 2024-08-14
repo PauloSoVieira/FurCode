@@ -51,6 +51,10 @@ public class AIService {
      * @return the generated pet description in JSON format.
      */
     public String generateNewPetDescription(PetDTO pet) {
+        if (pet == null) {
+            throw new IllegalArgumentException("PetDTO is null");
+        }
+
         return this.chatClient.prompt()
                 .user(PET_DESCRIPTION_CREATION +
                         " with the following JSON details, specially the 'observations' field, if available: "
@@ -68,6 +72,13 @@ public class AIService {
      * @return the generated pet search query in JSON format.
      */
     public String generateNewPetSearchQuery(String searchQuery) {
+        if (searchQuery == null) {
+            throw new IllegalArgumentException("Search query is null");
+        }
+
+        if (searchQuery.isEmpty()) {
+            throw new IllegalArgumentException("Search query is empty");
+        }
 
         String userText = PET_SEARCH_USER_TEXT.formatted(searchQuery);
         String systemText = PET_SEARCH_USER_SYSTEM_TEXT_V2.formatted(PET_SEARCH_USER_RESPONSE_JSON_SCHEMA, PET_SEARCH_USER_DB_SCHEMA);

@@ -1,6 +1,10 @@
 package org.mindera.fur.code.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
 import org.mindera.fur.code.service.FileService;
@@ -25,17 +29,39 @@ public class FileController {
     }
 
     @Operation(summary = "Upload a pet image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "File uploaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid file, pet not found"),
+    })
     @PostMapping("api/v1/upload/pet/{id}/image/")
-    public ResponseEntity<Void> uploadImagePet(@PathVariable("id") Long id, @RequestBody FileUploadDTO file) {
+    public ResponseEntity<Void> uploadImagePet(
+            @Parameter(description = "Pet ID", required = true)
+            @PathVariable("id") Long id, @RequestBody FileUploadDTO file) {
         String filePath = String.format("/pet/%s/image/", id);
         fileService.uploadImagePet(filePath, file, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Download a pet image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    content = {
+                            @Content(mediaType = MediaType.IMAGE_JPEG_VALUE),
+                            @Content(mediaType = MediaType.IMAGE_PNG_VALUE),
+                            @Content(mediaType = "image/webp")
+                    },
+                    description = "File downloaded successfully"),
+            @ApiResponse(responseCode = "400",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
+                    description = "File not found")
+    })
     @GetMapping("api/v1/download/pet/{id}/image/{fileName}")
-    public ResponseEntity<Resource> downloadImagePet(@PathVariable("id") Long id,
-                                                     @PathVariable("fileName") String fileName) {
+    public ResponseEntity<Resource> downloadImagePet(
+            @Parameter(description = "Pet ID", required = true)
+            @PathVariable("id") Long id,
+
+            @Parameter(description = "File name", required = true)
+            @PathVariable("fileName") String fileName) {
         String filePath = String.format("/pet/%s/image/%s", id, fileName);
         byte[] file = fileService.downloadImagePet(filePath, id);
 

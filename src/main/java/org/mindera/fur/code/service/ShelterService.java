@@ -1,5 +1,6 @@
 package org.mindera.fur.code.service;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -25,13 +26,14 @@ import java.util.List;
  * Service class for handling Shelters.
  */
 @Service
+@Schema(description = "The shelter service")
 public class ShelterService {
 
-    private PetService petService;
-    private DonationService donationService;
-    private ShelterRepository shelterRepository;
-    private PersonRepository personRepository;
-    private PetRepository petRepository;
+    private final PetService petService;
+    private final DonationService donationService;
+    private final ShelterRepository shelterRepository;
+    private final PersonRepository personRepository;
+    private final PetRepository petRepository;
 
     private ShelterMapper shelterMapper;
     private PetMapper petMapper;

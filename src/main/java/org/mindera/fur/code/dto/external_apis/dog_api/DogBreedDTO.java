@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Data
 @Schema(description = "Dog breed")
 public class DogBreedDTO implements Serializable {
-
     /**
      * Serial version UID
      */
