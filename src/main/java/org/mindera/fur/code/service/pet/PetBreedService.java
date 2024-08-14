@@ -39,7 +39,6 @@ public class PetBreedService {
     }
 
     @Transactional
-    @Cacheable(value = "petBreeds", key = "#petBreedCreateDTO.name", unless = "#result == null")
     public PetBreedDTO addOrFetchBreed(@Valid PetBreedCreateDTO petBreedCreateDTO) {
         // Check if the breed already exists in the local database
         PetBreed existingBreed = findExistingBreed(petBreedCreateDTO.getName());

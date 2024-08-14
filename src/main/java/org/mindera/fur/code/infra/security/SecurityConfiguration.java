@@ -39,6 +39,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+
 //                        //Adoption Request authorizations
 //                        .requestMatchers(HttpMethod.POST, "/api/v1/adoption-request").hasAnyAuthority("USER")
 //                        .requestMatchers(HttpMethod.PATCH, "/api/v1/adoption-request/update/{id}").hasAnyAuthority("USER")
