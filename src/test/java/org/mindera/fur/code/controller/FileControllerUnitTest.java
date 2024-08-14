@@ -1,11 +1,11 @@
-package org.mindera.fur.code.service;
+package org.mindera.fur.code.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mindera.fur.code.controller.FileController;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
+import org.mindera.fur.code.service.FileService;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
