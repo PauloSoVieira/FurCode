@@ -11,6 +11,7 @@ import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.exceptions.token.TokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -255,6 +256,28 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
                 new Date());
 
         return new ResponseEntity<>(responseJson, BAD_REQUEST);
+    }
+
+    /**
+     * Handles AI exception, returning a 503 response with the appropriate error message.
+     *
+     * @param ex      the exception
+     * @param request the request
+     * @return the response entity
+     */
+    @ExceptionHandler(NonTransientAiException.class)
+    public ResponseEntity<String> handleAIException(NonTransientAiException ex, HttpServletRequest request) {
+        logger.error("AI service is down: {}", ex.getMessage());
+
+        String responseJson = response(
+                SERVICE_UNAVAILABLE.value(),
+                SERVICE_UNAVAILABLE.getReasonPhrase(),
+                request.getRequestURI(),
+                "AI service is down, please try again later.",
+                "Sorry for the inconvenience.",
+                new Date());
+
+        return new ResponseEntity<>(responseJson, SERVICE_UNAVAILABLE);
     }
 
     /**
