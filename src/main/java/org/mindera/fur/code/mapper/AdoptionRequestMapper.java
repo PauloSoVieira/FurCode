@@ -1,6 +1,8 @@
 package org.mindera.fur.code.mapper;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
@@ -12,6 +14,7 @@ import java.util.List;
  * Mapper class for the AdoptionRequest entity.
  */
 @Mapper
+@Schema(description = "The adoption request mapper")
 public interface AdoptionRequestMapper {
 
     /**
@@ -25,6 +28,9 @@ public interface AdoptionRequestMapper {
      * @param adoptionRequest The AdoptionRequest object to convert.
      * @return The converted AdoptionRequestDTO object.
      */
+    @Mapping(source = "person.id", target = "personId")
+    @Mapping(source = "pet.id", target = "petId")
+    @Mapping(source = "shelter.id", target = "shelterId")
     AdoptionRequestDTO toDTO(AdoptionRequest adoptionRequest);
 
     /**
@@ -41,6 +47,9 @@ public interface AdoptionRequestMapper {
      * @param adoptionRequestCreationDTO
      * @return
      */
+    @Mapping(source = "personId", target = "person.id")
+    @Mapping(source = "petId", target = "pet.id")
+    @Mapping(source = "shelterId", target = "shelter.id")
     AdoptionRequest toModel(AdoptionRequestCreationDTO adoptionRequestCreationDTO);
 
     /**
