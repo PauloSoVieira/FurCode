@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Validated
 @Tag(name = "External Dog API", description = "Operations for the external Dog API")
 @RestController
@@ -27,6 +25,12 @@ public class DogApiController {
         this.dogApiService = dogApiService;
     }
 
+    /**
+     * Get a dog breed and description by ID
+     *
+     * @param id the ID of the dog breed
+     * @return the dog breed and description
+     */
     @Operation(summary = "Get a dog breed and description by ID")
     @GetMapping(value = "/breed-and-description/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DogBreedDTO> getBreedAndDescriptionById(@PathVariable @Valid String id) {
@@ -34,6 +38,11 @@ public class DogApiController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    /**
+     * Get all dog breeds names - from all pages
+     *
+     * @return the list of dog breed names
+     */
     @Operation(summary = "Get all dog breeds names - from all pages")
     @GetMapping(value = "/all-breeds-names", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DogBreedsNamesDTO> getAllBreedsNames() {
@@ -41,6 +50,12 @@ public class DogApiController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    /**
+     * Get a dog breed info by name - search from all pages
+     *
+     * @param name the name of the dog breed
+     * @return the dog breed info
+     */
     @Operation(summary = "Get a dog breed info by name - search from all pages")
     @GetMapping("/breed/{name}")
     public ResponseEntity<DogBreedDTO> getBreedInfoByName(@PathVariable @Valid String name) {
