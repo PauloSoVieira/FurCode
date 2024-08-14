@@ -2,6 +2,7 @@ package org.mindera.fur.code.mapper;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
@@ -19,6 +20,8 @@ public interface DonationMapper {
     /**
      * Converts a Donation to a DonationDTO
      **/
+    @Mapping(source = "person.id", target = "personId")
+    @Mapping(source = "shelter.id", target = "shelterId")
     DonationDTO toDTO(Donation donation);
 
     /**
@@ -29,5 +32,7 @@ public interface DonationMapper {
     /**
      * Converts a DonationCreateDTO to a Donation
      **/
+    @Mapping(source = "personId", target = "person.id")
+    @Mapping(source = "shelterId", target = "shelter.id")
     Donation toModel(DonationCreateDTO donationCreateDTO);
 }

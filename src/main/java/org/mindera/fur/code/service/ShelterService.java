@@ -1,5 +1,6 @@
 package org.mindera.fur.code.service;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -13,6 +14,7 @@ import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,13 +26,14 @@ import java.util.List;
  * Service class for handling Shelters.
  */
 @Service
+@Schema(description = "The shelter service")
 public class ShelterService {
 
-    private PetService petService;
-    private DonationService donationService;
-    private ShelterRepository shelterRepository;
-    private PersonRepository personRepository;
-    private PetRepository petRepository;
+    private final PetService petService;
+    private final DonationService donationService;
+    private final ShelterRepository shelterRepository;
+    private final PersonRepository personRepository;
+    private final PetRepository petRepository;
 
     private ShelterMapper shelterMapper;
     private PetMapper petMapper;

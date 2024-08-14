@@ -12,15 +12,18 @@ import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.exceptions.token.TokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -33,8 +36,8 @@ import java.util.*;
 import static org.springframework.http.HttpStatus.*;
 
 
-//@Component
-//@ControllerAdvice
+@Component
+@ControllerAdvice
 public class ExceptionAspect extends ResponseEntityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionAspect.class);
 
@@ -188,8 +191,8 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
             InvalidDonationDateException.class,
             FileException.class,
             PersonException.class,
-            AdoptionFormNotFound.class
-
+            AdoptionFormNotFound.class,
+            UnsupportedOperationException.class
     })
     public ResponseEntity<String> InvalidResourceException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Invalid Request/Resource", e.getMessage());
@@ -259,6 +262,28 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Handles AI exception, returning a 503 response with the appropriate error message.
+     *
+     * @param ex      the exception
+     * @param request the request
+     * @return the response entity
+     */
+    @ExceptionHandler(NonTransientAiException.class)
+    public ResponseEntity<String> handleAIException(NonTransientAiException ex, HttpServletRequest request) {
+        logger.error("AI service is down: {}", ex.getMessage());
+
+        String responseJson = response(
+                SERVICE_UNAVAILABLE.value(),
+                SERVICE_UNAVAILABLE.getReasonPhrase(),
+                request.getRequestURI(),
+                "AI service is down, please try again later.",
+                "Sorry for the inconvenience.",
+                new Date());
+
+        return new ResponseEntity<>(responseJson, SERVICE_UNAVAILABLE);
+    }
+
+    /**
      * Handles generic exceptions, returning a 500 response with the appropriate error message.
      *
      * @param e       the exception
@@ -305,5 +330,4 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleInvalidTokenException(TokenException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
 }

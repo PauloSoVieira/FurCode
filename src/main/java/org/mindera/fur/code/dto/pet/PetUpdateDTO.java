@@ -9,6 +9,8 @@ import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 @Data
 public class PetUpdateDTO {
 
+    private Long shelterId;
+
     private Boolean isAdopted;
 
     private Boolean isVaccinated;

@@ -1,8 +1,11 @@
 package org.mindera.fur.code.messages.requestDetail;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Class containing the messages for the RequestDetailMessage.
  */
+@Schema(description = "The request detail messages")
 public class RequestDetailMessage {
     /**
      * Message for when the id is null.

@@ -18,7 +18,10 @@ public enum State {
     ACCEPTED,
 
     @Schema(description = "The state of a pet as refused", example = "REFUSED", required = true)
-    REFUSED;
+    REFUSED,
+
+    @Schema(description = "The state of a pet as cancelled", example = "CANCELLED", required = true)
+    CANCELLED;
 
     private String State;
 

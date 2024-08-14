@@ -19,7 +19,7 @@ class OpenApiConfig {
                         ("Bearer Authentication", createAPIKeyScheme()))
                 .info(new Info()
                         .title("FurCode API")
-                        .description("To decide later")
+                        .description("Open Source Animal Shelter Manager")
                         .version("0.0.1")
                 );
     }

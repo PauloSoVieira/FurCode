@@ -2,6 +2,7 @@ package org.mindera.fur.code.service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.form.FormDTO;
@@ -30,9 +31,10 @@ import java.util.List;
  * Service class for handling AdoptionRequests.
  */
 @Service
+@Schema(description = "The adoption request service")
 public class AdoptionRequestService {
 
-    public AdoptionRequestRepository adoptionRequestRepository;
+   public AdoptionRequestRepository adoptionRequestRepository;
     private PetRepository petRepository;
     private AdoptionRequestMapper adoptionRequestMapper;
     private RequestDetailMapper requestDetailMapper;
