@@ -23,7 +23,6 @@ import org.mindera.fur.code.service.form.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -97,14 +96,10 @@ public class AdoptionRequestService {
         request.setShelter(shelterRepository.findById(dto.getShelterId()).orElseThrow(() -> new RuntimeException("Shelter not found")));
         request.setPerson(personRepository.findById(dto.getPersonId()).orElseThrow(() -> new RuntimeException("Person not found")));
 
-        try {
-            FormDTO formDTO = formService.createFormFromTemplate("adoption-template");
-            Form form = formRepository.findById(formDTO.getId())
-                    .orElseThrow(() -> new RuntimeException("Form not found after creation"));
-            request.setForm(form);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create form for adoption request", e);
-        }
+        FormDTO formDTO = formService.createFormFromTemplate("adoption-template");
+        Form form = formRepository.findById(formDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Form not found after creation"));
+        request.setForm(form);
 
         AdoptionRequest savedRequest = adoptionRequestRepository.save(request);
         return AdoptionRequestMapper.INSTANCE.toDTO(savedRequest);

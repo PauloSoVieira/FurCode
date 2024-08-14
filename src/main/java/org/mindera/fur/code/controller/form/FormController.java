@@ -24,8 +24,6 @@ public class FormController {
 
     @PostMapping
     public ResponseEntity<FormDTO> createForm(@RequestBody FormCreateDTO formCreateDTO) {
-
-
         return new ResponseEntity<>(formService.createForm(formCreateDTO), HttpStatus.CREATED);
     }
 
