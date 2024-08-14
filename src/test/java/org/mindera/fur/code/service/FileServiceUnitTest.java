@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.exceptions.file.FileException;
+import org.mindera.fur.code.service.pet.PetService;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
