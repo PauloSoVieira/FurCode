@@ -121,7 +121,7 @@ class FormServiceTestMockitoTest {
 
     @Test
     void createFormFromTemplate_shouldReturnFormDTO() throws IOException {
-        String templateName = "test-template";
+        String templateName = "adoption-template";
         FormTemplateDTO template = new FormTemplateDTO();
         template.setName("Test Template");
         template.setType("TEST");
@@ -185,28 +185,30 @@ class FormServiceTestMockitoTest {
     class CreateForm {
         @Test
         void createForm_shouldReturnFormDTO() {
-            // Arrange
             FormCreateDTO formCreateDTO = new FormCreateDTO();
-            formCreateDTO.setName("Test Form");
+            formCreateDTO.setName("adoption-template");
             formCreateDTO.setCreatedAt(LocalDateTime.now());
             formCreateDTO.setType("TEST");
+            formCreateDTO.setFormFieldAnswers(new ArrayList<>()); // Initialize with an empty list
 
             Form form = new Form();
             form.setId(1L);
             form.setName(formCreateDTO.getName());
             form.setCreatedAt(formCreateDTO.getCreatedAt());
             form.setType(formCreateDTO.getType());
+            form.setFormFieldAnswers(new ArrayList<>());
 
             when(formRepository.save(any(Form.class))).thenReturn(form);
 
-            // Act
             FormDTO result = formService.createForm(formCreateDTO);
 
-            // Assert
             assertNotNull(result);
             assertEquals(form.getId(), result.getId());
             assertEquals(form.getName(), result.getName());
             assertEquals(form.getType(), result.getType());
+            assertEquals(form.getCreatedAt(), result.getCreatedAt());
+            assertNotNull(result.getFormFieldAnswers());
+            assertTrue(result.getFormFieldAnswers().isEmpty());
             verify(formRepository, times(1)).save(any(Form.class));
         }
 
@@ -241,7 +243,7 @@ class FormServiceTestMockitoTest {
 
         @Test
         void createFormFromTemplate_shouldReturnFormDTO() throws IOException {
-            String templateName = "test-template";
+            String templateName = "adoption-template";
             FormTemplateDTO template = new FormTemplateDTO();
             template.setName("Test Template");
             template.setType("TEST");

@@ -2,7 +2,10 @@ package org.mindera.fur.code.service.form;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.mindera.fur.code.dto.form.FormCreateDTO;
 import org.mindera.fur.code.dto.form.FormDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -60,7 +65,23 @@ class FormServiceTest {
                     .body()
                     .as(FormDTO.class);
 
+            assertNotNull(formDTO);
+            assertNotNull(formDTO.getId());
+            assertEquals(formCreateDTO.getName(), formDTO.getName());
+            assertEquals(formCreateDTO.getType(), formDTO.getType());
 
+            FormDTO savedForm = given()
+                    .when()
+                    .get("/api/v1/forms/" + formDTO.getId())
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .body()
+                    .as(FormDTO.class);
+
+            assertEquals(formDTO.getId(), savedForm.getId());
+            assertEquals(formDTO.getName(), savedForm.getName());
+            assertEquals(formDTO.getType(), savedForm.getType());
         }
 
         @Test
@@ -94,7 +115,7 @@ class FormServiceTest {
                     .body()
                     .as(FormDTO.class);
 
-            Assertions.assertEquals(formId, getFormDTO.getId());
+            assertEquals(formId, getFormDTO.getId());
         }
 
         @Test
@@ -125,7 +146,7 @@ class FormServiceTest {
                     .jsonPath()
                     .getList(".", FormDTO.class);
 
-            Assertions.assertEquals(1, forms.size());
+            assertEquals(1, forms.size());
         }
 
         @Test
