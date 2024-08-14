@@ -12,22 +12,23 @@ import java.util.Date;
 @Data
 public class PetRecordDTO {
 
+    @NotNull(message = "ID is required")
     private Long id;
 
     @NotNull(message = "Pet ID is required")
     private Long petId;
 
-    // Criar um enum de intervenções
-    @NotBlank(message = "Intervention type is required")
-    // @NotNull(message = "Intervention type is required")
-    private String petRecordsStatus;
-
-    @NotNull(message = "Observation is required")
-    @Size(max = 999, message = "Observation cannot be longer than 999 characters")
-    private String observation;
+    @NotBlank(message = "Intervention is required")
+    @Size(max = 999, message = "Intervention cannot be longer than 999 characters")
+    private String intervention;
 
     @Valid
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
-    private Date date;
+    private Date createdAt;
+
+    @Valid
+    @NotNull(message = "Date is required")
+    @PastOrPresent(message = "Date cannot be in the future")
+    private Date updatedAt;
 }

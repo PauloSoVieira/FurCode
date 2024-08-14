@@ -1,6 +1,5 @@
 package org.mindera.fur.code.dto.pet;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
@@ -14,8 +13,7 @@ public class PetCreateDTO {
     @Size(min = 1, max = 30, message = "Pet name must be between 1 and 30 characters")
     private String name;
 
-    @NotNull(message = "Pet type must be provided")
-    //@Enumerated(EnumType.STRING)
+    @NotNull(message = "Pet type ID must be provided")
     private Long petTypeId;
 
     @NotNull(message = "Shelter ID must be provided")
@@ -25,7 +23,6 @@ public class PetCreateDTO {
     private Boolean isAdopted;
 
     @NotNull(message = "Vaccination status is required")
-    @Column(nullable = false)
     private Boolean isVaccinated;
 
     @NotNull(message = "Size must be provided")
