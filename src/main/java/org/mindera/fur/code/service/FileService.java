@@ -69,11 +69,15 @@ public class FileService {
      * @throws FileException if the file is invalid.
      */
     private void checkFileValidity(FileUploadDTO file) {
-        if (file.getFileName() == null) {
-            throw new FileException("File name and base64 content must be provided");
+        if (file.getFileName() == null || file.getFileName().isEmpty()) {
+            throw new FileException("File name must be provided");
         }
 
-        if (file.getMd5() == null) {
+        if (file.getFileData() == null || file.getFileData().isEmpty()) {
+            throw new FileException("File base64 content must be provided");
+        }
+
+        if (file.getMd5() == null || file.getMd5().isEmpty()) {
             throw new FileException("File checksum must be provided");
         }
 
