@@ -1,5 +1,6 @@
 package org.mindera.fur.code.service;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
@@ -24,16 +25,17 @@ import java.util.List;
  * Service class for handling AdoptionRequests.
  */
 @Service
+@Schema(description = "The adoption request service")
 public class AdoptionRequestService {
 
+    private final PetRepository petRepository;
+    private final ShelterRepository shelterRepository;
+    private final PersonRepository personRepository;
+    private final RequestDetailService requestDetailService;
+    private final RequestDetailRepository requestDetailRepository;
     public AdoptionRequestRepository adoptionRequestRepository;
-    private PetRepository petRepository;
     private AdoptionRequestMapper adoptionRequestMapper;
     private RequestDetailMapper requestDetailMapper;
-    private ShelterRepository shelterRepository;
-    private PersonRepository personRepository;
-    private RequestDetailService requestDetailService;
-    private RequestDetailRepository requestDetailRepository;
 
     /**
      * Constructor for the AdoptionRequestService.

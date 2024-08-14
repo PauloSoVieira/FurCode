@@ -1,8 +1,11 @@
 package org.mindera.fur.code.messages.shelter;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Class containing the messages for the ShelterMessage.
  */
+@Schema(description = "The shelter messages")
 public class ShelterMessages {
     /**
      * Message for when the name is null.

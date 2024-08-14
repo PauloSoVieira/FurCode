@@ -1,6 +1,8 @@
 package org.mindera.fur.code.mapper;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
@@ -12,6 +14,7 @@ import java.util.List;
  * Class mapping the RequestDetail.
  */
 @Mapper
+@Schema(description = "The request detail mapper")
 public interface RequestDetailMapper {
 
     /**
@@ -25,6 +28,7 @@ public interface RequestDetailMapper {
      * @param requestDetail The RequestDetail to map.
      * @return The RequestDetailDTO.
      */
+    @Mapping(source = "personId", target = "personId")
     RequestDetailDTO toDTO(RequestDetail requestDetail);
 
     /**
@@ -41,6 +45,7 @@ public interface RequestDetailMapper {
      * @param requestDetailCreationDTO The RequestDetailCreationDTO to map.
      * @return The RequestDetail.
      */
+    @Mapping(source = "personId", target = "personId")
     RequestDetail toModel(RequestDetailCreationDTO requestDetailCreationDTO);
 
     /**
