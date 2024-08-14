@@ -59,11 +59,11 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}/get-all-donations").hasAnyAuthority("ADMIN")
 
                         //Pet authorizations
-                        .requestMatchers(HttpMethod.POST, "/api/v1/pet").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/pet/update/{id}").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/pet/delete/{id}").hasAnyAuthority("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/pet/{id}/create-record").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/pet/{id}/record").hasAnyAuthority("ADMIN")
+                        //.requestMatchers(HttpMethod.POST, "/api/v1/pet").hasAnyAuthority("ADMIN")
+                        //.requestMatchers(HttpMethod.PUT, "/api/v1/pet/update/{id}").hasAnyAuthority("ADMIN")
+                        //.requestMatchers(HttpMethod.DELETE, "/api/v1/pet/delete/{id}").hasAnyAuthority("MANAGER")
+                        //.requestMatchers(HttpMethod.POST, "/api/v1/pet/{id}/create-record").hasAnyAuthority("ADMIN")
+                        //.requestMatchers(HttpMethod.GET, "/api/v1/pet/{id}/record").hasAnyAuthority("ADMIN")
 
                         //Shelter authorizations
                         .requestMatchers(HttpMethod.POST, "/api/v1/shelter").hasAnyAuthority("USER")
