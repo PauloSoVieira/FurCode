@@ -8,6 +8,7 @@ import io.minio.errors.*;
 import org.apache.commons.lang3.StringUtils;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
 import org.mindera.fur.code.exceptions.file.FileException;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;

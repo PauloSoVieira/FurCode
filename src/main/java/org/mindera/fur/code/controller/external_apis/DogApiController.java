@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.external_apis.dog_api.DogBreedDTO;
+import org.mindera.fur.code.dto.external_apis.dog_api.DogBreedsNamesDTO;
 import org.mindera.fur.code.service.external_apis.DogApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,13 +27,6 @@ public class DogApiController {
         this.dogApiService = dogApiService;
     }
 
-    @Operation(summary = "Get all dog breeds and descriptions - only the first page")
-    @GetMapping(value = "/all-breeds-and-descriptions", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DogBreedDTO>> getAllBreedsAndDescriptions() {
-        List<DogBreedDTO> dto = dogApiService.fetchAllBreeds();
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
-
     @Operation(summary = "Get a dog breed and description by ID")
     @GetMapping(value = "/breed-and-description/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DogBreedDTO> getBreedAndDescriptionById(@PathVariable @Valid String id) {
@@ -42,8 +36,8 @@ public class DogApiController {
 
     @Operation(summary = "Get all dog breeds names - from all pages")
     @GetMapping(value = "/all-breeds-names", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<String>> getAllBreedsNames() {
-        List<String> dto = dogApiService.fetchAllBreedsNames();
+    public ResponseEntity<DogBreedsNamesDTO> getAllBreedsNames() {
+        DogBreedsNamesDTO dto = dogApiService.fetchAllBreedsNames();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

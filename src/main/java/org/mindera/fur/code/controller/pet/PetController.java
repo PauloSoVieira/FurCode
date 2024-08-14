@@ -1,11 +1,11 @@
-package org.mindera.fur.code.controller;
+package org.mindera.fur.code.controller.pet;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.pet.*;
 import org.mindera.fur.code.service.AIService;
-import org.mindera.fur.code.service.PetService;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -40,8 +40,7 @@ public class PetController {
         return petDTOs;
     }
 
-    @Operation(summary = "Get a pet by id")
-
+    @Operation(summary = "Get a pet by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
         PetDTO petDTO = petService.findPetById(id);
@@ -83,13 +82,6 @@ public class PetController {
     public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
         PetRecordDTO petRecordDTO = petService.addPetRecord(id, petRecordCreateDTO);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "Create or fetch a pet breed from external DOG API")
-    @PostMapping(value = "/breed", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PetBreedDTO> createOrFetchBreed(@RequestBody @Valid PetBreedCreateDTO petBreedCreateDTO) {
-        PetBreedDTO breedDTO = petService.addOrFetchBreed(petBreedCreateDTO);
-        return new ResponseEntity<>(breedDTO, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Generate a new pet description with AI")

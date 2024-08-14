@@ -14,7 +14,7 @@ import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.pet.PetBreedRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.repository.pet.PetTypeRepository;
-import org.mindera.fur.code.service.PetService;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;

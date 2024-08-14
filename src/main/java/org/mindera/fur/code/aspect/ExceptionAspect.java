@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -32,8 +34,8 @@ import java.util.*;
 import static org.springframework.http.HttpStatus.*;
 
 
-//@Component
-//@ControllerAdvice
+@Component
+@ControllerAdvice
 public class ExceptionAspect extends ResponseEntityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionAspect.class);
 
@@ -185,8 +187,8 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
             InvalidDonationAmountException.class,
             InvalidDonationDateException.class,
             FileException.class,
-            PersonException.class
-
+            PersonException.class,
+            UnsupportedOperationException.class
     })
     public ResponseEntity<String> InvalidResourceException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Invalid Request/Resource", e.getMessage());
@@ -302,5 +304,4 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleInvalidTokenException(TokenException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
 }
