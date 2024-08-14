@@ -78,9 +78,4 @@ public class Pet {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pet_chip_id")
     private PetChip chip;
-
-    @Valid
-    @ManyToOne
-    @JoinColumn(name = "pet_cage_id")
-    private PetCage cage;
 }
