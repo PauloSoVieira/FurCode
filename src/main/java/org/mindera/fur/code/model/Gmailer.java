@@ -13,33 +13,37 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
-import com.google.api.services.gmail.model.Draft;
 import com.google.api.services.gmail.model.Message;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.sql.DataSource;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.Set;
 
 import static javax.mail.Message.RecipientType.TO;
 
+/**
+ * Utility class for sending emails using Gmail.
+ */
 @Component
 public class Gmailer {
 
-    private  static  final  String TEST_EMAIL="paulo.vieira@minderacodeacademy.com";
+
+    private static final String TEST_EMAIL = "paulo.vieira@minderacodeacademy.com";
     private Gmail service;
 
+    /**
+     * Constructs a new Gmailer instance and initializes the Gmail service.
+     *
+     * @throws Exception if there's an error initializing the Gmail service
+     */
     public Gmailer() throws Exception {
         NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         GsonFactory jsonFactory = GsonFactory.getDefaultInstance();
@@ -48,14 +52,20 @@ public class Gmailer {
                 .build();
     }
 
+    /**
+     * Retrieves OAuth2 credentials for Gmail API.
+     *
+     * @param HTTP_TRANSPORT The network HTTP Transport
+     * @param jsonFactory    JsonFactory for handling JSON
+     * @return Credential object for OAuth2 authentication
+     * @throws IOException if there's an error reading client secrets or storing credentials
+     */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT, GsonFactory jsonFactory)
             throws IOException {
-        // Load client secrets.
 
         GoogleClientSecrets clientSecrets =
                 GoogleClientSecrets.load(jsonFactory, new InputStreamReader(Gmailer.class.getResourceAsStream("/client_secret.json")));
 
-        // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, jsonFactory, clientSecrets, Set.of(GmailScopes.GMAIL_SEND))
                 .setDataStoreFactory(new FileDataStoreFactory(Paths.get("tokens").toFile()))
@@ -67,6 +77,29 @@ public class Gmailer {
     }
 
 
+    /**
+     * Main method for testing the Gmailer functionality.
+     *
+     * @param args Command line arguments (not used)
+     */
+    public static void main(String[] args) {
+        try {
+            Gmailer gmailer = new Gmailer();
+            gmailer.sendMail("paulo.vieira@minderacodeacademy.com", "Não é scam ", "Test email");
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends an email using the Gmail API.
+     *
+     * @param to      The recipient's email address
+     * @param subject The subject of the email
+     * @param message The body of the email
+     * @throws Exception if there's an error sending the email
+     */
     public void sendMail(String to, String subject, String message) throws Exception {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
@@ -93,15 +126,6 @@ public class Gmailer {
             } else {
                 throw e;
             }
-        }
-    }
-    public static void main(String[] args) {
-        try {
-            Gmailer gmailer = new Gmailer();
-            gmailer.sendMail("rui.teixeira@minderacodeacademy.com", "Não é scam ", "Queres ganhar um iphone? Click aqui https://www.apple.com/pt/iphone/");
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

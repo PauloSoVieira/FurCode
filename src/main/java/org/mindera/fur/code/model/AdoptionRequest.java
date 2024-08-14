@@ -5,9 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.pet.Pet;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
 import java.util.Set;
 
@@ -63,5 +63,9 @@ public class AdoptionRequest {
     @DateTimeFormat
     @Schema(description = "The date of the adoption request", example = "2023-01-01 12:00:00", required = true)
     private Date date;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "form_id", nullable = false)
+    private Form form;
 
 }

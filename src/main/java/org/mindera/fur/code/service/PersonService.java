@@ -13,37 +13,29 @@ import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
-import org.mindera.fur.code.model.Gmailer;
 import org.mindera.fur.code.messages.person.PersonMessages;
-import org.mindera.fur.code.model.Person;
-import org.mindera.fur.code.model.Role;
-import org.mindera.fur.code.model.Shelter;
-import org.mindera.fur.code.model.ShelterPersonRoles;
+import org.mindera.fur.code.model.*;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @Schema(description = "The person service")
 public class PersonService {
+    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
     private final PersonRepository personRepository;
     private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
     private final DonationService donationService;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
-    private PersonMapper personMapper;
     private final Gmailer gmailer;
-
-    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
-
-
+    private PersonMapper personMapper;
     private ShelterPersonRolesMapper shelterPersonRolesMapper;
 
     @Autowired
@@ -177,6 +169,7 @@ public class PersonService {
             throw new PersonException(PersonMessages.FAILED_TO_CREATE_PERSON);
         }
     }
+
     /**
      * Adds a person to a shelter based on the provided ShelterPersonRolesCreationDTO.
      *
@@ -366,15 +359,13 @@ public class PersonService {
      * <p>After successful validation, the donation is mapped to a Donation model object
      * and saved to the repository.
      *
-     * @param id                the ID of the person whose donations are to be retrieved
      * @param donationCreateDTO the DonationCreateDTO containing the donation details
      * @return the saved Donation object
      * @throws PersonException if any required fields are null or invalid
      * @throws PersonException if the email is already in use
      */
 
-    public DonationDTO donate(Long id, DonationCreateDTO donationCreateDTO) {
-        idValidation(id);
+    public DonationDTO donate(DonationCreateDTO donationCreateDTO) throws IOException {
         return donationService.createDonation(donationCreateDTO);
     }
 

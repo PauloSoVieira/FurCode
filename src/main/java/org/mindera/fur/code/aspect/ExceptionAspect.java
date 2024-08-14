@@ -3,6 +3,7 @@ package org.mindera.fur.code.aspect;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import org.mindera.fur.code.exceptions.adoptionFormException.AdoptionFormNotFound;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
@@ -162,6 +163,7 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
             NoSuchElementException.class,
             DonationNotFoundException.class,
             EntityNotFoundException.class,
+            AdoptionFormNotFound.class,
     })
     public ResponseEntity<String> ResourceNotFoundException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Resource Not Found", e.getMessage());
@@ -189,6 +191,7 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
             InvalidDonationDateException.class,
             FileException.class,
             PersonException.class,
+            AdoptionFormNotFound.class,
             UnsupportedOperationException.class
     })
     public ResponseEntity<String> InvalidResourceException(Exception e, HttpServletRequest request) {

@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -54,14 +55,13 @@ public class PersonController {
     /**
      * Create a shelter.
      *
-     * @param id                 The id of the person.
      * @param shelterCreationDTO The shelter creation DTO.
      * @return The shelter DTO.
      */
 
-    @PostMapping("/{id}/create-shelter")
+    @PostMapping("/create-shelter")
     @Schema(description = "Create a shelter")
-    public ResponseEntity<ShelterDTO> createShelter(@PathVariable Long id, @RequestBody ShelterCreationDTO shelterCreationDTO) {
+    public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(personService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
 
@@ -86,10 +86,10 @@ public class PersonController {
      * @return The donation DTO.
      */
 
-    @PostMapping("/{id}/donate")
+    @PostMapping("/donate")
     @Schema(description = "Donate to a shelter")
-    public ResponseEntity<DonationDTO> donate(@PathVariable Long id, @RequestBody DonationCreateDTO donationCreateDTO) {
-        return new ResponseEntity<>(personService.donate(id, donationCreateDTO), HttpStatus.CREATED);
+    public ResponseEntity<DonationDTO> donate(@RequestBody DonationCreateDTO donationCreateDTO) throws IOException {
+        return new ResponseEntity<>(personService.donate(donationCreateDTO), HttpStatus.CREATED);
     }
 
     /**
