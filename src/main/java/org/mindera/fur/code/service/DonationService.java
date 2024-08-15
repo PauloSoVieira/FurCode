@@ -95,6 +95,7 @@ public class DonationService {
     public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) {
         donationValidations(donationCreateDTO);
         FormDTO formDTO = formService.createFormFromTemplate("donation-template");
+
         Donation newDonation = DonationMapper.INSTANCE.toModel(donationCreateDTO);
         newDonation.setPerson(personRepository.findById(donationCreateDTO.getPersonId())
                 .orElseThrow(() -> new IllegalArgumentException(PersonMessages.PERSON_NOT_FOUND)));
