@@ -1,9 +1,9 @@
 package org.mindera.fur.code.dto.shelter;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
-
 import java.util.Date;
 
 
@@ -11,6 +11,7 @@ import java.util.Date;
  * DTO for a shelter.
  */
 @Data
+@Schema(description = "A shelter")
 public class ShelterDTO implements Serializable {
     private Long id;
     private String name;
