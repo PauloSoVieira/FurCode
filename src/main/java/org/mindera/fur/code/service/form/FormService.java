@@ -6,6 +6,7 @@ import org.mindera.fur.code.controller.form.TemplateLoaderUtil;
 import org.mindera.fur.code.dto.form.*;
 import org.mindera.fur.code.exceptions.adoptionFormException.AdoptionFormNotFound;
 import org.mindera.fur.code.mapper.formMapper.FormMapper;
+import org.mindera.fur.code.messages.form.FormMessages;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.model.form.FormFieldAnswer;
@@ -63,7 +64,13 @@ public class FormService {
     @Transactional
     public FormDTO createForm(FormCreateDTO formCreateDTO) {
         if (formCreateDTO == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Form not found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_CANT_BE_NULL);
+        }
+        if (formCreateDTO.getName() == null || formCreateDTO.getName().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_NAME_CANT_BE_NULL_OR_EMPTY);
+        }
+        if (formCreateDTO.getType() == null || formCreateDTO.getType().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_TYPE_CANT_BE_NULL_OR_EMPTY);
         }
         Form form = new Form();
         form.setName(formCreateDTO.getName());
