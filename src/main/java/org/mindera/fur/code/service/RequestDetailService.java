@@ -1,6 +1,7 @@
 package org.mindera.fur.code.service;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 @Service
 @Schema(description = "The request detail service")
+@Tag(name = "Request Details", description = "Request Details")
 public class RequestDetailService {
 
     private final RequestDetailRepository requestDetailRepository;
