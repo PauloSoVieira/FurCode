@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.mindera.fur.code.model.enums.pet.PetSpeciesEnum;
 
+/**
+ * A model class for a pet type.
+ */
 @Data
 @Entity
 @Table(name = "pet_type")
@@ -22,7 +25,7 @@ public class PetType {
     private PetSpeciesEnum species;
 
     @Valid
-    @NotNull
+    @NotNull(message = "Breed name must be provided")
     @ManyToOne
     @JoinColumn(name = "breed_id", nullable = false)
     private PetBreed breed;

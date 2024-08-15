@@ -17,15 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(description = "Dog breeds names")
 public class DogBreedsNamesDTO implements Serializable {
-    /**
-     * Serial version UID
-     */
+
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Dog breeds names
-     */
     @Valid
     @NotNull(message = "Breeds must be provided")
     @Schema(description = "List of dog breeds names")

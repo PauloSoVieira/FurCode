@@ -20,6 +20,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+/**
+ * Pet Breed Service class for managing PetBreed entities.
+ */
 @Validated
 @Service
 public class PetBreedService {
@@ -38,6 +41,12 @@ public class PetBreedService {
         this.dogApiService = dogApiService;
     }
 
+    /**
+     * Fetch a pet breed from external API if not exist in local database and save to local repository.
+     *
+     * @param petBreedCreateDTO the pet breed to create or fetch
+     * @return the created or fetched pet breed
+     */
     @Transactional
     public PetBreedDTO addOrFetchBreed(@Valid PetBreedCreateDTO petBreedCreateDTO) {
         // Check if the breed already exists in the local database

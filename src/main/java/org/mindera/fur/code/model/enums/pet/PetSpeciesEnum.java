@@ -1,8 +1,13 @@
 package org.mindera.fur.code.model.enums.pet;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Pet species enum
+ */
 @Getter
+@AllArgsConstructor
 public enum PetSpeciesEnum {
     DOG(1, "Dog"),
     CAT(2, "Cat"),
@@ -13,9 +18,4 @@ public enum PetSpeciesEnum {
 
     private final int id;
     private final String name;
-
-    PetSpeciesEnum(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 }

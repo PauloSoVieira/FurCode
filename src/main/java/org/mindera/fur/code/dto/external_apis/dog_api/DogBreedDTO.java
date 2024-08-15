@@ -14,31 +14,20 @@ import java.io.Serializable;
 @Data
 @Schema(description = "Dog breed")
 public class DogBreedDTO implements Serializable {
-    /**
-     * Serial version UID
-     */
+
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Dog breed external ID
-     */
     @NotBlank(message = "Dog breed ID is required")
     @Size(min = 1, max = 255, message = "Dog breed id must be between 1 and 255 characters")
     @Schema(description = "Dog breed external ID")
     private String id;
 
-    /**
-     * Dog breed name
-     */
     @NotBlank(message = "Dog breed name is required")
     @Size(min = 1, max = 255, message = "Dog breed name must be between 1 and 255 characters")
     @Schema(description = "Dog breed name")
     private String name;
 
-    /**
-     * Dog breed description
-     */
     @NotBlank(message = "Dog breed description is required")
     @Size(min = 1, max = 2048, message = "Dog breed description must be between 1 and 2048 characters")
     @Schema(description = "Dog breed description")

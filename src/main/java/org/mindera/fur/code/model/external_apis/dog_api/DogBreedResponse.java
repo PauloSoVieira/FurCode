@@ -13,16 +13,10 @@ import java.util.List;
 @Data
 public class DogBreedResponse {
 
-    /**
-     * Data for the response
-     */
     @Valid
     @NotEmpty(message = "Data must be provided")
     private List<DogBreed> data;
 
-    /**
-     * Links for the response
-     */
     @Valid
     @NotNull(message = "Links must be provided")
     private DogBreedLinks links;
