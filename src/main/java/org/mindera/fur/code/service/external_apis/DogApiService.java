@@ -21,6 +21,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Dog API service class for making requests to the Dog API.
+ */
 @Validated
 @Service
 public class DogApiService {

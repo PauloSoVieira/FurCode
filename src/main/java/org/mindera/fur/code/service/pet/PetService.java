@@ -85,7 +85,10 @@ public class PetService {
 
     /**
      * Update a pet.
-     *
+     *<p>
+     * <b>Note:</b> The pet.setId(id) is required for MapStruct to work.
+     * It will be removed in the future from the service and implemented in the mapper, once I figure out how to do it.
+     * </p>
      * @param id The ID of the pet.
      * @param petUpdateDTO The pet to update.
      */
@@ -95,7 +98,7 @@ public class PetService {
 
         PetUpdateMapper.INSTANCE.updatePetFromDto(petUpdateDTO, pet);
 
-        pet.setId(id); // Ensure ID is set - This is required for MapStruct
+        pet.setId(id);
         petRepository.save(pet);
     }
 
@@ -104,7 +107,7 @@ public class PetService {
      * <p>
      * <b>Note:</b> This method currently performs a hard delete (removes the record from the database).
      * In a future release, this method will be updated to perform a soft delete, which will mark the record as deleted without removing it.
-     * Also, will delete all pet records from the database. This not what we want.
+     * Also, currently will delete all pet records from the database. This not what we want.
      * </p>
      *
      * @param id the ID of the pet to be deleted
@@ -148,7 +151,7 @@ public class PetService {
      * Deletes all pets and related records.
      * <p>
      * <b>Note:</b> This method is for testing purposes only and should not be used in production.
-     * It deletes all pet records and should be handled with caution.
+     * It deletes all pets and pet records and should be handled with caution.
      * </p>
      */
     @Transactional

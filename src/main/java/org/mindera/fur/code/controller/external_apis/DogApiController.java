@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for the external dog API.
+ */
 @Validated
 @Tag(name = "External Dog API", description = "Operations for the external Dog API")
 @RestController

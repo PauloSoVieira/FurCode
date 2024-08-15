@@ -8,6 +8,15 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * A model class for a pet chip.
+ * <p>
+ * <b>Note:</b> This class is currently not used in the application.
+ * It is included for future reference and may be used in the future.
+ * Maybe reference to medical records or other associated entities can be added later
+ *</p>
+ *
+ */
 @Data
 @Entity
 @Table(name = "pet_chip")
@@ -38,6 +47,4 @@ public class PetChip {
     @NotNull(message = "Active status must be provided")
     @Column(nullable = false)
     private Boolean active;
-
-    // Reference to medical records or other associated entities can be added later
 }
