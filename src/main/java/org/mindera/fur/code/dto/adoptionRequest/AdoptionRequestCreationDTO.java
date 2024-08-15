@@ -5,9 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
-
-import java.util.Set;
 
 /**
  * DTO for creating an adoption request.
@@ -31,9 +28,9 @@ public class AdoptionRequestCreationDTO {
     @Schema(description = "The id of the pet", example = "1", required = true)
     private Long petId;
 
-    @NotNull
-    @NotBlank
-    private Set<RequestDetailDTO> requestDetails;
+//    @NotNull
+//    @NotBlank
+//    private Set<RequestDetailDTO> requestDetails;
 
     /**
      * Default constructor.
@@ -44,16 +41,16 @@ public class AdoptionRequestCreationDTO {
     /**
      * Constructor with parameters.
      *
-     * @param shelterId      The id of the shelter.
-     * @param personId       The id of the person.
-     * @param petId          The id of the pet.
-     * @param requestDetails The request details.
+     * @param shelterId The id of the shelter.
+     * @param personId  The id of the person.
+     * @param petId     The id of the pet.
+     *                  //     * @param requestDetails The request details.
      */
     public AdoptionRequestCreationDTO(Long shelterId, Long personId, Long petId) {
         this.shelterId = shelterId;
         this.personId = personId;
         this.petId = petId;
-        this.requestDetails = requestDetails;
+//        this.requestDetails = requestDetails;
     }
 
     //TODO VERIFY HOW TO LEAVE SOMETHING TO SENT BY DEFAULT
