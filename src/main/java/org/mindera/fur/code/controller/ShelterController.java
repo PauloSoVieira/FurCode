@@ -9,9 +9,6 @@ import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.service.ShelterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,11 +48,11 @@ public class ShelterController {
     @Schema(description = "Create a shelter")
     @Operation(summary = "Create a shelter", description = "Creates a new shelter with the provided data")
     @CacheEvict(cacheNames = "shelters", allEntries = true)
+
     public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(shelterService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
 
-    //Get all shelters
 
     /**
      * Endpoint to get all shelters.

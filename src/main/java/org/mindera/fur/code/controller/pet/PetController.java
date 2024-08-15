@@ -7,9 +7,6 @@ import org.mindera.fur.code.dto.pet.*;
 import org.mindera.fur.code.service.AIService;
 import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Pet Controller for managing Pet entities.
+ */
 @Validated
 @Tag(name = "Pet", description = "Operations for pets")
 @RestController
@@ -32,14 +32,24 @@ public class PetController {
         this.aiService = aiService;
     }
 
+    /**
+     * Get all pets.
+     *
+     * @return a list of all pets
+     */
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Cacheable(cacheNames = "pets")
-    public List<PetDTO> getAllPets() {
+    public ResponseEntity<List<PetDTO>> getAllPets() {
         List<PetDTO> petDTOs = petService.findAllPets();
-        return petDTOs;
+        return new ResponseEntity<>(petDTOs, HttpStatus.OK);
     }
 
+    /**
+     * Get a pet by ID.
+     *
+     * @param id The ID of the pet.
+     * @return The pet.
+     */
     @Operation(summary = "Get a pet by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
@@ -47,29 +57,52 @@ public class PetController {
         return new ResponseEntity<>(petDTO, HttpStatus.OK);
     }
 
+    /**
+     * Create a new pet.
+     *
+     * @param petCreateDTO The pet to create.
+     * @return The pet.
+     */
     @Operation(summary = "Create a new pet")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(cacheNames = "pets", allEntries = true)
     public ResponseEntity<PetDTO> createPet(@RequestBody @Valid PetCreateDTO petCreateDTO) {
         PetDTO petDTO = petService.addPet(petCreateDTO);
         return new ResponseEntity<>(petDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Update a pet.
+     *
+     * @param id           The ID of the pet.
+     * @param petUpdateDTO The pet to update.
+     */
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CachePut(cacheNames = "pets", key = "#petDTO.id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
+    public ResponseEntity<Void> updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         petService.updatePet(id, petUpdateDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Delete a pet.
+     *
+     * @param id The ID of the pet.
+     */
     @Operation(summary = "Delete a pet")
     @DeleteMapping(value = "/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePet(@PathVariable @Valid Long id) {
+    public ResponseEntity<Void> deletePet(@PathVariable @Valid Long id) {
         petService.softDeletePet(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Get all pet records by pet ID.
+     *
+     * @param id The ID of the pet.
+     * @return A list of pet records.
+     */
     @Operation(summary = "Get all pet records by pet ID")
     @GetMapping(value = "/{id}/record", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @Valid Long id) {
@@ -77,6 +110,13 @@ public class PetController {
         return new ResponseEntity<>(petRecordDTO, HttpStatus.OK);
     }
 
+    /**
+     * Create a new pet record by pet ID.
+     *
+     * @param id                 The ID of the pet.
+     * @param petRecordCreateDTO The pet record to create.
+     * @return The created pet record.
+     */
     @Operation(summary = "Create a new pet record by pet ID")
     @PostMapping(value = "/{id}/create-record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
@@ -84,12 +124,24 @@ public class PetController {
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Generate a new pet description with AI.
+     *
+     * @param id The ID of the pet.
+     * @return The generated pet description.
+     */
     @Operation(summary = "Generate a new pet description with AI")
     @PostMapping(value = "/{id}/new-description")
     public ResponseEntity<String> generatePetDescription(@PathVariable @Valid Long id) {
         return new ResponseEntity<>(aiService.generateNewPetDescription(petService.findPetById(id)), HttpStatus.OK);
     }
 
+    /**
+     * Search a pet with natural language.
+     *
+     * @param searchQuery The search query.
+     * @return The search result.
+     */
     @Operation(summary = "Search a pet with natural language")
     @PostMapping(value = "/search/nl/{searchQuery}")
     public ResponseEntity<String> searchPetWithNaturalLanguage(@PathVariable @Valid String searchQuery) {

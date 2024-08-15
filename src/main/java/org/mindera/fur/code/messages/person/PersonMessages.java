@@ -23,4 +23,5 @@ public class PersonMessages {
 
     public static final String TOKEN_IS_NULL = "Token is null";
 
+    public static final String SHELTER_NOT_FOUND = "Shelter not found";
 }

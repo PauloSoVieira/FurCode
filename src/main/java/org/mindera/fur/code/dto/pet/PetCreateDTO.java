@@ -7,12 +7,15 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
+/**
+ * A DTO class for creating a pet.
+ */
 @Data
 public class PetCreateDTO {
 
     @NotBlank(message = "Pet name must be provided")
     @Size(min = 1, max = 30, message = "Pet name must be between 1 and 30 characters")
-    @Schema(description = "The name of the pet", example = "Max")
+    @Schema(description = "The name of the pet", example = "Bobby")
     private String name;
 
     @NotNull(message = "Pet type ID must be provided")

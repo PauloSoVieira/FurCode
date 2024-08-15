@@ -9,6 +9,9 @@ import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
 import java.util.List;
 
+/**
+ * A model class for a pet.
+ */
 @Data
 @Entity
 @Table(name = "pet")
@@ -25,7 +28,7 @@ public class Pet {
 
     @Valid
     @NotNull(message = "Pet Type must be provided")
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "pet_type_id", nullable = false)
     private PetType petType;
 
@@ -73,6 +76,4 @@ public class Pet {
     @Valid
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRecord> petRecords;
-
-    // TODO: Add chip to the model
 }

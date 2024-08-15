@@ -12,6 +12,9 @@ import org.mindera.fur.code.model.enums.pet.PetSpeciesEnum;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * A DTO class for creating a pet breed.
+ */
 @Data
 public class PetBreedCreateDTO implements Serializable {
 
