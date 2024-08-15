@@ -6,8 +6,9 @@ import org.mapstruct.factory.Mappers;
 import org.mindera.fur.code.dto.external_apis.dog_api.DogBreedDTO;
 import org.mindera.fur.code.model.external_apis.dog_api.DogBreed;
 
-import java.util.List;
-
+/**
+ * A mapper class for mapping dog breeds.
+ */
 @Mapper
 public interface DogBreedMapper {
 
@@ -17,6 +18,4 @@ public interface DogBreedMapper {
     @Mapping(source = "attributes.name", target = "name")
     @Mapping(source = "attributes.description", target = "description")
     DogBreedDTO toBreedDTO(DogBreed dogBreed);
-
-    List<DogBreedDTO> toBreedDTOList(List<DogBreed> dogBreeds);
 }

@@ -37,7 +37,7 @@ public class FormController {
         return new ResponseEntity<>(formService.createFormFromTemplate(templateName), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{formId}")
+    @PostMapping("/submit/{formId}")
     @Operation(summary = "Submit answers for a form", description = "Submits answers for a specific form")
     public ResponseEntity<FormDTO> submitFormAnswers(@PathVariable Long formId, @RequestBody FormDTO formDTO) {
         FormAnswerDTO formAnswerDTO = new FormAnswerDTO();

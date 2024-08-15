@@ -8,6 +8,7 @@ import org.mindera.fur.code.dto.external_apis.dog_api.DogBreedDTO;
 import org.mindera.fur.code.dto.pet.PetBreedCreateDTO;
 import org.mindera.fur.code.dto.pet.PetBreedDTO;
 import org.mindera.fur.code.mapper.pet.PetBreedMapper;
+import org.mindera.fur.code.messages.pet.PetMessages;
 import org.mindera.fur.code.model.enums.pet.PetSpeciesEnum;
 import org.mindera.fur.code.model.pet.PetBreed;
 import org.mindera.fur.code.model.pet.PetType;
@@ -92,14 +93,14 @@ public class PetBreedService {
     private DogBreedDTO fetchBreedFromExternalApi(String breedName) {
         DogBreedDTO dogBreedDTO = dogApiService.getBreedByName(breedName);
         if (dogBreedDTO == null) {
-            throw new EntityNotFoundException("Breed not found in external API with name: " + breedName);
+            throw new EntityNotFoundException(PetMessages.BREED_NOT_FOUND_EXTERNAL_API_WITH_NAME + breedName);
         }
         return dogBreedDTO;
     }
 
     private static void verifySpecies(PetSpeciesEnum species) {
         if (!species.equals(PetSpeciesEnum.DOG)) {
-            throw new UnsupportedOperationException("Currently, only Dog breeds are supported. Provided species: " + species.getName());
+            throw new UnsupportedOperationException(PetMessages.TYPE_OF_BREED_NOT_SUPPORTED + species.getName());
         }
     }
 

@@ -1,7 +1,6 @@
 package org.mindera.fur.code.model.external_apis.dog_api;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public class DogBreedResponse {
 
     @Valid
-    @NotEmpty(message = "Data must be provided")
+    @NotNull(message = "Data must be provided")
     private List<DogBreed> data;
 
     @Valid

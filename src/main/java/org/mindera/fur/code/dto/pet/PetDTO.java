@@ -16,6 +16,7 @@ import java.io.Serializable;
 public class PetDTO implements Serializable {
 
     @NotNull(message = "Pet ID must be provided")
+    @Schema(description = "The ID of the pet", example = "2")
     @Schema(description = "The ID of the pet", example = "1")
     private Long id;
 
