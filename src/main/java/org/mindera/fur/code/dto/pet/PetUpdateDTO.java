@@ -20,6 +20,7 @@ public class PetUpdateDTO {
 
     @Schema(description = "The size of the pet", example = "SMALL")
     @Enumerated(EnumType.STRING)
+    @Schema(description = "The size of the pet", example = "SMALL")
     private PetSizeEnum size;
 
     @DecimalMin(value = "0.01", message = "Pet weight must be greater than 0.01 kilos")

@@ -9,6 +9,9 @@ import org.mindera.fur.code.model.pet.Pet;
 
 import java.util.List;
 
+/**
+ * A mapper class for mapping pets.
+ */
 @Mapper
 public interface PetMapper {
 
@@ -23,7 +26,6 @@ public interface PetMapper {
     @Mapping(source = "petTypeId", target = "petType.id")
     @Mapping(source = "shelterId", target = "shelter.id")
     Pet toModel(PetCreateDTO dto);
-
 
     List<PetDTO> toDto(List<Pet> pet);
 }

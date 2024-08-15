@@ -5,6 +5,9 @@ import org.mindera.fur.code.model.pet.PetType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Pet type repository.
+ */
 @Schema(description = "Pet type repository")
 @Repository
 public interface PetTypeRepository extends JpaRepository<PetType, Long> {
