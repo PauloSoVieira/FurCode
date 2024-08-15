@@ -68,6 +68,10 @@ public class ShelterMessages {
      */
     public static final String SIZE_CANT_BE_NULL = "Size can't be null";
     /**
+     * Message for when the size is higher than 1000.
+     */
+    public static final String SIZE_CANT_BE_HIGHER_THAN_1000 = "Size can't be higher than 1000";
+    /**
      * Message for when the isActive is null.
      */
     public static final String ISACTIVE_CANT_BE_NULL = "State can't be null";
@@ -91,4 +95,16 @@ public class ShelterMessages {
      * Message for when the postal code is empty.
      */
     public static final String POSTAL_CODE_CANT_BE_EMPTY = "Postal Code can't be empty";
+    /**
+     * Message for when the creation date is null.
+     */
+    public static final String CREATION_DATE_CANT_BE_NULL = "Creation Date can't be null";
+    /**
+     * Message for when the creation date is empty.
+     */
+    public static final String CREATION_DATE_CANT_BE_EMPTY = "Creation Date can't be empty";
+    /**
+     * Message for when the creation date is in future.
+     */
+    public static final String CREATION_DATE_CANT_BE_IN_FUTURE = "Creation Date can't be in future";
 }

@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.mindera.fur.code.model.pet.Pet;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -23,6 +25,7 @@ import java.util.Set;
 public class Shelter {
 
     @Id
+    @Positive
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
     private Long id;
@@ -50,6 +53,8 @@ public class Shelter {
     private Integer size;
     @Schema(description = "The is active of the shelter", example = "true", required = true)
     private Boolean isActive;
+    @Schema(description = "The creation date of the shelter", example = "2023-01-01", required = true)
+    private LocalDate creationDate;
 
     /**
      * The set of ShelterPersonRoles.

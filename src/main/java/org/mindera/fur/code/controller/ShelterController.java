@@ -1,5 +1,6 @@
 package org.mindera.fur.code.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mindera.fur.code.dto.donation.DonationDTO;
@@ -45,6 +46,9 @@ public class ShelterController {
      */
     @PostMapping
     @Schema(description = "Create a shelter")
+    @Operation(summary = "Create a shelter", description = "Creates a new shelter with the provided data")
+    @CacheEvict(cacheNames = "shelters", allEntries = true)
+
     public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(shelterService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
@@ -57,8 +61,11 @@ public class ShelterController {
      */
     @GetMapping("/all")
     @Schema(description = "Get all shelters")
-    public ResponseEntity<List<ShelterDTO>> getAllShelters() {
-        return new ResponseEntity<>(shelterService.getAllShelters(), HttpStatus.OK);
+    @Operation(summary = "Get all shelters", description = "Returns a list of all shelters")
+    @Cacheable(cacheNames = "shelters")
+    public List<ShelterDTO> getAllShelters() {
+        System.out.println("Cache");
+        return shelterService.getAllShelters();
     }
 
     //Get shelter by id
@@ -70,6 +77,7 @@ public class ShelterController {
      * @return The ShelterDTO object.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Get a shelter by id", description = "Returns a shelter with the specified id")
     @Schema(description = "Get a shelter by id")
     public ResponseEntity<ShelterDTO> getShelterById(@PathVariable Long id) {
         return new ResponseEntity<>(shelterService.getShelterById(id), HttpStatus.OK);
@@ -84,6 +92,7 @@ public class ShelterController {
      * @return The list of donations.
      */
     @GetMapping("/{id}/get-all-donations")
+    @Operation(summary = "Get all donations in a shelter", description = "Returns a list of donations in a shelter")
     @Schema(description = "Get all donations in a shelter")
     public ResponseEntity<List<DonationDTO>> getAllDonationsById(@PathVariable Long id) {
         return new ResponseEntity<>(shelterService.getAllDonationsById(id), HttpStatus.OK);
@@ -98,6 +107,7 @@ public class ShelterController {
      * @return The deleted shelter.
      */
     @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Delete a shelter by id", description = "Deletes a shelter with the specified id")
     @Schema(description = "Delete a shelter by id")
     public ResponseEntity<ShelterDTO> deleteShelter(@PathVariable Long id) {
         return new ResponseEntity<>(shelterService.deleteShelter(id), HttpStatus.NO_CONTENT);
@@ -114,6 +124,8 @@ public class ShelterController {
      */
     @PatchMapping("/update/{id}")
     @Schema(description = "Update a shelter")
+    @Operation(summary = "Update a shelter", description = "Updates a shelter with the provided data")
+    @CachePut(cacheNames = "shelters", key = "#shelterDTO.id")
     public ResponseEntity<ShelterDTO> updateShelter(@PathVariable Long id, @RequestBody ShelterDTO shelterDTO) {
         return new ResponseEntity<>(shelterService.updateShelter(id, shelterDTO), HttpStatus.OK);
     }
@@ -127,6 +139,7 @@ public class ShelterController {
      * @return The list of pets.
      */
     @GetMapping("/{id}/allPets")
+    @Operation(summary = "Get all pets in a shelter", description = "Returns a list of pets in a shelter")
     @Schema(description = "Get all pets in a shelter")
     public ResponseEntity<List<PetDTO>> getAllPetsInShelter(@PathVariable Long id) {
         return new ResponseEntity<>(shelterService.getAllPetsInShelter(id), HttpStatus.OK);
