@@ -4,6 +4,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+/**
+ * Response for dog api by id
+ */
 @Data
 public class DogBreedByIdResponse {
 

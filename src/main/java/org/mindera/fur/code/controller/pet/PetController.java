@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Pet Controller for managing Pet entities.
+ */
 @Validated
 @Tag(name = "Pet", description = "Operations for pets")
 @RestController
@@ -32,14 +35,25 @@ public class PetController {
         this.aiService = aiService;
     }
 
+    /**
+     * Get all pets.
+     *
+     * @return a list of all pets
+     */
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Cacheable(cacheNames = "pets")
+    //@Cacheable(cacheNames = "pets")
     public List<PetDTO> getAllPets() {
         List<PetDTO> petDTOs = petService.findAllPets();
         return petDTOs;
     }
 
+    /**
+     * Get a pet by ID.
+     *
+     * @param id The ID of the pet.
+     * @return The pet.
+     */
     @Operation(summary = "Get a pet by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
@@ -47,6 +61,12 @@ public class PetController {
         return new ResponseEntity<>(petDTO, HttpStatus.OK);
     }
 
+    /**
+     * Create a new pet.
+     *
+     * @param petCreateDTO The pet to create.
+     * @return The pet.
+     */
     @Operation(summary = "Create a new pet")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(cacheNames = "pets", allEntries = true)
@@ -55,14 +75,25 @@ public class PetController {
         return new ResponseEntity<>(petDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Update a pet.
+     *
+     * @param id The ID of the pet.
+     * @param petUpdateDTO The pet to update.
+     */
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CachePut(cacheNames = "pets", key = "#petDTO.id")
+    @CachePut(cacheNames = "pets", key = "#id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         petService.updatePet(id, petUpdateDTO);
     }
 
+    /**
+     * Delete a pet.
+     *
+     * @param id The ID of the pet.
+     */
     @Operation(summary = "Delete a pet")
     @DeleteMapping(value = "/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -70,6 +101,12 @@ public class PetController {
         petService.softDeletePet(id);
     }
 
+    /**
+     * Get all pet records by pet ID.
+     *
+     * @param id The ID of the pet.
+     * @return A list of pet records.
+     */
     @Operation(summary = "Get all pet records by pet ID")
     @GetMapping(value = "/{id}/record", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @Valid Long id) {
@@ -77,6 +114,13 @@ public class PetController {
         return new ResponseEntity<>(petRecordDTO, HttpStatus.OK);
     }
 
+    /**
+     * Create a new pet record by pet ID.
+     *
+     * @param id The ID of the pet.
+     * @param petRecordCreateDTO The pet record to create.
+     * @return The created pet record.
+     */
     @Operation(summary = "Create a new pet record by pet ID")
     @PostMapping(value = "/{id}/create-record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
@@ -84,12 +128,24 @@ public class PetController {
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Generate a new pet description with AI.
+     *
+     * @param id The ID of the pet.
+     * @return The generated pet description.
+     */
     @Operation(summary = "Generate a new pet description with AI")
     @PostMapping(value = "/{id}/new-description")
     public ResponseEntity<String> generatePetDescription(@PathVariable @Valid Long id) {
         return new ResponseEntity<>(aiService.generateNewPetDescription(petService.findPetById(id)), HttpStatus.OK);
     }
 
+    /**
+     * Search a pet with natural language.
+     *
+     * @param searchQuery The search query.
+     * @return The search result.
+     */
     @Operation(summary = "Search a pet with natural language")
     @PostMapping(value = "/search/nl/{searchQuery}")
     public ResponseEntity<String> searchPetWithNaturalLanguage(@PathVariable @Valid String searchQuery) {

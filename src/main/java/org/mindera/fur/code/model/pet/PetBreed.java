@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * A model class for a pet breed.
+ */
 @Data
 @Entity
 @Table(name = "pet_breed")

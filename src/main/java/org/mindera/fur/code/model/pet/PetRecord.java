@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * A model class for a pet record.
+ */
 @Data
 @Entity
 @Table(name = "pet_record")
@@ -31,10 +34,4 @@ public class PetRecord {
     @PastOrPresent(message = "Date cannot be in the future")
     @Column(nullable = false)
     private Date createdAt;
-
-    @Valid
-    @NotNull(message = "Date is required")
-    @PastOrPresent(message = "Date cannot be in the future")
-    @Column(nullable = false)
-    private Date updatedAt;
 }

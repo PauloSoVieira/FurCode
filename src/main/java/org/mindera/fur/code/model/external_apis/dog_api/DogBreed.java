@@ -12,16 +12,10 @@ import lombok.Data;
 @Data
 public class DogBreed {
 
-    /**
-     * ID of the breed
-     */
     @NotBlank(message = "ID must be provided")
     @Size(min = 1, max = 255, message = "ID must be between 1 and 255 characters")
     private String id;
 
-    /**
-     * Name and attributes of the breed
-     */
     @Valid
     @NotNull(message = "Attributes must be provided")
     private DogBreedAttributes attributes;

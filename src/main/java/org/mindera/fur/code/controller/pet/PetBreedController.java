@@ -28,6 +28,12 @@ public class PetBreedController {
         this.petBreedService = petBreedService;
     }
 
+    /**
+     * Fetch a pet breed from external API if not exist in local database and save to local repository.
+     *
+     * @param petBreedCreateDTO the pet breed to create or fetch
+     * @return the created or fetched pet breed
+     */
     @Operation(summary = "Fetch a pet breed from external API if not exist in local database and save to local repository")
     @PostMapping(value = "/create-breed", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetBreedDTO> createOrFetchBreed(@RequestBody @Valid PetBreedCreateDTO petBreedCreateDTO) {
