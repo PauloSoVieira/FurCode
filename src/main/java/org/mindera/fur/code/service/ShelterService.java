@@ -16,6 +16,8 @@ import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -137,6 +139,7 @@ public class ShelterService {
      *
      * @return
      */
+    @Cacheable(cacheNames = "shelters")
     public List<ShelterDTO> getAllShelters() {
         List<Shelter> shelters = shelterRepository.findAll();
         return shelterMapper.INSTANCE.toDto(shelters);
@@ -160,6 +163,7 @@ public class ShelterService {
      * @param shelterCreationDTO
      * @return
      */
+    @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
         shelterValidation(shelterCreationDTO);
         Shelter shelter = shelterMapper.INSTANCE.toModel(shelterCreationDTO);
@@ -173,6 +177,7 @@ public class ShelterService {
      * @param id
      * @return
      */
+    @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO deleteShelter(Long id) {
         idValidation(id);
         Shelter shelter = shelterRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Error"));
@@ -187,6 +192,7 @@ public class ShelterService {
      * @param shelterDTO
      * @return
      */
+    @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO updateShelter(Long id, ShelterDTO shelterDTO) {
         idValidation(id);
         Shelter shelter = shelterRepository.findById(id).orElseThrow();

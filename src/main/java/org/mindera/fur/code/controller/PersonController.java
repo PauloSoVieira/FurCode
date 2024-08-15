@@ -12,9 +12,6 @@ import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.model.Role;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +43,6 @@ public class PersonController {
      */
     @PostMapping
     @Schema(description = "Create a person")
-    @CacheEvict(cacheNames = "persons", allEntries = true)
     public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonCreationDTO personCreationDTO) {
         return new ResponseEntity<>(personService.createPerson(personCreationDTO), HttpStatus.CREATED);
     }
@@ -99,9 +95,8 @@ public class PersonController {
      */
     @GetMapping("/all")
     @Schema(description = "Get all persons")
-    @Cacheable(cacheNames = "persons")
-    public List<PersonDTO> getAllPersons() {
-        return personService.getAllPersons();
+    public ResponseEntity<List<PersonDTO>> getAllPersons() {
+        return new ResponseEntity<>(personService.getAllPersons(), HttpStatus.OK);
     }
 
     /**
@@ -137,7 +132,6 @@ public class PersonController {
      */
     @PatchMapping("/update/{id}")
     @Schema(description = "Update a person")
-    @CachePut(cacheNames = "persons", key = "#personDTO.id")
     public ResponseEntity<PersonDTO> updatePerson(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
         return new ResponseEntity<>(personService.updatePerson(id, personDTO), HttpStatus.OK);
     }

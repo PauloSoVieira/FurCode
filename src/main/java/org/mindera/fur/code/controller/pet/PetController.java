@@ -7,9 +7,6 @@ import org.mindera.fur.code.dto.pet.*;
 import org.mindera.fur.code.service.AIService;
 import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +39,9 @@ public class PetController {
      */
     @Operation(summary = "Get all pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    //@Cacheable(cacheNames = "pets")
-    public List<PetDTO> getAllPets() {
+    public ResponseEntity<List<PetDTO>> getAllPets() {
         List<PetDTO> petDTOs = petService.findAllPets();
-        return petDTOs;
+        return new ResponseEntity<>(petDTOs, HttpStatus.OK);
     }
 
     /**
@@ -69,7 +65,6 @@ public class PetController {
      */
     @Operation(summary = "Create a new pet")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(cacheNames = "pets", allEntries = true)
     public ResponseEntity<PetDTO> createPet(@RequestBody @Valid PetCreateDTO petCreateDTO) {
         PetDTO petDTO = petService.addPet(petCreateDTO);
         return new ResponseEntity<>(petDTO, HttpStatus.CREATED);
@@ -78,15 +73,15 @@ public class PetController {
     /**
      * Update a pet.
      *
-     * @param id The ID of the pet.
+     * @param id           The ID of the pet.
      * @param petUpdateDTO The pet to update.
      */
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CachePut(cacheNames = "pets", key = "#id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
+    public ResponseEntity<Void> updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         petService.updatePet(id, petUpdateDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -97,8 +92,9 @@ public class PetController {
     @Operation(summary = "Delete a pet")
     @DeleteMapping(value = "/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePet(@PathVariable @Valid Long id) {
+    public ResponseEntity<Void> deletePet(@PathVariable @Valid Long id) {
         petService.softDeletePet(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -117,7 +113,7 @@ public class PetController {
     /**
      * Create a new pet record by pet ID.
      *
-     * @param id The ID of the pet.
+     * @param id                 The ID of the pet.
      * @param petRecordCreateDTO The pet record to create.
      * @return The created pet record.
      */
