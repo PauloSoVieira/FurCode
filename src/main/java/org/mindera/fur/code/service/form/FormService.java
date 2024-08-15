@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 import org.mindera.fur.code.controller.form.TemplateLoaderUtil;
 import org.mindera.fur.code.dto.form.*;
-import org.mindera.fur.code.exceptions.adoptionFormException.AdoptionFormNotFound;
 import org.mindera.fur.code.mapper.formMapper.FormMapper;
+import org.mindera.fur.code.messages.form.FormMessages;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.model.form.FormFieldAnswer;
@@ -63,7 +63,13 @@ public class FormService {
     @Transactional
     public FormDTO createForm(FormCreateDTO formCreateDTO) {
         if (formCreateDTO == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Form not found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_CANT_BE_NULL);
+        }
+        if (formCreateDTO.getName() == null || formCreateDTO.getName().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_NAME_CANT_BE_NULL_OR_EMPTY);
+        }
+        if (formCreateDTO.getType() == null || formCreateDTO.getType().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_TYPE_CANT_BE_NULL_OR_EMPTY);
         }
         Form form = new Form();
         form.setName(formCreateDTO.getName());
@@ -112,7 +118,7 @@ public class FormService {
      * @return true if the template name is valid, false otherwise
      */
     @Operation(summary = "Check if a template name is valid", description = "Checks if the provided template name is valid")
-    private boolean isValidTemplateName(String templateName) {
+    boolean isValidTemplateName(String templateName) {
 
         List<String> validTemplateNames = Arrays.asList("adoption-template", "donation-template");
         return validTemplateNames.contains(templateName);
@@ -169,10 +175,10 @@ public class FormService {
             return FormMapper.INSTANCE.toDTO(savedForm);
         } catch (IOException e) {
             logger.error("Error loading template: {}", templateName, e);
-            throw new AdoptionFormNotFound("Error loading template: " + templateName);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading template: " + templateName);
         } catch (Exception e) {
             logger.error("Error creating form from template: {}", templateName, e);
-            throw new AdoptionFormNotFound("Error creating form from template: " + templateName);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error creating form from template: " + templateName);
         }
     }
 
@@ -220,6 +226,11 @@ public class FormService {
         }
         try {
             FormTemplateDTO template = templateLoader.loadTemplate(templateName);
+
+            if (template.getFields().stream().anyMatch(field -> field.getQuestion().equals(newField.getQuestion()))) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Field with this question already exists");
+            }
+
             template.getFields().add(newField);
             templateLoader.saveTemplate(templateName, template);
 

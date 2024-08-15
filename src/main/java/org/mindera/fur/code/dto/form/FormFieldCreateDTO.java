@@ -10,4 +10,12 @@ import lombok.Data;
 public class FormFieldCreateDTO {
     private String question;
     private String fieldType;
+
+    public FormFieldCreateDTO(String fieldType, String question) {
+        this.question = question;
+        this.fieldType = fieldType;
+    }
+
+    public FormFieldCreateDTO() {
+    }
 }
