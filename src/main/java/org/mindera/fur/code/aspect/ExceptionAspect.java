@@ -162,6 +162,7 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
             NoSuchElementException.class,
             DonationNotFoundException.class,
             EntityNotFoundException.class,
+//            AdoptionFormNotFound.class,
     })
     public ResponseEntity<String> ResourceNotFoundException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Resource Not Found", e.getMessage());
@@ -189,7 +190,8 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
             InvalidDonationDateException.class,
             FileException.class,
             PersonException.class,
-            UnsupportedOperationException.class
+//            AdoptionFormNotFound.class,
+//            UnsupportedOperationException.class
     })
     public ResponseEntity<String> InvalidResourceException(Exception e, HttpServletRequest request) {
         logger.error("{}: {}", "Invalid Request/Resource", e.getMessage());
