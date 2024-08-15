@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
@@ -264,25 +265,57 @@ class FormServiceTest {
         }
 
         @Test
-        void addFieldToTemplate_withValidField_returns200() {
+        void addFieldToTemplate_withValidField_returns201() {
+            String uniqueQuestion = "uniqueQuestion" + System.currentTimeMillis();
             FormFieldCreateDTO newField = new FormFieldCreateDTO();
             newField.setFieldType("TEXT");
-            newField.setQuestion("New Question");
+            newField.setQuestion(uniqueQuestion);
 
-            FormDTO updatedTemplate = given()
+            given()
                     .contentType(ContentType.JSON)
                     .body(newField)
                     .when()
                     .post("/api/v1/forms/template/adoption-template/field")
                     .then()
-                    .statusCode(201)
+                    .statusCode(201);
+
+            FormTemplateDTO updatedTemplateDTO = given()
+                    .when()
+                    .get("/api/v1/forms/template/adoption-template")
+                    .then()
+                    .statusCode(200)
                     .extract()
                     .body()
-                    .as(FormDTO.class);
+                    .as(FormTemplateDTO.class);
 
-            assertNotNull(updatedTemplate);
-            assertTrue(updatedTemplate.getFormFieldAnswers().stream()
-                    .anyMatch(field -> field.getQuestion().equals("New Question")));
+            assertTrue(updatedTemplateDTO.getFields().stream()
+                            .anyMatch(field -> field.getQuestion().equals(uniqueQuestion)),
+                    "The new field should exist in the updated template");
+
+        }
+
+        @Test
+        void addDuplicateFieldToTemplate_returns400() {
+            String uniqueQuestion = "Duplicate Question " + UUID.randomUUID().toString();
+            FormFieldCreateDTO newField = new FormFieldCreateDTO();
+            newField.setFieldType("TEXT");
+            newField.setQuestion(uniqueQuestion);
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .body(newField)
+                    .when()
+                    .post("/api/v1/forms/template/adoption-template/field")
+                    .then()
+                    .statusCode(201);
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .body(newField)
+                    .when()
+                    .post("/api/v1/forms/template/adoption-template/field")
+                    .then()
+                    .statusCode(400);
         }
 
         @Test
@@ -346,6 +379,50 @@ class FormServiceTest {
             assertTrue(updatedForm.getFormFieldAnswers().stream()
                     .anyMatch(field -> field.getQuestion().equals("New Question")));
         }
+
+        @Test
+        void addMultipleFieldsToForm_returns201() {
+            FormCreateDTO formCreateDTO = new FormCreateDTO();
+            formCreateDTO.setName("Test Form");
+            formCreateDTO.setCreatedAt(LocalDateTime.now());
+            formCreateDTO.setType("DEFAULT");
+            formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+
+            Long formId = given()
+                    .contentType(ContentType.JSON)
+                    .body(formCreateDTO)
+                    .when()
+                    .post("/api/v1/forms")
+                    .then()
+                    .statusCode(201)
+                    .extract()
+                    .jsonPath()
+                    .getLong("id");
+
+            List<FormFieldCreateDTO> newFields = new ArrayList<>();
+            newFields.add(new FormFieldCreateDTO("TEXT", "Question 1"));
+            newFields.add(new FormFieldCreateDTO("NUMBER", "Question 2"));
+            newFields.add(new FormFieldCreateDTO("BOOLEAN", "Question 3"));
+
+            FormDTO updatedForm = null;
+
+            for (FormFieldCreateDTO field : newFields) {
+                updatedForm = given()
+                        .contentType(ContentType.JSON)
+                        .body(field)
+                        .when()
+                        .post("/api/v1/forms/" + formId + "/field")
+                        .then()
+                        .statusCode(201)
+                        .extract()
+                        .as(FormDTO.class);
+            }
+
+            assertNotNull(updatedForm);
+            assertEquals(3, updatedForm.getFormFieldAnswers().size());
+
+        }
+
     }
 
     @Nested
