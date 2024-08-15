@@ -17,8 +17,11 @@ import org.mindera.fur.code.repository.pet.PetRecordRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.repository.pet.PetTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
 import java.util.List;
 
 /**
@@ -50,11 +53,12 @@ public class PetService {
      *
      * @return a list of all pets
      */
+    @Cacheable(cacheNames = "pets")
     public List<PetDTO> findAllPets() {
         List<Pet> pets = petRepository.findAll();
         return pets.stream().map(PetMapper.INSTANCE::toDTO).toList();
     }
-    
+
     /**
      * Find a pet by ID.
      *
@@ -65,7 +69,7 @@ public class PetService {
         Pet pet = findAndAssignPet(id);
         return PetMapper.INSTANCE.toDTO(pet);
     }
-    
+
     /**
      * Add a pet.
      *
@@ -73,6 +77,7 @@ public class PetService {
      * @return The pet.
      */
     @Transactional
+    @CacheEvict(cacheNames = "pets", allEntries = true)
     public PetDTO addPet(@Valid PetCreateDTO petCreateDTO) {
         Pet pet = PetMapper.INSTANCE.toModel(petCreateDTO);
 
@@ -90,12 +95,13 @@ public class PetService {
      * It will be removed in the future from the service and implemented in the mapper, once I figure out how to do it.
      * </p>
      *
-     * @param id The ID of the pet.
+     * @param id           The ID of the pet.
      * @param petUpdateDTO The pet to update.
      */
     @Transactional
+    @CacheEvict(cacheNames = "pets", allEntries = true)
     public void updatePet(@Valid Long id, @Valid PetUpdateDTO petUpdateDTO) {
-        Pet pet =  findAndAssignPet(id);
+        Pet pet = findAndAssignPet(id);
 
         PetUpdateMapper.INSTANCE.updatePetFromDto(petUpdateDTO, pet);
 
@@ -115,6 +121,7 @@ public class PetService {
      * @param id the ID of the pet to be deleted
      * @throws EntityNotFoundException if the pet with the specified ID is not found
      */
+    @CacheEvict(cacheNames = "pets", allEntries = true)
     public void softDeletePet(@Valid Long id) {
         Pet pet = findAndAssignPet(id);
         petRepository.delete(pet);
@@ -123,7 +130,7 @@ public class PetService {
     /**
      * Add a pet record.
      *
-     * @param id The ID of the pet.
+     * @param id                 The ID of the pet.
      * @param petRecordCreateDTO The pet record to add.
      * @return The pet record.
      */

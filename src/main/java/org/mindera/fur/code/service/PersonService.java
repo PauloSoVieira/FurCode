@@ -19,6 +19,8 @@ import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -133,6 +135,7 @@ public class PersonService {
      * @throws PersonException if any required fields are null or invalid
      * @throws PersonException if the email is already in use
      */
+    @CacheEvict(cacheNames = "persons", allEntries = true)
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
         personValidation(personCreationDTO);
 
@@ -208,6 +211,7 @@ public class PersonService {
      * @return an ArrayList of PersonDTO objects representing all persons
      */
 
+    @Cacheable(cacheNames = "persons")
     public List<PersonDTO> getAllPersons() {
         List<Person> persons = personRepository.findAll();
         return personMapper.INSTANCE.toDTO(persons);
@@ -255,6 +259,7 @@ public class PersonService {
      * @throws PersonException if the email is already in use
      */
 
+    @CacheEvict(cacheNames = "persons", allEntries = true)
     public PersonDTO updatePerson(Long id, PersonDTO personDTO) {
         idValidation(id);
         Person person = personRepository.findById(id).orElseThrow(
@@ -283,6 +288,7 @@ public class PersonService {
      * @throws PersonException if no person with the specified ID is found
      */
 
+    @CacheEvict(cacheNames = "persons", allEntries = true)
     public void deletePerson(Long id) {
         Person person = personRepository.findById(id).orElseThrow(
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)

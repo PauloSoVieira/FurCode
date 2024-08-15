@@ -8,9 +8,6 @@ import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.service.ShelterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,12 +45,10 @@ public class ShelterController {
      */
     @PostMapping
     @Schema(description = "Create a shelter")
-    @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(shelterService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
 
-    //Get all shelters
 
     /**
      * Endpoint to get all shelters.
@@ -62,10 +57,8 @@ public class ShelterController {
      */
     @GetMapping("/all")
     @Schema(description = "Get all shelters")
-    @Cacheable(cacheNames = "shelters")
-    public List<ShelterDTO> getAllShelters() {
-        System.out.println("Cache");
-        return shelterService.getAllShelters();
+    public ResponseEntity<List<ShelterDTO>> getAllShelters() {
+        return new ResponseEntity<>(shelterService.getAllShelters(), HttpStatus.OK);
     }
 
     //Get shelter by id
@@ -121,7 +114,6 @@ public class ShelterController {
      */
     @PatchMapping("/update/{id}")
     @Schema(description = "Update a shelter")
-    @CachePut(cacheNames = "shelters", key = "#shelterDTO.id")
     public ResponseEntity<ShelterDTO> updateShelter(@PathVariable Long id, @RequestBody ShelterDTO shelterDTO) {
         return new ResponseEntity<>(shelterService.updateShelter(id, shelterDTO), HttpStatus.OK);
     }
