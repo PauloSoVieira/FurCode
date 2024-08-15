@@ -1,8 +1,11 @@
 package org.mindera.fur.code.exceptions.shelter;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Exception class for when a shelter is not found.
  */
+@Schema(description = "Exception thrown when a shelter is not found.")
 public class ShelterNotFound extends RuntimeException {
 
     /**
