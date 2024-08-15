@@ -45,21 +45,31 @@ public class AuthenticationController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid PersonAuthenticationDTO personAuthenticationDTO) {
-        Person person = personRepository.findByEmail(personAuthenticationDTO.getEmail());
+        try {
 
-        if (personRepository.findByEmail(personAuthenticationDTO.getEmail()) == null) {
+            if (personAuthenticationDTO.getEmail() == null || personAuthenticationDTO.getPassword() == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            
+            Person person = personRepository.findByEmail(personAuthenticationDTO.getEmail());
+
+            if (person == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            if (!passwordEncoder.matches(personAuthenticationDTO.getPassword(), person.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            PersonDTO personDTO = personMapper.INSTANCE.toDTO(person);
+            String token = tokenService.generateToken(personDTO);
+
+            return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
+
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!passwordEncoder.matches(personAuthenticationDTO.getPassword(), person.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        PersonDTO personDTO = personMapper.INSTANCE.toDTO(person);
-        String token = tokenService.generateToken(personDTO);
-
-        return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
     }
 
 }

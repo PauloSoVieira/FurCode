@@ -24,4 +24,5 @@ public class PersonMessages {
     public static final String TOKEN_IS_NULL = "Token is null";
 
     public static final String SHELTER_NOT_FOUND = "Shelter not found";
+    public static final String ERROR_LOGIN = "Email or password is incorrect";
 }
