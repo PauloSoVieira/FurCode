@@ -153,6 +153,7 @@ public class AdoptionRequestService {
     @Transactional
     public AdoptionRequestDTO createAdoptionRequest(AdoptionRequestCreationDTO dto) {
         AdoptionRequest request = new AdoptionRequest();
+
         request.setPet(petRepository.findById(dto.getPetId()).orElseThrow(() -> new RuntimeException("Pet not found")));
         request.setShelter(shelterRepository.findById(dto.getShelterId()).orElseThrow(() -> new RuntimeException("Shelter not found")));
         request.setPerson(personRepository.findById(dto.getPersonId()).orElseThrow(() -> new RuntimeException("Person not found")));

@@ -60,7 +60,7 @@ public class Shelter {
      * The set of ShelterPersonRoles.
      */
     @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
-    @OneToMany(mappedBy = "shelter", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
     /**
