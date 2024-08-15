@@ -2,6 +2,7 @@ package org.mindera.fur.code.dto.adoptionRequest;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -15,21 +16,25 @@ public class AdoptionRequestCreationDTO {
 
     @NotNull
     @NotBlank
+    @Valid
     @Schema(description = "The id of the shelter", example = "1", required = true)
     private Long shelterId;
 
     @NotNull
     @NotBlank
+    @Valid
     @Schema(description = "The id of the person", example = "1", required = true)
     private Long personId;
 
     @NotNull
     @NotBlank
+    @Valid
     @Schema(description = "The id of the pet", example = "1", required = true)
     private Long petId;
 
 //    @NotNull
 //    @NotBlank
+//    @Valid
 //    private Set<RequestDetailDTO> requestDetails;
 
     /**

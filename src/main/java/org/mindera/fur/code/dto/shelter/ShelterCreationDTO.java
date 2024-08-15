@@ -96,13 +96,4 @@ public class ShelterCreationDTO {
     public ShelterCreationDTO() {
     }
 
-    /**
-     * Constructor with parameters.
-     *
-     * @param name The name of the shelter.
-     */
-    public ShelterCreationDTO(String name) {
-        this.name = name;
-    }
-
 }

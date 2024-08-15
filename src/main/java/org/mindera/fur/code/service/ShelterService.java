@@ -127,6 +127,9 @@ public class ShelterService {
         if (shelterCreationDTO.getSize() <= 0) {
             throw new PersonException(ShelterMessages.SIZE_CANT_BE_ZERO_OR_LOWER);
         }
+        if (shelterCreationDTO.getSize() > 1000) {
+            throw new PersonException(ShelterMessages.SIZE_CANT_BE_HIGHER_THAN_1000);
+        }
         if (shelterCreationDTO.getIsActive() == null) {
             throw new PersonException(ShelterMessages.ISACTIVE_CANT_BE_NULL);
         }

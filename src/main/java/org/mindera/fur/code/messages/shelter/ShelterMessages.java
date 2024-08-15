@@ -68,6 +68,10 @@ public class ShelterMessages {
      */
     public static final String SIZE_CANT_BE_NULL = "Size can't be null";
     /**
+     * Message for when the size is higher than 1000.
+     */
+    public static final String SIZE_CANT_BE_HIGHER_THAN_1000 = "Size can't be higher than 1000";
+    /**
      * Message for when the isActive is null.
      */
     public static final String ISACTIVE_CANT_BE_NULL = "State can't be null";
