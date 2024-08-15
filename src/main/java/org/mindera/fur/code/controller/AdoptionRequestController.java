@@ -1,6 +1,7 @@
 package org.mindera.fur.code.controller;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
@@ -11,15 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
  * Controller class for handling adoption request related requests.
  */
 @RestController
-@Schema(name = "Adoption Request Controller", description = "Endpoint for handling adoption requests")
 @RequestMapping("/api/v1/adoption-request")
+@Tag(name = "Adoption Request Controller", description = "Endpoint for handling adoption requests")
 public class AdoptionRequestController {
 
     private final AdoptionRequestService adoptionRequestService;

@@ -5,9 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
-
-import java.util.Set;
 
 /**
  * DTO for creating an adoption request.
@@ -33,7 +30,6 @@ public class AdoptionRequestCreationDTO {
 
     @NotNull
     @NotBlank
-    @Schema(description = "The request details", required = true)
     private Set<RequestDetailDTO> requestDetails;
 
     /**

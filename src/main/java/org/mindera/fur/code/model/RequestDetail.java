@@ -3,6 +3,7 @@ package org.mindera.fur.code.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,12 +21,14 @@ public class RequestDetail {
 
 
     @Id
+    @Positive
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The unique identifier of the request detail", example = "1", required = true)
     private Long id;
 
     @Column(name = "person_id")
     @Schema(description = "The id of the person", example = "1", required = true)
+    @Positive
     private Long personId;
 
     @Enumerated(EnumType.STRING)

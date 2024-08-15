@@ -25,9 +25,8 @@ public class RequestDetailDTO {
     @Schema(description = "The observation of the RequestDetail", example = "The pet is missing information", required = true)
     private String observation;
 
-    @Autowired
-    @Schema(description = "The AdoptionRequestService")
-    private AdoptionRequestService adoptionRequestService;
+    //@Autowired
+    //private AdoptionRequestService adoptionRequestService;
 
     /**
      * Constructor with parameters.
@@ -45,5 +44,8 @@ public class RequestDetailDTO {
         this.date = date;
         this.observation = observation;
     }
-    
+
+    //public AdoptionRequestDTO getAdoptionRequestById(Long id) {
+    //    return adoptionRequestService.getAdoptionRequestById(id);
+    //}
 }

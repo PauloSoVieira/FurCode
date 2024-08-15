@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.mindera.fur.code.model.pet.Pet;
@@ -21,8 +22,9 @@ import java.util.Set;
 @Tag(name = "Shelter", description = "Details about the shelter entity")
 
 public class Shelter {
-    
+
     @Id
+    @Positive
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
     private Long id;
