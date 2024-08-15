@@ -18,7 +18,6 @@ public class PetUpdateDTO {
     @Schema(description = "The vaccination status of the pet", example = "true")
     private Boolean isVaccinated;
 
-    @Schema(description = "The size of the pet", example = "SMALL")
     @Enumerated(EnumType.STRING)
     @Schema(description = "The size of the pet", example = "SMALL")
     private PetSizeEnum size;
