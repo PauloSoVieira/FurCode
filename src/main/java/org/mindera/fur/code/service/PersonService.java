@@ -2,48 +2,39 @@ package org.mindera.fur.code.service;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
-import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesCreationDTO;
 import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
-import org.mindera.fur.code.model.Gmailer;
 import org.mindera.fur.code.messages.person.PersonMessages;
-import org.mindera.fur.code.model.Person;
-import org.mindera.fur.code.model.Role;
-import org.mindera.fur.code.model.Shelter;
-import org.mindera.fur.code.model.ShelterPersonRoles;
+import org.mindera.fur.code.model.*;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @Service
 @Schema(description = "The person service")
 public class PersonService {
+    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
     private final PersonRepository personRepository;
     private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
     private final DonationService donationService;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
-    private PersonMapper personMapper;
     private final Gmailer gmailer;
-
-    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
-
-
+    private PersonMapper personMapper;
     private ShelterPersonRolesMapper shelterPersonRolesMapper;
 
     @Autowired
@@ -177,36 +168,33 @@ public class PersonService {
             throw new PersonException(PersonMessages.FAILED_TO_CREATE_PERSON);
         }
     }
+
     /**
-     * Adds a person to a shelter based on the provided ShelterPersonRolesCreationDTO.
+     * Adds a person to a shelter with an assigned role.
      *
-     * <p>This method performs several validation checks on the provided ShelterPersonRolesCreationDTO:
-     * <ul>
-     *   <li>Ensures that the person ID and shelter ID are not null and that the person ID is greater than 0.</li>
-     *   <li>Ensures that the role is not null and that it is a valid role.</li>
-     * </ul>
-     * If any of these conditions are not met, an appropriate exception is thrown.
-     *
-     * <p>After successful validation, the person is mapped to a Person model object
-     * and saved to the repository.
-     *
-     * @param shelterPersonRolesCreationDTO the ShelterPersonRolesCreationDTO containing the person details
-     * @return the saved ShelterPersonRoles object
-     * @throws PersonException if any required fields are null or invalid
-     * @throws PersonException if the email is already in use
+     * @param personId  the ID of the person to be added to the shelter
+     * @param shelterId the ID of the shelter to which the person is being added
+     * @return ShelterPersonRolesDTO containing the details of the person, shelter, and assigned role
+     * @throws PersonException if the person or shelter is not found
+     * @apiNote This method assigns a person to a shelter and sets their role within the shelter.
+     * The role is based on the person's current role.
      */
 
-    public ShelterPersonRolesDTO addPersonToShelter(ShelterPersonRolesCreationDTO shelterPersonRolesCreationDTO) {
-
-        Person person = personRepository.findById(shelterPersonRolesCreationDTO.getPersonId()).orElseThrow(PersonException::new);
-        Shelter shelter = shelterRepository.findById(shelterPersonRolesCreationDTO.getShelterId()).orElseThrow(PersonException::new);  //TODO change this exception
+    @Transactional
+    public ShelterPersonRolesDTO addPersonToShelter(Long personId, Long shelterId) {
+        Person person = personRepository.findById(personId).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
+        Shelter shelter = shelterRepository.findById(shelterId).orElseThrow(
+                () -> new PersonException(PersonMessages.SHELTER_NOT_FOUND)
+        );
 
         ShelterPersonRoles shelterPersonRoles = new ShelterPersonRoles();
-
-        shelterPersonRoles.setShelter(shelter);
         shelterPersonRoles.setPerson(person);
-        shelterPersonRoles.setRole(shelterPersonRolesCreationDTO.getRole());
-        shelterPersonRolesRepository.save(shelterPersonRoles);
+        shelterPersonRoles.setShelter(shelter);
+        shelterPersonRoles.setRole(person.getRole());
+
+        shelterPersonRoles = shelterPersonRolesRepository.save(shelterPersonRoles);
 
         return shelterPersonRolesMapper.INSTANCE.toDto(shelterPersonRoles);
     }
@@ -239,7 +227,9 @@ public class PersonService {
 
     public PersonDTO getPersonById(Long id) {
         idValidation(id);
-        Person person = personRepository.findById(id).get(); //TODO verificar melhor forma para este get
+        Person person = personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
         return personMapper.INSTANCE.toDTO(person);
     }
 
@@ -267,7 +257,9 @@ public class PersonService {
 
     public PersonDTO updatePerson(Long id, PersonDTO personDTO) {
         idValidation(id);
-        Person person = personRepository.findById(id).get(); //TODO verificar melhor forma para este get
+        Person person = personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
         Person updatedPerson = personMapper.INSTANCE.toModel(personDTO);
         person.setFirstName(updatedPerson.getFirstName());
         person.setLastName(updatedPerson.getLastName());
@@ -292,7 +284,9 @@ public class PersonService {
      */
 
     public void deletePerson(Long id) {
-        Person person = personRepository.findById(id).get();
+        Person person = personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
         personRepository.delete(person);
     }
 
@@ -310,17 +304,26 @@ public class PersonService {
     }
 
     /**
-     * Creates a new shelter based on the provided ShelterCreationDTO.
-     * <p>After successful validation, the shelter is mapped to a Shelter model object
-     * and saved to the repository.
+     * /**
+     * Creates a new shelter and assigns the person as an admin of that shelter.
      *
-     * @param shelterCreationDTO the ShelterCreationDTO containing the shelter details
-     * @return the saved Shelter object
-     * @throws PersonException if any required fields are null or invalid
-     * @throws PersonException if the email is already in use
+     * @param id                 the ID of the person who is creating the shelter
+     * @param shelterCreationDTO the data required to create the shelter
+     * @return ShelterPersonRolesDTO containing the details of the created shelter and the person's assigned role
+     * @throws PersonException if the person is not found
+     * @apiNote This method creates a shelter and assigns the person as an admin of the newly created shelter.
+     * The person's role is updated to MANAGER.
      */
-    public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
-        return shelterService.createShelter(shelterCreationDTO);
+    public ShelterPersonRolesDTO createShelter(Long id, ShelterCreationDTO shelterCreationDTO) {
+        idValidation(id);
+        Person person = personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
+        person.setRole(Role.MANAGER);
+        personRepository.save(person);
+        ShelterDTO shelter = shelterService.createShelter(shelterCreationDTO);
+        Long shelterId = shelter.getId();
+        return addPersonToShelter(id, shelterId);
     }
 
     /**
@@ -336,17 +339,19 @@ public class PersonService {
      * <p>After successful validation, the person is mapped to a Person model object
      * and saved to the repository.
      *
-     * @param id        the ID of the person to update
-     * @param personDTO the PersonDTO containing the person details to update
+     * @param id   the ID of the person to update
+     * @param role the role to set
      * @return the updated Person object
      * @throws PersonException if any required fields are null or invalid
      * @throws PersonException if the email is already in use
      */
 
-    public PersonDTO setPersonRole(Long id, PersonDTO personDTO) {
-        Person person = personRepository.findById(id).orElseThrow();
-        Person personWithNewRole = personMapper.INSTANCE.toModel(personDTO);
-        person.setRole(personWithNewRole.getRole());
+    public PersonDTO setPersonRole(Long id, Role role) {
+        idValidation(id);
+        Person person = personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
+        person.setRole(role);
         personRepository.save(person);
         return personMapper.INSTANCE.toDTO(person);
     }
@@ -375,6 +380,9 @@ public class PersonService {
 
     public DonationDTO donate(Long id, DonationCreateDTO donationCreateDTO) {
         idValidation(id);
+        personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
         return donationService.createDonation(donationCreateDTO);
     }
 
@@ -389,6 +397,9 @@ public class PersonService {
 
     public List<DonationDTO> getAllDonationsById(Long id) {
         idValidation(id);
+        personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
         return donationService.getAllDonationsByPersonId(id);
     }
 }

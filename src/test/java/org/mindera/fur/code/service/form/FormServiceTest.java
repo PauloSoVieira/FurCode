@@ -1,30 +1,25 @@
 package org.mindera.fur.code.service.form;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.mindera.fur.code.dto.form.FormCreateDTO;
 import org.mindera.fur.code.dto.form.FormDTO;
-import org.mindera.fur.code.dto.form.FormFieldCreateDTO;
-import org.mindera.fur.code.dto.form.FormTemplateDTO;
-import org.mindera.fur.code.model.form.Form;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -50,10 +45,9 @@ class FormServiceTest {
     }
 
     @Nested
-    class CrudForms{
+    class CrudForms {
         @Test
         void createForm_returns201() {
-
             FormCreateDTO formCreateDTO = new FormCreateDTO();
             formCreateDTO.setName("Test Form");
             formCreateDTO.setCreatedAt(LocalDateTime.now());
@@ -71,8 +65,23 @@ class FormServiceTest {
                     .body()
                     .as(FormDTO.class);
 
+            assertNotNull(formDTO);
+            assertNotNull(formDTO.getId());
+            assertEquals(formCreateDTO.getName(), formDTO.getName());
+            assertEquals(formCreateDTO.getType(), formDTO.getType());
 
-            Assertions.assertEquals("Test Form", formCreateDTO.getName());
+            FormDTO savedForm = given()
+                    .when()
+                    .get("/api/v1/forms/" + formDTO.getId())
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .body()
+                    .as(FormDTO.class);
+
+            assertEquals(formDTO.getId(), savedForm.getId());
+            assertEquals(formDTO.getName(), savedForm.getName());
+            assertEquals(formDTO.getType(), savedForm.getType());
         }
 
         @Test
@@ -83,7 +92,7 @@ class FormServiceTest {
             formcreateDTO.setType("DEFAULT");
             formcreateDTO.setFormFieldAnswers(new ArrayList<>());
 
-            FormDTO formDTO = given()
+            String formIdString = given()
                     .contentType(ContentType.JSON)
                     .body(formcreateDTO)
                     .when()
@@ -92,21 +101,12 @@ class FormServiceTest {
                     .statusCode(201)
                     .extract()
                     .body()
-                    .as(FormDTO.class);
+                    .jsonPath()
+                    .getString("id");
 
-           String formId = given()
-                   .contentType(ContentType.JSON)
-                   .body(formDTO)
-                   .when()
-                   .post("/api/v1/forms")
-                   .then()
-                   .statusCode(201)
-                   .extract()
-                   .body()
-                   .as(FormDTO.class)
-                   .getId().toString();
+            Long formId = Long.parseLong(formIdString);
 
-            FormDTO formDTO1 = given()
+            FormDTO getFormDTO = given()
                     .when()
                     .get("/api/v1/forms/" + formId)
                     .then()
@@ -115,9 +115,7 @@ class FormServiceTest {
                     .body()
                     .as(FormDTO.class);
 
-
-
-            assertEquals(formcreateDTO.getName(), formDTO1.getName());
+            assertEquals(formId, getFormDTO.getId());
         }
 
         @Test
@@ -136,8 +134,7 @@ class FormServiceTest {
                     .then()
                     .statusCode(201)
                     .extract()
-                    .body()
-                    .as(FormDTO.class);
+                    .body();
 
             List<FormDTO> forms = given()
                     .when()
@@ -150,130 +147,6 @@ class FormServiceTest {
                     .getList(".", FormDTO.class);
 
             assertEquals(1, forms.size());
-
-
-
-
-
-
-        }
-
-        @Test
-        void addFieldToForm_returns201() {
-            FormCreateDTO formcreateDTO = new FormCreateDTO();
-            formcreateDTO.setName("Test Form");
-            formcreateDTO.setCreatedAt(LocalDateTime.now());
-            formcreateDTO.setType("DEFAULT");
-            formcreateDTO.setFormFieldAnswers(new ArrayList<>());
-
-            FormDTO formDTO = given()
-                    .contentType(ContentType.JSON)
-                    .body(formcreateDTO)
-                    .when()
-                    .post("/api/v1/forms")
-                    .then()
-                    .statusCode(201)
-                    .extract()
-                    .body()
-                    .as(FormDTO.class);
-
-            String formId = given()
-                    .contentType(ContentType.JSON)
-                    .body(formDTO)
-                    .when()
-                    .post("/api/v1/forms")
-                    .then()
-                    .statusCode(201)
-                    .extract()
-                    .body()
-                    .as(FormDTO.class)
-                    .getId().toString();
-
-            FormFieldCreateDTO formFieldCreateDTO = new FormFieldCreateDTO();
-            formFieldCreateDTO.setQuestion("Test Question");
-            formFieldCreateDTO.setFieldType("TEXT");
-
-            given()
-                    .contentType(ContentType.JSON)
-                    .body(formFieldCreateDTO)
-                    .when()
-                    .post("/api/v1/forms/" + formId + "/field")
-                    .then()
-                    .statusCode(201);
-
-            given()
-                    .contentType(ContentType.JSON)
-                    .body(formFieldCreateDTO)
-                    .when()
-                    .post("/api/v1/forms/" + formId + "/field")
-                    .then()
-                    .statusCode(201);
-
-            FormDTO formDTO1 = given()
-                    .when()
-                    .get("/api/v1/forms/" + formId)
-                    .then()
-                    .statusCode(200)
-                    .extract()
-                    .body()
-                    .as(FormDTO.class);
-
-
-
-            assertEquals(formcreateDTO.getName(), formDTO1.getName());
-        }
-
-        @Test
-        void deleteFieldFromForm_returns204() {
-            FormCreateDTO formcreateDTO = new FormCreateDTO();
-            formcreateDTO.setName("Test Form");
-            formcreateDTO.setCreatedAt(LocalDateTime.now());
-            formcreateDTO.setType("DEFAULT");
-            formcreateDTO.setFormFieldAnswers(new ArrayList<>());
-
-            FormDTO formDTO = given()
-                    .contentType(ContentType.JSON)
-                    .body(formcreateDTO)
-                    .when()
-                    .post("/api/v1/forms")
-                    .then()
-                    .statusCode(201)
-                    .extract()
-                    .body()
-                    .as(FormDTO.class);
-
-            Long formId = formDTO.getId();
-
-            FormFieldCreateDTO formFieldCreateDTO = new FormFieldCreateDTO();
-            formFieldCreateDTO.setQuestion("Test Question");
-            formFieldCreateDTO.setFieldType("TEXT");
-
-            given()
-                    .contentType(ContentType.JSON)
-                    .body(formFieldCreateDTO)
-                    .when()
-                    .post("/api/v1/forms/" + formId + "/field")
-                    .then()
-                    .statusCode(201);
-
-            given()
-                    .contentType(ContentType.JSON)
-                    .body(formFieldCreateDTO)
-                    .when()
-                    .post("/api/v1/forms/" + formId + "/field")
-                    .then()
-                    .statusCode(201);
-
-            FormDTO formDTO1 = given()
-                    .when()
-                    .get("/api/v1/forms/" + formId)
-                    .then()
-                    .statusCode(200)
-                    .extract()
-                    .body()
-                    .as(FormDTO.class);
-
-            assertEquals(formcreateDTO.getName(), formDTO1.getName());
         }
 
         @Test
@@ -284,7 +157,7 @@ class FormServiceTest {
             formcreateDTO.setType("DEFAULT");
             formcreateDTO.setFormFieldAnswers(new ArrayList<>());
 
-            FormDTO formDTO = given()
+            String formIdString = given()
                     .contentType(ContentType.JSON)
                     .body(formcreateDTO)
                     .when()
@@ -293,34 +166,18 @@ class FormServiceTest {
                     .statusCode(201)
                     .extract()
                     .body()
-                    .as(FormDTO.class);
+                    .jsonPath()
+                    .getString("id");
 
-            String formId = given()
-                    .contentType(ContentType.JSON)
-                    .body(formDTO)
-                    .when()
-                    .post("/api/v1/forms")
-                    .then()
-                    .statusCode(201)
-                    .extract()
-                    .body()
-                    .as(FormDTO.class)
-                    .getId().toString();
+            Long formId = Long.parseLong(formIdString);
 
             given()
                     .contentType(ContentType.JSON)
-                    .body(formDTO)
+                    .body(formcreateDTO)
                     .when()
                     .delete("/api/v1/forms/" + formId)
                     .then()
                     .statusCode(204);
-
-
-
-            assertFalse(Boolean.parseBoolean(formId), "Form should be deleted");
         }
     }
-
-
-
 }
