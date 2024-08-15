@@ -55,4 +55,8 @@ public class RequestDetailMessage {
      * Message for when the date is past.
      */
     public static final String DATE_CANT_BE_PAST = "Date can't be past";
+    /**
+     * Message for when the observation is null.
+     */
+    public static final String OBSERVATION_CANT_BE_LONGER_THAN_1000 = "Observation can't be longer than 1000 characters";
 }

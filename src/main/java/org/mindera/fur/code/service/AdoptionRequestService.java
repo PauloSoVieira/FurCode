@@ -1,8 +1,8 @@
 package org.mindera.fur.code.service;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.transaction.Transactional;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.form.FormDTO;
@@ -34,7 +34,7 @@ import java.util.List;
 @Schema(description = "The adoption request service")
 public class AdoptionRequestService {
 
-   public AdoptionRequestRepository adoptionRequestRepository;
+    public AdoptionRequestRepository adoptionRequestRepository;
     private PetRepository petRepository;
     private AdoptionRequestMapper adoptionRequestMapper;
     private RequestDetailMapper requestDetailMapper;
@@ -84,6 +84,57 @@ public class AdoptionRequestService {
         }
         if (id <= 0) {
             throw new AdoptionRequestNotFound(AdoptionRequestMessage.ADOPTION_REQUEST_ID_CANT_BE_ZERO_OR_LOWER);
+        }
+    }
+
+    /**
+     * Validates shelter id.
+     *
+     * @param shelterId
+     */
+    private static void shelterIdValidation(Long shelterId) {
+        if (shelterId == null) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.SHELTER_ID_CANT_BE_NULL);
+        }
+        if (shelterId <= 0) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.SHELTER_ID_CANT_BE_ZERO_OR_LOWER);
+        }
+        if (shelterId.equals(" ")) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.SHELTER_ID_CANT_BE_EMPTY);
+        }
+    }
+
+    /**
+     * Validates person id.
+     *
+     * @param personId
+     */
+    private static void personIdValidation(Long personId) {
+        if (personId == null) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PERSON_ID_CANT_BE_NULL);
+        }
+        if (personId <= 0) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PERSON_ID_CANT_BE_ZERO_OR_LOWER);
+        }
+        if (personId.equals(" ")) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PERSON_ID_CANT_BE_EMPTY);
+        }
+    }
+
+    /**
+     * Validates pet id.
+     *
+     * @param petId
+     */
+    private static void petIdValidation(Long petId) {
+        if (petId == null) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PET_ID_CANT_BE_NULL);
+        }
+        if (petId <= 0) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PET_ID_CANT_BE_ZERO_OR_LOWER);
+        }
+        if (petId.equals(" ")) {
+            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PET_ID_CANT_BE_EMPTY);
         }
     }
 

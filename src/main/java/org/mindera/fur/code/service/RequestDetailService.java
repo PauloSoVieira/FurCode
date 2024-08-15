@@ -9,12 +9,14 @@ import org.mindera.fur.code.mapper.RequestDetailMapper;
 import org.mindera.fur.code.messages.requestDetail.RequestDetailMessage;
 import org.mindera.fur.code.model.AdoptionRequest;
 import org.mindera.fur.code.model.RequestDetail;
+import org.mindera.fur.code.model.State;
 import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.RequestDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -51,10 +53,75 @@ public class RequestDetailService {
      */
     private static void idValidation(Long id) {
         if (id == null) {
-            throw new RequestDetailNotFound(RequestDetailMessage.DETAIL_ID_CANT_BE_EMPTY);
+            throw new RequestDetailNotFound(RequestDetailMessage.DETAIL_ID_CANT_BE_NULL);
         }
         if (id <= 0) {
             throw new PersonException(RequestDetailMessage.DETAIL_ID_CANT_BE_ZERO_OR_LOWER);
+        }
+        if (id.equals(" ")) {
+            throw new RequestDetailNotFound(RequestDetailMessage.DETAIL_ID_CANT_BE_EMPTY);
+        }
+    }
+
+    /**
+     * Validates person id.
+     *
+     * @param personId
+     */
+    private static void personIdValidation(Long personId) {
+        if (personId == null) {
+            throw new RequestDetailNotFound(RequestDetailMessage.PERSON_ID_CANT_BE_NULL);
+        }
+        if (personId <= 0) {
+            throw new RequestDetailNotFound(RequestDetailMessage.PERSON_ID_CANT_BE_ZERO_OR_LOWER);
+        }
+        if (personId.equals(" ")) {
+            throw new RequestDetailNotFound(RequestDetailMessage.PERSON_ID_CANT_BE_EMPTY);
+        }
+    }
+
+    /**
+     * Validates state.
+     *
+     * @param state
+     */
+    private static void stateValidation(State state) {
+        if (state == null) {
+            throw new RequestDetailNotFound(RequestDetailMessage.STATE_CANT_BE_NULL);
+        }
+        if (state.equals(" ")) {
+            throw new RequestDetailNotFound(RequestDetailMessage.STATE_CANT_BE_EMPTY);
+        }
+    }
+
+    /**
+     * Validates date.
+     *
+     * @param date
+     */
+    private static void dateValidation(LocalDate date) {
+        if (date == null) {
+            throw new RequestDetailNotFound(RequestDetailMessage.DATE_CANT_BE_NULL);
+        }
+        if (date.equals(" ")) {
+            throw new RequestDetailNotFound(RequestDetailMessage.DATE_CANT_BE_EMPTY);
+        }
+        if (date.isAfter(LocalDate.now())) {
+            throw new RequestDetailNotFound(RequestDetailMessage.DATE_CANT_BE_FUTURE);
+        }
+        if (date.isBefore(LocalDate.now())) {
+            throw new RequestDetailNotFound(RequestDetailMessage.DATE_CANT_BE_PAST);
+        }
+    }
+
+    /**
+     * Validates observation.
+     *
+     * @param observation
+     */
+    private static void observationValidation(String observation) {
+        if (observation.length() > 1000) {
+            throw new RequestDetailNotFound(RequestDetailMessage.OBSERVATION_CANT_BE_LONGER_THAN_1000);
         }
     }
 

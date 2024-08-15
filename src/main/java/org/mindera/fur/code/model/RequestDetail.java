@@ -3,6 +3,7 @@ package org.mindera.fur.code.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class RequestDetail {
 
     @Column(name = "person_id")
     @Schema(description = "The id of the person", example = "1", required = true)
-    @Positive
+    @Valid
     private Long personId;
 
     @Enumerated(EnumType.STRING)
