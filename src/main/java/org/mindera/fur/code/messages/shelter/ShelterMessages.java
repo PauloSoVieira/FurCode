@@ -95,4 +95,16 @@ public class ShelterMessages {
      * Message for when the postal code is empty.
      */
     public static final String POSTAL_CODE_CANT_BE_EMPTY = "Postal Code can't be empty";
+    /**
+     * Message for when the creation date is null.
+     */
+    public static final String CREATION_DATE_CANT_BE_NULL = "Creation Date can't be null";
+    /**
+     * Message for when the creation date is empty.
+     */
+    public static final String CREATION_DATE_CANT_BE_EMPTY = "Creation Date can't be empty";
+    /**
+     * Message for when the creation date is in future.
+     */
+    public static final String CREATION_DATE_CANT_BE_IN_FUTURE = "Creation Date can't be in future";
 }
