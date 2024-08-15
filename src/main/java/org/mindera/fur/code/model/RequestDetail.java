@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Class representing a RequestDetail.
@@ -37,7 +37,7 @@ public class RequestDetail {
 
     @DateTimeFormat
     @Schema(description = "The date of the request detail", example = "2023-01-01 00:00:00", required = true)
-    private Date date;
+    private LocalDate date;
 
     @Size(max = 1000, message = "Observation must be less than 1000 characters")
     @Schema(description = "The observation of the request detail", example = "The request is accepted", required = true)

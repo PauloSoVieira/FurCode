@@ -8,9 +8,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.pet.Pet;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -19,6 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "adoption_request")
 @Data
+@Schema(description = "Adoption Request entity")
 @Tag(name = "Adoption Request", description = "Details about the adoption request entity")
 public class AdoptionRequest {
 
@@ -66,9 +66,8 @@ public class AdoptionRequest {
     @Schema(description = "The state of the adoption request", example = "SENT", required = true)
     private State state;
 
-    @DateTimeFormat
     @Schema(description = "The date of the adoption request", example = "2023-01-01 12:00:00", required = true)
-    private Date date;
+    private LocalDate date;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "form_id", nullable = false)

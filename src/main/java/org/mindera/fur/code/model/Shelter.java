@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.mindera.fur.code.model.pet.Pet;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -52,6 +53,8 @@ public class Shelter {
     private Integer size;
     @Schema(description = "The is active of the shelter", example = "true", required = true)
     private Boolean isActive;
+    @Schema(description = "The creation date of the shelter", example = "2023-01-01", required = true)
+    private LocalDate creationDate;
 
     /**
      * The set of ShelterPersonRoles.
