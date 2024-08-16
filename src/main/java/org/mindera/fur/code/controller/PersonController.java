@@ -130,6 +130,7 @@ public class PersonController {
      * @return The list of person DTOs.
      */
 
+
     @GetMapping("/get-all-persons-in-shelter/{id}")
     @Schema(description = "Get all persons in a shelter")
     public ResponseEntity<List<PersonDTO>> getAllPersonsInShelter(@PathVariable Long id) {
