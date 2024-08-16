@@ -85,6 +85,12 @@ public class ShelterService {
      */
     private static void shelterValidation(ShelterCreationDTO shelterCreationDTO) {
 
+        String emailRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-zA-Z]{2,})$";
+
+        if (!shelterCreationDTO.getEmail().matches(emailRegex)) {
+            throw new PersonException(ShelterMessages.EMAIL_FORMAT_INVALID);
+        }
+
         if (shelterCreationDTO.getName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ShelterMessages.NAME_CANT_BE_NULL);
         }
@@ -136,9 +142,7 @@ public class ShelterService {
         if (shelterCreationDTO.getCreationDate() == null) {
             throw new PersonException(ShelterMessages.CREATION_DATE_CANT_BE_NULL);
         }
-        if (shelterCreationDTO.getCreationDate().equals(" ")) {
-            throw new PersonException(ShelterMessages.CREATION_DATE_CANT_BE_EMPTY);
-        }
+
         if (shelterCreationDTO.getCreationDate().isAfter(LocalDate.now())) {
             throw new PersonException(ShelterMessages.CREATION_DATE_CANT_BE_IN_FUTURE);
         }
