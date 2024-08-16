@@ -6,6 +6,7 @@ import org.mindera.fur.code.dto.person.LoginResponseDTO;
 import org.mindera.fur.code.dto.person.PersonAuthenticationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.mapper.PersonMapper;
+import org.mindera.fur.code.messages.token.TokenMessage;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @Schema(description = "Authentication controller")
 @RestController
@@ -48,27 +50,26 @@ public class AuthenticationController {
         try {
 
             if (personAuthenticationDTO.getEmail() == null || personAuthenticationDTO.getPassword() == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, TokenMessage.INVALID_EMAIL_OR_PASSWORD);
             }
-            
+
             Person person = personRepository.findByEmail(personAuthenticationDTO.getEmail());
 
             if (person == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, TokenMessage.INVALID_EMAIL_OR_PASSWORD);
             }
 
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             if (!passwordEncoder.matches(personAuthenticationDTO.getPassword(), person.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, TokenMessage.INVALID_EMAIL_OR_PASSWORD);
             }
 
             PersonDTO personDTO = personMapper.INSTANCE.toDTO(person);
             String token = tokenService.generateToken(personDTO);
-
             return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return new ResponseEntity<>(new LoginResponseDTO(TokenMessage.INVALID_EMAIL_OR_PASSWORD), HttpStatus.BAD_REQUEST);
         }
     }
 

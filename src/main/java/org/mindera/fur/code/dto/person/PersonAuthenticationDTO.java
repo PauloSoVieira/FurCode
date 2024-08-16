@@ -1,9 +1,9 @@
 package org.mindera.fur.code.dto.person;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 @Schema(description = "A person authentication information")

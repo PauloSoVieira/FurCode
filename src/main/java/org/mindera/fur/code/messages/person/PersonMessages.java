@@ -25,4 +25,7 @@ public class PersonMessages {
 
     public static final String SHELTER_NOT_FOUND = "Shelter not found";
     public static final String ERROR_LOGIN = "Email or password is incorrect";
+    public static final String EMAIL_INVALID = "Email is invalid";
+    public static final String PASSWORD_CANT_BE_LESS_THAN_6 = "Password can't be less than 6 characters";
+    public static final String PASSWORD_CANT_BE_MORE_THAN_100 = "Password can't be more than 100 characters";
 }

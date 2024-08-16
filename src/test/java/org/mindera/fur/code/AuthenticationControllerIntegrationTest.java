@@ -2,6 +2,7 @@ package org.mindera.fur.code;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -35,6 +36,8 @@ public class AuthenticationControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+        personRepository.deleteAll(); // Clear the database before each test
+
         createTestUser();
     }
 
@@ -49,28 +52,46 @@ public class AuthenticationControllerIntegrationTest {
     class LoginTest {
         @Test
         public void testSuccessfulLogin() {
-            String requestBody = String.format("""
+            String loginRequestBody = String.format("""
                     {
                         "email": "%s",
                         "password": "%s"
                     }
                     """, TEST_EMAIL, TEST_PASSWORD);
-            String responseBody = given()
+
+            Response response = given()
                     .contentType(ContentType.JSON)
-                    .body(requestBody)
+                    .body(loginRequestBody)
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .extract().body().asString();
+                    .log().ifValidationFails()
+                    .statusCode(200)
+                    .extract().response();
+
+            String token = response.path("token");
+
+            assertThat(token, is(not(emptyOrNullString())));
+        }
+
+        @Test
+        public void testLoginWithInvalidCredentials() {
+            String loginRequestBody = String.format("""
+                    {
+                        "email": "%s",
+                        "password": "wrongpassword"
+                    }
+                    """, TEST_EMAIL);
 
             given()
                     .contentType(ContentType.JSON)
-                    .body(requestBody)
+                    .body(loginRequestBody)
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .statusCode(200)
-                    .body("token", not(emptyOrNullString()));
+                    .log().ifValidationFails()
+                    .statusCode(400)
+                    .body("token", equalTo("Invalid email or password"));
         }
 
         @Test
@@ -88,7 +109,7 @@ public class AuthenticationControllerIntegrationTest {
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .statusCode(401);
+                    .statusCode(400);
         }
 
         @Test
@@ -124,7 +145,7 @@ public class AuthenticationControllerIntegrationTest {
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .statusCode(401);
+                    .statusCode(400);
         }
 
         @Test
@@ -141,7 +162,7 @@ public class AuthenticationControllerIntegrationTest {
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .statusCode(401);
+                    .statusCode(400);
         }
 
         @Test
@@ -159,7 +180,7 @@ public class AuthenticationControllerIntegrationTest {
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .statusCode(401);
+                    .statusCode(400);
 
         }
 
@@ -178,7 +199,7 @@ public class AuthenticationControllerIntegrationTest {
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .statusCode(401);
+                    .statusCode(400);
         }
 
         @Test
@@ -196,7 +217,7 @@ public class AuthenticationControllerIntegrationTest {
                     .when()
                     .post("/api/v1/auth/login")
                     .then()
-                    .statusCode(401);
+                    .statusCode(400);
         }
     }
 }

@@ -1,9 +1,12 @@
 package org.mindera.fur.code.dto.person;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import javax.validation.constraints.Size;
 
 @Data
 @Schema(description = "A person creation request")
@@ -23,11 +26,13 @@ public class PersonCreationDTO {
 
     @NotNull
     @NotBlank
+    @Email
     @Schema(description = "The email address of the person", example = "john.doe@example.com", required = true)
     private String email;
 
     @NotNull
     @NotBlank
+    @Size(min = 6, max = 100)
     @Schema(description = "The password of the person", example = "password", required = true)
     private String password;
 
@@ -40,7 +45,6 @@ public class PersonCreationDTO {
     private String address2;
 
     @NotNull
-    @NotBlank
     @Schema(description = "The postal code of the person", example = "12345", required = true)
     private Long postalCode;
 
