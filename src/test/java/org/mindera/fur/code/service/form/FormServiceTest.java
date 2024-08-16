@@ -52,7 +52,7 @@ class FormServiceTest {
             formCreateDTO.setName("Test Form");
             formCreateDTO.setCreatedAt(LocalDateTime.now());
             formCreateDTO.setType("DEFAULT");
-            formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formCreateDTO.setInitialField(new FormFieldCreateDTO());
 
             FormDTO formDTO = given()
                     .contentType(ContentType.JSON)
@@ -90,7 +90,7 @@ class FormServiceTest {
             formcreateDTO.setName("Test Form");
             formcreateDTO.setCreatedAt(LocalDateTime.now());
             formcreateDTO.setType("DEFAULT");
-            formcreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formcreateDTO.setInitialField(new FormFieldCreateDTO());
 
             String formIdString = given()
                     .contentType(ContentType.JSON)
@@ -124,7 +124,7 @@ class FormServiceTest {
             formcreateDTO.setName("Test Form");
             formcreateDTO.setCreatedAt(LocalDateTime.now());
             formcreateDTO.setType("DEFAULT");
-            formcreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formcreateDTO.setInitialField(new FormFieldCreateDTO());
 
             given()
                     .contentType(ContentType.JSON)
@@ -155,7 +155,7 @@ class FormServiceTest {
             formcreateDTO.setName("Test Form");
             formcreateDTO.setCreatedAt(LocalDateTime.now());
             formcreateDTO.setType("DEFAULT");
-            formcreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formcreateDTO.setInitialField(new FormFieldCreateDTO());
 
             String formIdString = given()
                     .contentType(ContentType.JSON)
@@ -189,7 +189,7 @@ class FormServiceTest {
             formCreateDTO.setName(null);
             formCreateDTO.setCreatedAt(LocalDateTime.now());
             formCreateDTO.setType("DEFAULT");
-            formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formCreateDTO.setInitialField(new FormFieldCreateDTO());
 
             given()
                     .contentType(ContentType.JSON)
@@ -206,7 +206,7 @@ class FormServiceTest {
             formCreateDTO.setName("");
             formCreateDTO.setCreatedAt(LocalDateTime.now());
             formCreateDTO.setType("DEFAULT");
-            formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formCreateDTO.setInitialField(new FormFieldCreateDTO());
 
             given()
                     .contentType(ContentType.JSON)
@@ -224,7 +224,7 @@ class FormServiceTest {
             formCreateDTO.setName("Test Form");
             formCreateDTO.setCreatedAt(LocalDateTime.now());
             formCreateDTO.setType(null);
-            formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formCreateDTO.setInitialField(new FormFieldCreateDTO());
 
             given()
                     .contentType(ContentType.JSON)
@@ -348,7 +348,7 @@ class FormServiceTest {
             formCreateDTO.setName("Test Form");
             formCreateDTO.setCreatedAt(LocalDateTime.now());
             formCreateDTO.setType("DEFAULT");
-            formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formCreateDTO.setInitialField(new FormFieldCreateDTO());
 
             Long formId = given()
                     .contentType(ContentType.JSON)
@@ -363,7 +363,6 @@ class FormServiceTest {
 
             FormFieldCreateDTO newField = new FormFieldCreateDTO();
             newField.setFieldType("TEXT");
-            newField.setQuestion("New Question");
 
             FormDTO updatedForm = given()
                     .contentType(ContentType.JSON)
@@ -376,8 +375,7 @@ class FormServiceTest {
                     .as(FormDTO.class);
 
             assertNotNull(updatedForm);
-            assertTrue(updatedForm.getFormFieldAnswers().stream()
-                    .anyMatch(field -> field.getQuestion().equals("New Question")));
+            assertEquals(2, updatedForm.getFormFieldAnswers().size());
         }
 
         @Test
@@ -386,7 +384,7 @@ class FormServiceTest {
             formCreateDTO.setName("Test Form");
             formCreateDTO.setCreatedAt(LocalDateTime.now());
             formCreateDTO.setType("DEFAULT");
-            formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+            formCreateDTO.setInitialField(new FormFieldCreateDTO());
 
             Long formId = given()
                     .contentType(ContentType.JSON)
@@ -419,7 +417,7 @@ class FormServiceTest {
             }
 
             assertNotNull(updatedForm);
-            assertEquals(3, updatedForm.getFormFieldAnswers().size());
+            assertEquals(4, updatedForm.getFormFieldAnswers().size());
 
         }
 

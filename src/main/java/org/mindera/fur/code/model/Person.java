@@ -80,6 +80,20 @@ public class Person implements UserDetails {
     public Person() {
     }
 
+
+    /**
+     * Constructor with firstName, email and number.
+     *
+     * @param johnDoe The firstName of the person.
+     * @param mail    The email of the person.
+     * @param number  The nif of the person.
+     */
+    public Person(String johnDoe, String mail, Long number) {
+        this.firstName = johnDoe;
+        this.email = mail;
+        this.nif = number;
+    }
+
     /**
      * Get the authorities of the person.
      *
