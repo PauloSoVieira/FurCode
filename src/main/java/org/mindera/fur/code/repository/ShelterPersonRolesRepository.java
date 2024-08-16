@@ -18,6 +18,7 @@ import java.util.List;
 @Schema(description = "The shelter person roles repository")
 public interface ShelterPersonRolesRepository extends JpaRepository<ShelterPersonRoles, Long> {
 
+    @Schema(description = "Find person by shelter id")
     @Query("SELECT spr.person FROM ShelterPersonRoles spr WHERE spr.shelter.id = :shelterId")
     List<Person> findPersonsByShelterId(@Param("shelterId") Long shelterId);
 }

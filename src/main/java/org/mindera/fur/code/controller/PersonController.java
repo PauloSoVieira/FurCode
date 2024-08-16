@@ -130,6 +130,20 @@ public class PersonController {
     }
 
     /**
+     * Get all persons in a shelter.
+     *
+     * @param id The id of the shelter.
+     * @return The list of person DTOs.
+     */
+
+
+    @GetMapping("/get-all-persons-in-shelter/{id}")
+    @Schema(description = "Get all persons in a shelter")
+    public ResponseEntity<List<PersonDTO>> getAllPersonsInShelter(@PathVariable Long id) {
+        return new ResponseEntity<>(personService.getAllPersonsInShelter(id), HttpStatus.OK);
+    }
+
+    /**
      * Update a person.
      *
      * @param id        The id of the person.
