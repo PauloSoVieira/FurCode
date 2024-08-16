@@ -483,4 +483,9 @@ public class PersonService {
         return PersonMapper.INSTANCE.toDTO(person);
 
     }
+
+    public List<PersonDTO> getAllPersonsInShelter(Long id) {
+        List<Person> persons = shelterPersonRolesRepository.findPersonsByShelterId(id);
+        return personMapper.INSTANCE.toDTO(persons);
+    }
 }
