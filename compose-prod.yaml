@@ -1,0 +1,59 @@
+services:
+
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - POSTGRES_DB=example
+    networks:
+      - spring-furcode
+    ports:
+      - 8080:8080
+      - 8888:8888
+    
+  postgres:
+    image: postgres:16.3-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=furcode
+      - POSTGRES_PASSWORD=password
+    networks:
+      - spring-furcode
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    
+  minio:
+    image: bitnami/minio:2024
+    restart: always
+    environment:
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD: roottoor
+      MINIO_DEFAULT_BUCKETS: furcode
+    networks:
+      - spring-furcode
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - minio-data:/data
+
+  redis:
+    image: redis:7.4.0-alpine
+    hostname: redis
+    restart: always
+    networks:
+      - spring-furcode
+    ports:
+      - 6379:6379
+
+volumes:
+  db-data:
+  minio-data:
+networks:
+  spring-furcode:
+
+
