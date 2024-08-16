@@ -477,12 +477,26 @@ public class PersonService {
         return donationService.getAllDonationsByPersonId(id);
     }
 
+    /**
+     * Gets a person by email
+     *
+     * @param email the email of the person
+     * @return a PersonDTO object representing the person
+     */
+
     public PersonDTO getPersonByEmail(String email) {
         Person person = personRepository.findByEmail(email);
 
         return PersonMapper.INSTANCE.toDTO(person);
 
     }
+
+    /**
+     * Gets all persons in a shelter
+     *
+     * @param id the id of the shelter
+     * @return a list of PersonDTO objects representing the persons in the shelter
+     */
 
     public List<PersonDTO> getAllPersonsInShelter(Long id) {
         List<Person> persons = shelterPersonRolesRepository.findPersonsByShelterId(id);

@@ -123,6 +123,13 @@ public class PersonController {
         return new ResponseEntity<>(personService.getAllDonationsById(id), HttpStatus.OK);
     }
 
+    /**
+     * Get all persons in a shelter.
+     *
+     * @param id The id of the shelter.
+     * @return The list of person DTOs.
+     */
+
     @GetMapping("/get-all-persons-in-shelter/{id}")
     @Schema(description = "Get all persons in a shelter")
     public ResponseEntity<List<PersonDTO>> getAllPersonsInShelter(@PathVariable Long id) {
