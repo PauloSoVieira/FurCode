@@ -36,8 +36,6 @@ public class ShelterController {
         this.shelterService = shelterService;
     }
 
-    //Create Shelter
-
     /**
      * Endpoint to create a shelter.
      *
@@ -47,8 +45,6 @@ public class ShelterController {
     @PostMapping
     @Schema(description = "Create a shelter")
     @Operation(summary = "Create a shelter", description = "Creates a new shelter with the provided data")
-    @CacheEvict(cacheNames = "shelters", allEntries = true)
-
     public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(shelterService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
@@ -62,13 +58,11 @@ public class ShelterController {
     @GetMapping("/all")
     @Schema(description = "Get all shelters")
     @Operation(summary = "Get all shelters", description = "Returns a list of all shelters")
-    @Cacheable(cacheNames = "shelters")
     public List<ShelterDTO> getAllShelters() {
         System.out.println("Cache");
         return shelterService.getAllShelters();
     }
 
-    //Get shelter by id
 
     /**
      * Endpoint to get a shelter by id.
@@ -83,7 +77,6 @@ public class ShelterController {
         return new ResponseEntity<>(shelterService.getShelterById(id), HttpStatus.OK);
     }
 
-    //Get all donations in shelter
 
     /**
      * Endpoint to get all donations in a shelter.
@@ -98,7 +91,6 @@ public class ShelterController {
         return new ResponseEntity<>(shelterService.getAllDonationsById(id), HttpStatus.OK);
     }
 
-    //Delete shelter by Id
 
     /**
      * Endpoint to delete a shelter by id.
@@ -125,12 +117,9 @@ public class ShelterController {
     @PatchMapping("/update/{id}")
     @Schema(description = "Update a shelter")
     @Operation(summary = "Update a shelter", description = "Updates a shelter with the provided data")
-    @CachePut(cacheNames = "shelters", key = "#shelterDTO.id")
     public ResponseEntity<ShelterDTO> updateShelter(@PathVariable Long id, @RequestBody ShelterDTO shelterDTO) {
         return new ResponseEntity<>(shelterService.updateShelter(id, shelterDTO), HttpStatus.OK);
     }
-
-    //Get all pets in shelter
 
     /**
      * Endpoint to get all pets in a shelter.
