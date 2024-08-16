@@ -107,4 +107,8 @@ public class ShelterMessages {
      * Message for when the creation date is in future.
      */
     public static final String CREATION_DATE_CANT_BE_IN_FUTURE = "Creation Date can't be in future";
+    /**
+     * Message for when the email format is invalid.
+     */
+    public static final String EMAIL_FORMAT_INVALID = "Email format is invalid";
 }

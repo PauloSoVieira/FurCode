@@ -57,11 +57,11 @@ public class Person implements UserDetails {
     private Role role;
 
 
-    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Schema(description = "The shelter person roles of the person", required = true)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
-    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Schema(description = "The donations of the person", required = true)
     private Set<Donation> donations;
 

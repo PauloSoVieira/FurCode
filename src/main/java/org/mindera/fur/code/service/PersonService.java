@@ -25,11 +25,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Schema(description = "The person service")
 public class PersonService {
-    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
+    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com";
     private final PersonRepository personRepository;
     private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
@@ -79,7 +81,12 @@ public class PersonService {
         if (personCreationDTO.getFirstName() == null) {
             throw new PersonException(PersonMessages.NAME_CANT_BE_NULL);
         }
-
+        if (personCreationDTO.getNif() == null) {
+            throw new PersonException(PersonMessages.NIF_CANT_BE_NULL);
+        }
+        if (personCreationDTO.getNif() <= 0) {
+            throw new PersonException(PersonMessages.NIF_CANT_BE_ZERO);
+        }
         if (personCreationDTO.getFirstName().equals(" ")) {
             throw new PersonException(PersonMessages.NAME_CANT_BE_EMPTY);
         }
@@ -116,6 +123,31 @@ public class PersonService {
     }
 
     /**
+     * Validates the email address of the person.
+     *
+     * @param email the email address to be validated
+     * @throws PersonException if the email is invalid
+     */
+    private static void emailValidation(String email) {
+        String emailRegex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+
+        if (!matcher.matches()) {
+            throw new PersonException(PersonMessages.EMAIL_INVALID);
+        }
+        if (email == null) {
+            throw new PersonException(PersonMessages.EMAIL_CANT_BE_NULL);
+        }
+        if (email.equals(" ")) {
+            throw new PersonException(PersonMessages.EMAIL_CANT_BE_EMPTY);
+        }
+        if (!email.contains("@")) {
+            throw new PersonException(PersonMessages.EMAIL_INVALID);
+        }
+    }
+
+    /**
      * Creates a new person based on the provided PersonCreationDTO.
      *
      * <p>This method performs several validation checks on the provided PersonCreationDTO:
@@ -137,21 +169,24 @@ public class PersonService {
      */
     @CacheEvict(cacheNames = "persons", allEntries = true)
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
-        personValidation(personCreationDTO);
-
-        if (personRepository.findByEmail(personCreationDTO.getEmail()) != null) {
-            throw new PersonException(PersonMessages.EMAIL_ALREADY_EXISTS);
-        }
-
-        Person person = personMapper.INSTANCE.toModel(personCreationDTO);
-        person.setRole(Role.USER);
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(personCreationDTO.getPassword());
-        person.setPassword(encryptedPassword);
-
-        Person savedPerson = personRepository.save(person);
-
         try {
+            personValidation(personCreationDTO);
+            emailValidation(personCreationDTO.getEmail());
+            passwordValidation(personCreationDTO.getPassword());
+
+            if (personRepository.findByEmail(personCreationDTO.getEmail()) != null) {
+                throw new PersonException(PersonMessages.EMAIL_ALREADY_EXISTS);
+            }
+
+            Person person = personMapper.INSTANCE.toModel(personCreationDTO);
+            person.setRole(Role.USER);
+
+            String encryptedPassword = new BCryptPasswordEncoder().encode(personCreationDTO.getPassword());
+            person.setPassword(encryptedPassword);
+
+            Person savedPerson = personRepository.save(person);
+
+
             try {
                 // Send welcome email to the user
                 gmailer.sendMail(savedPerson.getEmail(), "Welcome to FurCode",
@@ -169,6 +204,27 @@ public class PersonService {
             return personMapper.INSTANCE.toDTO(savedPerson);
         } catch (Exception e) {
             throw new PersonException(PersonMessages.FAILED_TO_CREATE_PERSON);
+        }
+    }
+
+    /**
+     * Validates the password of the person.
+     *
+     * @param password the password to be validated
+     * @throws PersonException if the password is invalid
+     */
+    private void passwordValidation(String password) {
+        if (password == null) {
+            throw new PersonException(PersonMessages.PASSWORD_CANT_BE_NULL);
+        }
+        if (password.equals(" ")) {
+            throw new PersonException(PersonMessages.PASSWORD_CANT_BE_EMPTY);
+        }
+        if (password.length() < 6) {
+            throw new PersonException(PersonMessages.PASSWORD_CANT_BE_LESS_THAN_6);
+        }
+        if (password.length() > 100) {
+            throw new PersonException(PersonMessages.PASSWORD_CANT_BE_MORE_THAN_100);
         }
     }
 
@@ -407,5 +463,12 @@ public class PersonService {
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
         );
         return donationService.getAllDonationsByPersonId(id);
+    }
+
+    public PersonDTO getPersonByEmail(String email) {
+        Person person = personRepository.findByEmail(email);
+
+        return PersonMapper.INSTANCE.toDTO(person);
+
     }
 }

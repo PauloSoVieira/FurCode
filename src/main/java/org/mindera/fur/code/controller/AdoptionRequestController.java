@@ -35,7 +35,6 @@ public class AdoptionRequestController {
         this.adoptionRequestService = adoptionRequestService;
     }
 
-    //Create an adoption request
 
     /**
      * Endpoint to create an adoption request.
@@ -50,7 +49,6 @@ public class AdoptionRequestController {
         return new ResponseEntity<>(adoptionRequestService.createAdoptionRequest(adoptionRequestCreationDTO), HttpStatus.CREATED);
     }
 
-    //Change some info from the request
 
     /**
      * Endpoint to update an adoption request.
@@ -66,7 +64,6 @@ public class AdoptionRequestController {
         return new ResponseEntity<>(adoptionRequestService.updateAdoptionRequest(id, adoptionRequestDTO), HttpStatus.OK);
     }
 
-    //Get all requests
 
     /**
      * Endpoint to get all adoption requests.
@@ -80,8 +77,6 @@ public class AdoptionRequestController {
         return new ResponseEntity<>(adoptionRequestService.getAllAdoptionRequests(), HttpStatus.OK);
     }
 
-    //Get request by id
-
     /**
      * Endpoint to get an adoption request by id.
      *
@@ -94,8 +89,6 @@ public class AdoptionRequestController {
     public ResponseEntity<AdoptionRequestDTO> getAdoptionRequestById(@PathVariable Long id) {
         return new ResponseEntity<>(adoptionRequestService.getAdoptionRequestById(id), HttpStatus.OK);
     }
-
-    //Delete request
 
     /**
      * Endpoint to delete an adoption request by id.
@@ -112,8 +105,6 @@ public class AdoptionRequestController {
     }
 
 
-    //Get all details of the adoption request
-
     /**
      * Endpoint to get all request details of an adoption request.
      *
@@ -126,9 +117,6 @@ public class AdoptionRequestController {
     public ResponseEntity<List<RequestDetailDTO>> getAllRequestDetails(@PathVariable Long id) {
         return new ResponseEntity<>(adoptionRequestService.getAllRequestDetails(id), HttpStatus.OK);
     }
-
-
-    //Create a new request detail
 
     /**
      * Endpoint to create a new request detail.
@@ -143,8 +131,6 @@ public class AdoptionRequestController {
     public ResponseEntity<RequestDetailDTO> createRequestDetail(@PathVariable Long id, @RequestBody RequestDetailCreationDTO requestDetailCreationDTO) {
         return new ResponseEntity<>(adoptionRequestService.createRequestDetail(id, requestDetailCreationDTO), HttpStatus.CREATED);
     }
-
-    //Get request detail by id
 
     /**
      * Endpoint to get a request detail by id.
