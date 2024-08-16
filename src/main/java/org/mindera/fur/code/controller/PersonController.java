@@ -7,6 +7,8 @@ import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.dto.pet.PetCreateDTO;
+import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.model.Role;
@@ -86,6 +88,19 @@ public class PersonController {
     @Schema(description = "Donate to a shelter")
     public ResponseEntity<DonationDTO> donate(@PathVariable Long id, @RequestBody DonationCreateDTO donationCreateDTO) {
         return new ResponseEntity<>(personService.donate(id, donationCreateDTO), HttpStatus.CREATED);
+    }
+
+    /**
+     * Create a pet.
+     *
+     * @param petCreationDTO The pet creation DTO.
+     * @return The pet DTO.
+     */
+
+    @PostMapping("/create-pet")
+    @Schema(description = "Create a pet")
+    public ResponseEntity<PetDTO> createPet(@RequestBody PetCreateDTO petCreationDTO) {
+        return new ResponseEntity<>(personService.createPet(petCreationDTO), HttpStatus.CREATED);
     }
 
     /**
