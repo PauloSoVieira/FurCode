@@ -47,7 +47,7 @@ public class Person implements UserDetails {
     private String address2;
 
     @Schema(description = "The postal code of the person", example = "12345", required = true)
-    private Long postalCode;
+    private String postalCode;
 
     @Schema(description = "The cell phone of the person", example = "1234567890", required = true)
     private Long cellPhone;

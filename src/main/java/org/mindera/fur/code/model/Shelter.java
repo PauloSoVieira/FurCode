@@ -46,11 +46,11 @@ public class Shelter {
     @Schema(description = "The postal code of the shelter", example = "12345", required = true)
     private String postalCode;
     @Schema(description = "The phone of the shelter", example = "1234567890", required = true)
-    private Integer phone;
+    private Long phone;
     @Schema(description = "The size of the shelter", example = "10", required = true)
     @Min(value = 1, message = "Size must be greater than or equal to 1")
     @Max(value = 1000, message = "Size must be less than or equal to 1000")
-    private Integer size;
+    private Long size;
     @Schema(description = "The is active of the shelter", example = "true", required = true)
     private Boolean isActive;
     @Schema(description = "The creation date of the shelter", example = "2023-01-01", required = true)
