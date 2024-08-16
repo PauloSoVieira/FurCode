@@ -61,7 +61,7 @@ class FormServiceTestMockitoTest {
             assertThrows(ResponseStatusException.class,
                     () -> formService.getForm(nonExistentId));
         }
-        
+
 
         @Test
         void submitFormAnswers_withInvalidFieldId_shouldThrowException() {
@@ -416,7 +416,7 @@ class FormServiceTestMockitoTest {
                 formCreateDTO.setName("adoption-template");
                 formCreateDTO.setCreatedAt(LocalDateTime.now());
                 formCreateDTO.setType("TEST");
-                formCreateDTO.setFormFieldAnswers(new ArrayList<>());
+                formCreateDTO.setInitialField(new FormFieldCreateDTO());
 
                 Form form = new Form();
                 form.setId(1L);
