@@ -49,6 +49,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/person/delete/{id}").hasAnyAuthority("MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/add-person-to-shelter").hasAnyAuthority("MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}/get-all-donations").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/person/get-all-persons-in-shelter/{id}").hasAnyAuthority("ADMIN")
 
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/pet").hasAnyAuthority("ADMIN")
