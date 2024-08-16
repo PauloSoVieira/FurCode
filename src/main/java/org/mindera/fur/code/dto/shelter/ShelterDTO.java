@@ -12,7 +12,6 @@ import java.util.Date;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class ShelterDTO implements Serializable {
     private Long id;
     private String name;

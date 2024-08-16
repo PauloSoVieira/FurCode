@@ -16,7 +16,6 @@ public class ShelterCreationDTO {
     private String name;
 
     @NotNull
-    @NotBlank
     private Long vat;
 
     @NotNull
@@ -34,19 +33,15 @@ public class ShelterCreationDTO {
     private String postalCode;
 
     @NotNull
-    @NotBlank
     private Long phone;
 
     @NotNull
-    @NotBlank
     private Long size;
 
     @NotNull
-    @NotBlank
     private Boolean isActive;
 
     @NotNull
-    @NotBlank
     private Date createdAt;
 
     /**
@@ -90,5 +85,6 @@ public class ShelterCreationDTO {
     public ShelterCreationDTO(String name) {
         this.name = name;
     }
+
 
 }

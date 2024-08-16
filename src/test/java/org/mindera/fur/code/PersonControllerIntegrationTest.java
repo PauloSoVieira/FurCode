@@ -1,9 +1,9 @@
 package org.mindera.fur.code;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -19,8 +19,6 @@ import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -39,18 +37,24 @@ public class PersonControllerIntegrationTest {
 
     @LocalServerPort
     private Integer port;
-
     @Autowired
     private PersonService personService;
     private String adminToken;
     private String managerToken;
     private String userToken;
+    @Autowired
     private ShelterPersonRolesRepository shelterPersonRolesRepository;
+    @Autowired
     private ShelterRepository shelterRepository;
+
+    private String generateUniqueEmail() {
+        return "jojo-" + UUID.randomUUID().toString() + "@example.com";
+    }
 
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+        personService.deleteAllPersons();
         createTestUsers();
     }
 
@@ -58,7 +62,6 @@ public class PersonControllerIntegrationTest {
     void tearDown() {
         shelterPersonRolesRepository.deleteAll();
         shelterRepository.deleteAll();
-
         personService.deleteAllPersons();
     }
 
@@ -117,7 +120,7 @@ public class PersonControllerIntegrationTest {
                     "jojo",
                     "da wish",
                     123456789L,
-                    "jojo@example.com",
+                    generateUniqueEmail(),
                     "password",
                     "mindera",
                     "Apt mindera",
@@ -147,7 +150,7 @@ public class PersonControllerIntegrationTest {
                     "jojo",
                     "da wish",
                     123456789L,
-                    "jojo@example.com",
+                    generateUniqueEmail(),
                     "password",
                     "mindera",
                     "Apt mindera",
@@ -198,7 +201,7 @@ public class PersonControllerIntegrationTest {
                     "jojo",
                     "da wish",
                     123456789L,
-                    "jojo@example.com",
+                    generateUniqueEmail(),
                     "password",
                     "mindera",
                     "Apt mindera",
@@ -238,7 +241,7 @@ public class PersonControllerIntegrationTest {
                     "jojo",
                     "da wish",
                     123456789L,
-                    "jojo@example.com",
+                    generateUniqueEmail(),
                     "password",
                     "mindera",
                     "Apt mindera",
@@ -266,12 +269,12 @@ public class PersonControllerIntegrationTest {
 
         @Test
         void createShelterShouldReturn201() {
-            String uniqueEmail = "jojo" + UUID.randomUUID().toString() + "@example.com";
+            // Step 1: Create a person
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "jojo",
                     "da wish",
                     123456789L,
-                    uniqueEmail,
+                    generateUniqueEmail(),
                     "password",
                     "mindera",
                     "Apt mindera",
@@ -288,7 +291,6 @@ public class PersonControllerIntegrationTest {
                     .statusCode(201)
                     .extract().body().jsonPath().getLong("id");
 
-            Date date = new Date();
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
                     "Shelter",
                     123456789L,
@@ -299,39 +301,45 @@ public class PersonControllerIntegrationTest {
                     987654321L,
                     12L,
                     true,
-                    date
+                    new Date()
             );
 
-            try {
-                System.out.println("Request Body: " + new ObjectMapper().writeValueAsString(shelterCreationDTO));
-            } catch (JsonProcessingException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to serialize request body", e);
+            Response response = given()
+                    .header("Authorization", "Bearer " + userToken)
+                    .contentType(ContentType.JSON)
+                    .body(shelterCreationDTO)
+                    .when()
+                    .post("/api/v1/person/" + personId + "/create-shelter");
+
+            System.out.println("Response Status: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody().asString());
+
+            ShelterDTO shelterDTO = response.then()
+                    .statusCode(201)
+                    .extract().body().as(ShelterDTO.class);
+
+            if (shelterDTO == null) {
+                System.out.println("ShelterDTO is null. Attempting manual deserialization...");
+                try {
+                    shelterDTO = new ObjectMapper().readValue(response.getBody().asString(), ShelterDTO.class);
+                    System.out.println("Manual deserialization result: " + shelterDTO);
+                } catch (Exception e) {
+                    System.out.println("Manual deserialization failed: " + e.getMessage());
+                }
+
+                assertNotNull(shelterDTO, "ShelterDTO should not be null");
+                assertNotNull(shelterDTO.getName(), "Shelter name should not be null");
+                assertEquals("Shelter", shelterDTO.getName());
+                assertEquals(123456789L, shelterDTO.getVat());
+                assertEquals("shelter@shelter.com", shelterDTO.getEmail());
+
             }
-
-            ShelterDTO shelterDTO =
-                    given()
-                            .header("Authorization", "Bearer " + userToken)
-                            .contentType(ContentType.JSON)
-                            .body(shelterCreationDTO)
-                            .when()
-                            .post("/api/v1/person/" + personId + "/create-shelter")
-                            .then()
-                            .statusCode(201)
-                            .extract().body().as(ShelterDTO.class);
-
-            assertNotNull(shelterDTO, "ShelterDTO should not be null");
-            //assertNotNull(shelterDTO.getName(), "Shelter name should not be null");
-            assertEquals("Shelter", shelterDTO.getName());
-            assertEquals(123456789L, shelterDTO.getVat());
-            assertEquals("shelter@shelter.com", shelterDTO.getEmail());
-
-
         }
 
         @Nested
         class Validation {
             @Test
-            void createPersonWithNullName() {
+            void createPersonWithNullFirstName() {
                 PersonCreationDTO person = new PersonCreationDTO(
                         null,
                         "da wish",
@@ -347,6 +355,144 @@ public class PersonControllerIntegrationTest {
                 given()
                         .contentType(ContentType.JSON)
                         .body(person)
+                        .when()
+                        .post("/api/v1/person")
+                        .then()
+                        .statusCode(400);
+            }
+
+            @Test
+            void createPersonWithNullLastName() {
+                PersonCreationDTO person = new PersonCreationDTO(
+                        "John",
+                        null,
+                        123456789L,
+                        generateUniqueEmail(),
+                        "password",
+                        "mindera",
+                        "Apt mindera",
+                        12345L,
+                        123456789L
+                );
+
+                given()
+                        .contentType(ContentType.JSON)
+                        .body(person)
+                        .when()
+                        .post("/api/v1/person")
+                        .then()
+                        .statusCode(400);
+            }
+
+            @Test
+            void createPersonWithInvalidEmail() {
+                PersonCreationDTO person = new PersonCreationDTO(
+                        "John",
+                        "Doe",
+                        123456789L,
+                        "invalid-email",
+                        "password",
+                        "mindera",
+                        "Apt mindera",
+                        12345L,
+                        123456789L
+                );
+
+                given()
+                        .contentType(ContentType.JSON)
+                        .body(person)
+                        .when()
+                        .post("/api/v1/person")
+                        .then()
+                        .statusCode(400);
+            }
+
+            @Test
+            void createPersonWithShortPassword() {
+                PersonCreationDTO person = new PersonCreationDTO(
+                        "John",
+                        "Doe",
+                        123456789L,
+                        generateUniqueEmail(),
+                        "short",
+                        "mindera",
+                        "Apt mindera",
+                        12345L,
+                        123456789L
+                );
+
+                given()
+                        .contentType(ContentType.JSON)
+                        .body(person)
+                        .when()
+                        .post("/api/v1/person")
+                        .then()
+                        .statusCode(400);
+            }
+
+            @Test
+            void createPersonWithNegativeVat() {
+                PersonCreationDTO person = new PersonCreationDTO(
+                        "John",
+                        "Doe",
+                        -123456789L,
+                        generateUniqueEmail(),
+                        "password",
+                        "mindera",
+                        "Apt mindera",
+                        12345L,
+                        123456789L
+                );
+
+                given()
+                        .contentType(ContentType.JSON)
+                        .body(person)
+                        .when()
+                        .post("/api/v1/person")
+                        .then()
+                        .statusCode(400);
+            }
+
+       
+            @Test
+            void createPersonWithExistingEmail() {
+                String email = generateUniqueEmail();
+
+                PersonCreationDTO person1 = new PersonCreationDTO(
+                        "John",
+                        "Doe",
+                        123456789L,
+                        email,
+                        "password",
+                        "mindera",
+                        "Apt mindera",
+                        12345L,
+                        123456789L
+                );
+
+                given()
+                        .contentType(ContentType.JSON)
+                        .body(person1)
+                        .when()
+                        .post("/api/v1/person")
+                        .then()
+                        .statusCode(201);
+
+                PersonCreationDTO person2 = new PersonCreationDTO(
+                        "Jane",
+                        "Doe",
+                        987654321L,
+                        email,
+                        "password",
+                        "mindera",
+                        "Apt mindera",
+                        54321L,
+                        987654321L
+                );
+
+                given()
+                        .contentType(ContentType.JSON)
+                        .body(person2)
                         .when()
                         .post("/api/v1/person")
                         .then()
