@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Data Transfer Object (DTO) representing a form to be created.
@@ -18,6 +17,6 @@ public class FormCreateDTO {
     private LocalDateTime createdAt;
     @Schema(description = "The type of the form", example = "donation")
     private String type;
-    @Schema(description = "The fields in the form", example = "Total Amount, Date, Shelter, Person")
-    private List<FormFieldAnswerDTO> formFieldAnswers;
+    @Schema(description = "The initial field in the form")
+    private FormFieldCreateDTO initialField;
 }

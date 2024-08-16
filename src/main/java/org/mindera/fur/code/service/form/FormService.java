@@ -6,6 +6,7 @@ import org.mindera.fur.code.controller.form.TemplateLoaderUtil;
 import org.mindera.fur.code.dto.form.*;
 import org.mindera.fur.code.mapper.formMapper.FormMapper;
 import org.mindera.fur.code.messages.form.FormMessages;
+import org.mindera.fur.code.messages.formField.FormFieldMessages;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.model.form.FormFieldAnswer;
@@ -53,6 +54,7 @@ public class FormService {
         this.templateLoader = templateLoader;
     }
 
+
     /**
      * Creates a new form based on the provided data.
      *
@@ -71,27 +73,29 @@ public class FormService {
         if (formCreateDTO.getType() == null || formCreateDTO.getType().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_TYPE_CANT_BE_NULL_OR_EMPTY);
         }
+        if (formCreateDTO.getInitialField() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_FIELD_CANT_BE_NULL);
+        }
+
         Form form = new Form();
         form.setName(formCreateDTO.getName());
         form.setType(formCreateDTO.getType());
         form.setCreatedAt(formCreateDTO.getCreatedAt() != null ? formCreateDTO.getCreatedAt() : LocalDateTime.now());
 
         List<FormFieldAnswer> formFieldAnswers = new ArrayList<>();
-        for (FormFieldAnswerDTO answerDTO : formCreateDTO.getFormFieldAnswers()) {
-            FormField formField = new FormField();
-            formField.setFieldType(answerDTO.getAnswer());
-            formField.setQuestion(answerDTO.getQuestion());
-            formField.setForm(form);
+        FormField formField = new FormField();
+        formField.setFieldType(formCreateDTO.getInitialField().getFieldType());
+        formField.setQuestion(formCreateDTO.getInitialField().getQuestion());
+        formField.setForm(form);
 
-            FormFieldAnswer answer = new FormFieldAnswer();
-            answer.setFormField(formField);
-            answer.setAnswer(answerDTO.getAnswer());
-            answer.setForm(form);
-            formFieldAnswers.add(answer);
-        }
+        FormFieldAnswer answer = new FormFieldAnswer();
+        answer.setFormField(formField);
+        answer.setAnswer("");
+        answer.setForm(form);
+        formFieldAnswers.add(answer);
 
         form.setFormFieldAnswers(formFieldAnswers);
-        form.setFields(formFieldAnswers.stream().map(FormFieldAnswer::getFormField).collect(Collectors.toList()));
+        form.setFields(List.of(formField));
 
         Form savedForm = formRepository.save(form);
         return FormMapper.INSTANCE.toDTO(savedForm);
@@ -107,7 +111,7 @@ public class FormService {
     @Operation(summary = "Get a form", description = "Retrieves a form by its ID")
     public FormDTO getForm(Long formId) {
         Form form = formRepository.findById(formId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, FormMessages.FORM_ID_NOT_FOUND));
         return FormMapper.INSTANCE.toDTO(form);
     }
 
@@ -120,7 +124,7 @@ public class FormService {
     @Operation(summary = "Check if a template name is valid", description = "Checks if the provided template name is valid")
     boolean isValidTemplateName(String templateName) {
 
-        List<String> validTemplateNames = Arrays.asList("adoption-template", "donation-template");
+        List<String> validTemplateNames = Arrays.asList(FormMessages.DONATION_TEMPLATE, FormMessages.ADOPTION_TEMPLATE);
         return validTemplateNames.contains(templateName);
     }
 
@@ -135,7 +139,7 @@ public class FormService {
     @Transactional
     public FormDTO createFormFromTemplate(String templateName) {
         if (!isValidTemplateName(templateName)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Teste: " + templateName);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_ID_NOT_FOUND + ": " + templateName);
         }
 
         try {
@@ -174,11 +178,11 @@ public class FormService {
             Form savedForm = formRepository.save(form);
             return FormMapper.INSTANCE.toDTO(savedForm);
         } catch (IOException e) {
-            logger.error("Error loading template: {}", templateName, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading template: " + templateName);
+            logger.error(FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE, e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE + ": " + templateName);
         } catch (Exception e) {
-            logger.error("Error creating form from template: {}", templateName, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error creating form from template: " + templateName);
+            logger.error(FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE, e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE + ": " + templateName);
         }
     }
 
@@ -193,7 +197,7 @@ public class FormService {
     @Transactional
     public FormDTO submitFormAnswers(FormAnswerDTO formAnswerDTO) {
         Form form = formRepository.findById(formAnswerDTO.getFormId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, FormMessages.FORM_ID_NOT_FOUND));
 
         Map<Long, FormFieldAnswer> answerMap = form.getFormFieldAnswers().stream()
                 .collect(Collectors.toMap(answer -> answer.getFormField().getId(), answer -> answer));
@@ -201,7 +205,7 @@ public class FormService {
         for (FieldAnswerDTO fieldAnswer : formAnswerDTO.getAnswers()) {
             FormFieldAnswer answer = answerMap.get(fieldAnswer.getFieldId());
             if (answer == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Field not found: " + fieldAnswer.getFieldId());
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, FormMessages.FORM_ID_NOT_FOUND + ": " + fieldAnswer.getFieldId());
             }
             answer.setAnswer(fieldAnswer.getAnswer());
         }
@@ -258,7 +262,7 @@ public class FormService {
     @Transactional
     public FormDTO addFieldToForm(Long formId, FormFieldCreateDTO newField) {
         Form form = formRepository.findById(formId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Form not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_ID_NOT_FOUND));
 
         return FormMapper.INSTANCE.toDTO(addFieldToForm(form, newField));
     }
@@ -274,7 +278,7 @@ public class FormService {
     @Operation(summary = "Add a field to a form", description = "Adds a field to a form")
     private Form addFieldToForm(Form form, FormFieldCreateDTO newField) {
         if (form == null || form.getId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Form not found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_ID_NOT_FOUND);
         }
 
         FormField formField = new FormField();
@@ -303,7 +307,7 @@ public class FormService {
         try {
             return templateLoader.loadTemplate(templateName);
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Template not found: " + templateName);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, FormMessages.FORM_ID_NOT_FOUND + ": " + templateName);
         }
     }
 
@@ -320,7 +324,7 @@ public class FormService {
     public FormDTO removeFieldFromTemplate(String templateName, String questionToRemove) {
         try {
             if (!isValidTemplateName(templateName)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Template not found: " + templateName);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_ID_NOT_FOUND + ": " + templateName);
             }
 
             FormTemplateDTO template = templateLoader.loadTemplate(templateName);
@@ -328,11 +332,11 @@ public class FormService {
             boolean questionExists = template.getFields().stream()
                     .anyMatch(field -> field.getQuestion().equals(questionToRemove));
             if (!questionExists) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Question not found in template: " + questionToRemove);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.QUESTION_NOT_FOUND + ": " + questionToRemove);
             }
 
             FormField fieldToInactivate = formFieldRepository.findByQuestion(questionToRemove)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Field not found: " + questionToRemove));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, FormFieldMessages.FIELD_NOT_FOUND + ": " + questionToRemove));
 
             fieldToInactivate.setActive(false);
             formFieldRepository.save(fieldToInactivate);
@@ -352,8 +356,8 @@ public class FormService {
 
             return createFormFromTemplate(templateName);
         } catch (IOException e) {
-            logger.error("Error in removeFieldFromTemplate: ", e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in removeFieldFromTemplate: " + templateName);
+            logger.error(FormMessages.ERROR_IN_REMOVE_FIELD_FROM_TEMPLATE, e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.ERROR_IN_REMOVE_FIELD_FROM_TEMPLATE + ": " + templateName);
         }
     }
 
@@ -375,7 +379,7 @@ public class FormService {
     @Operation(summary = "Delete a form", description = "Deletes a form by its ID")
     public FormDTO deleteForm(Long formId) {
         Form form = formRepository.findById(formId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, FormMessages.FORM_ID_NOT_FOUND));
 
         formRepository.delete(form);
         return FormMapper.INSTANCE.toDTO(form);

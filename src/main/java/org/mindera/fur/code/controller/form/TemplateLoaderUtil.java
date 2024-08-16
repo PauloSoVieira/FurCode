@@ -3,13 +3,18 @@ package org.mindera.fur.code.controller.form;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mindera.fur.code.dto.form.FormTemplateDTO;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for loading and saving form templates.
@@ -58,5 +63,21 @@ public class TemplateLoaderUtil {
         Files.createDirectories(path.getParent());
 
         objectMapper.writeValue(path.toFile(), template);
+    }
+
+
+    /**
+     * Returns a list of all template names in the classpath.
+     *
+     * @return A list of template names.
+     * @throws IOException If there's an error reading the template files.
+     */
+    public List<String> getAllTemplateNames() throws IOException {
+        Resource[] resources = ResourcePatternUtils.getResourcePatternResolver(resourceLoader)
+                .getResources("classpath:templates/*.json");
+
+        return Arrays.stream(resources)
+                .map(resource -> resource.getFilename().replace(".json", ""))
+                .collect(Collectors.toList());
     }
 }
