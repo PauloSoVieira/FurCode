@@ -3,11 +3,13 @@ package org.mindera.fur.code.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Class representing a RequestDetail.
@@ -20,12 +22,14 @@ public class RequestDetail {
 
 
     @Id
+    @Positive
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The unique identifier of the request detail", example = "1", required = true)
     private Long id;
 
     @Column(name = "person_id")
     @Schema(description = "The id of the person", example = "1", required = true)
+    @Valid
     private Long personId;
 
     @Enumerated(EnumType.STRING)
@@ -34,7 +38,7 @@ public class RequestDetail {
 
     @DateTimeFormat
     @Schema(description = "The date of the request detail", example = "2023-01-01 00:00:00", required = true)
-    private Date date;
+    private LocalDate date;
 
     @Size(max = 1000, message = "Observation must be less than 1000 characters")
     @Schema(description = "The observation of the request detail", example = "The request is accepted", required = true)

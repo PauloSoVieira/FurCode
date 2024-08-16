@@ -1,5 +1,6 @@
 package org.mindera.fur.code.dto.adoptionRequest;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 
@@ -9,6 +10,7 @@ import java.util.Set;
  * DTO for an adoption request.
  */
 @Data
+@Schema(description = "DTO for an adoption request")
 public class AdoptionRequestDTO {
     private Long id;
     private Long shelterId;

@@ -2,9 +2,15 @@ package org.mindera.fur.code.dto.shelter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 
 /**
@@ -12,7 +18,12 @@ import java.util.Date;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Schema(description = "A shelter")
 public class ShelterDTO implements Serializable {
+    @NotNull
+    @NotBlank
+    @Schema(description = "The id of the shelter", example = "1", required = true)
+    @Valid
     private Long id;
     private String name;
     private Long vat;
@@ -23,7 +34,7 @@ public class ShelterDTO implements Serializable {
     private Long phone;
     private Long size;
     private Boolean isActive;
-    private Date creationDate;
+    private LocalDate creationDate;
 
     /**
      * Constructor with parameters.
@@ -34,13 +45,13 @@ public class ShelterDTO implements Serializable {
      * @param email        The email of the shelter.
      * @param address1     The address1 of the shelter.
      * @param address2     The address2 of the shelter.
-     * @param postCode     The postal code of the shelter.
+     * @param postalCode   The postal code of the shelter.
      * @param phone        The phone number of the shelter.
      * @param size         The size of the shelter.
      * @param isActive     The isActive status of the shelter.
      * @param creationDate The creation date of the shelter.
      */
-    public ShelterDTO(Long id, String name, Long vat, String email, String address1, String address2, String postCode, Long phone, Long size, Boolean isActive, Date creationDate) {
+    public ShelterDTO(Long id, String name, Long vat, String email, String address1, String address2, String postalCode, Long phone, Long size, Boolean isActive, LocalDate creationDate) {
         this.id = id;
 
         this.name = name;
