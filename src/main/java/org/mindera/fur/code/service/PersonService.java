@@ -81,7 +81,12 @@ public class PersonService {
         if (personCreationDTO.getFirstName() == null) {
             throw new PersonException(PersonMessages.NAME_CANT_BE_NULL);
         }
-
+        if (personCreationDTO.getNif() == null) {
+            throw new PersonException(PersonMessages.NIF_CANT_BE_NULL);
+        }
+        if (personCreationDTO.getNif() <= 0) {
+            throw new PersonException(PersonMessages.NIF_CANT_BE_ZERO);
+        }
         if (personCreationDTO.getFirstName().equals(" ")) {
             throw new PersonException(PersonMessages.NAME_CANT_BE_EMPTY);
         }

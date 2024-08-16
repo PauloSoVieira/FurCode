@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -291,6 +291,7 @@ public class PersonControllerIntegrationTest {
                     .statusCode(201)
                     .extract().body().jsonPath().getLong("id");
 
+            LocalDate now = LocalDate.now();
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
                     "Shelter",
                     123456789L,
@@ -301,7 +302,7 @@ public class PersonControllerIntegrationTest {
                     987654321L,
                     12L,
                     true,
-                    new Date()
+                    now
             );
 
             Response response = given()
@@ -453,7 +454,7 @@ public class PersonControllerIntegrationTest {
                         .statusCode(400);
             }
 
-       
+
             @Test
             void createPersonWithExistingEmail() {
                 String email = generateUniqueEmail();
