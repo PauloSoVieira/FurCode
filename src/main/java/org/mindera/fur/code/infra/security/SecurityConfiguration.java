@@ -73,7 +73,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/adoption-request/delete/{id}").hasAnyAuthority("MANAGER")
 
-                        .anyRequest().permitAll())
+                       .anyRequest().permitAll())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
