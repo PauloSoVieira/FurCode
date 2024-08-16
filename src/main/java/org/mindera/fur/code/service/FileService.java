@@ -5,6 +5,7 @@ import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
 import org.mindera.fur.code.exceptions.file.FileException;
@@ -23,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
 
+@Schema(description = "The file service")
 @Service
 public class FileService {
 
@@ -56,7 +58,7 @@ public class FileService {
 
         checkFileValidity(file);
         checkImageType(file.getFileData());
-        // temporary file
+
         File newFile = convertBase64ToFile(file.getFileData(), file.getMd5());
         uploadFileToBucket(filePath, file, newFile);
         newFile.delete();
