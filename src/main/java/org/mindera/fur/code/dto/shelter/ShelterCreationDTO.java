@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -21,7 +22,7 @@ public class ShelterCreationDTO {
     private String name;
 
     @NotNull
-    @NotBlank
+    @Positive
     @Schema(description = "The vat number of the shelter", example = "123456789", required = true)
     private Long vat;
 
@@ -44,17 +45,14 @@ public class ShelterCreationDTO {
     private String postalCode;
 
     @NotNull
-    @NotBlank
     @Schema(description = "The phone number of the shelter", example = "123456789", required = true)
     private Long phone;
 
     @NotNull
-    @NotBlank
     @Schema(description = "The size of the shelter", example = "1", required = true)
     private Long size;
 
     @NotNull
-    @NotBlank
     @Schema(description = "The isActive status of the shelter", example = "true", required = true)
     private Boolean isActive;
 
@@ -94,6 +92,16 @@ public class ShelterCreationDTO {
      * Default constructor.
      */
     public ShelterCreationDTO() {
+    }
+
+
+    /**
+     * Constructor with parameters.
+     *
+     * @param name The name of the shelter.
+     */
+    public ShelterCreationDTO(String name) {
+        this.name = name;
     }
 
 }

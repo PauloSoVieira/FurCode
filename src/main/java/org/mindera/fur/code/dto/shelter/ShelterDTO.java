@@ -1,11 +1,14 @@
 package org.mindera.fur.code.dto.shelter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import java.io.Serializable;
+import java.util.Date;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -14,6 +17,7 @@ import java.time.LocalDate;
  * DTO for a shelter.
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(description = "A shelter")
 public class ShelterDTO implements Serializable {
     @NotNull
@@ -31,7 +35,6 @@ public class ShelterDTO implements Serializable {
     private Long size;
     private Boolean isActive;
     private LocalDate creationDate;
-
 
     /**
      * Constructor with parameters.
@@ -61,5 +64,8 @@ public class ShelterDTO implements Serializable {
         this.size = size;
         this.isActive = isActive;
         this.creationDate = creationDate;
+    }
+
+    public ShelterDTO() {
     }
 }

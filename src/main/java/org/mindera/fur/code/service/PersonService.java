@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Service
 @Schema(description = "The person service")
 public class PersonService {
-    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com"; // Replace with your actual company email
+    private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com";
     private final PersonRepository personRepository;
     private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
@@ -458,5 +458,12 @@ public class PersonService {
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
         );
         return donationService.getAllDonationsByPersonId(id);
+    }
+
+    public PersonDTO getPersonByEmail(String email) {
+        Person person = personRepository.findByEmail(email);
+
+        return PersonMapper.INSTANCE.toDTO(person);
+
     }
 }
