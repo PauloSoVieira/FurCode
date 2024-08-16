@@ -321,15 +321,27 @@ public class PersonService {
         Person person = personRepository.findById(id).orElseThrow(
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
         );
-        Person updatedPerson = personMapper.INSTANCE.toModel(personDTO);
-        person.setFirstName(updatedPerson.getFirstName());
-        person.setLastName(updatedPerson.getLastName());
-        person.setEmail(updatedPerson.getEmail());
-        person.setPassword(updatedPerson.getPassword());
-        person.setAddress1(updatedPerson.getAddress1());
-        person.setAddress2(updatedPerson.getAddress2());
-        person.setPostalCode(updatedPerson.getPostalCode());
-        person.setCellPhone(updatedPerson.getCellPhone());
+        if (personDTO.getFirstName() != null) {
+            person.setFirstName(personDTO.getFirstName());
+        }
+        if (personDTO.getLastName() != null) {
+            person.setLastName(personDTO.getLastName());
+        }
+        if (personDTO.getEmail() != null) {
+            person.setEmail(personDTO.getEmail());
+        }
+        if (personDTO.getAddress1() != null) {
+            person.setAddress1(personDTO.getAddress1());
+        }
+        if (personDTO.getAddress2() != null) {
+            person.setAddress2(personDTO.getAddress2());
+        }
+        if (personDTO.getPostalCode() != null) {
+            person.setPostalCode(personDTO.getPostalCode());
+        }
+        if (personDTO.getCellPhone() != null) {
+            person.setCellPhone(personDTO.getCellPhone());
+        }
         personRepository.save(person);
         return personMapper.INSTANCE.toDTO(person);
     }
