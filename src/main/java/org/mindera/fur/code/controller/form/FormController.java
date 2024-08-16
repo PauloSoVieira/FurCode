@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,11 @@ public class FormController {
     @PostMapping
     @Operation(summary = "Create a new form", description = "Creates a new form based on the provided data")
     public ResponseEntity<FormDTO> createForm(@RequestBody FormCreateDTO formCreateDTO) {
+        if (formCreateDTO.getCreatedAt() == null) {
+            formCreateDTO.setCreatedAt(LocalDateTime.now());
+        }
         return new ResponseEntity<>(formService.createForm(formCreateDTO), HttpStatus.CREATED);
+    
     }
 
     /**
@@ -183,6 +188,11 @@ public class FormController {
         return new ResponseEntity<>(formService.getAllForms(), HttpStatus.OK);
     }
 
+    /**
+     * Gets all forms template names
+     *
+     * @return
+     */
     @Schema(name = "Get all template names", description = "Retrieves all available template names")
     @GetMapping("/templates")
     @Operation(summary = "Get all template names", description = "Retrieves all available template names")
