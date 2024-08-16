@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @Tag(name = "Form Management", description = "APIs for managing forms")
 public class FormController {
     private final FormService formService;
+    private final TemplateLoaderUtil templateLoaderUtil;
+
 
     /**
      * Constructor for FormController
@@ -27,8 +29,9 @@ public class FormController {
      * @param formService
      */
     @Autowired
-    public FormController(FormService formService) {
+    public FormController(FormService formService, TemplateLoaderUtil templateLoaderUtil) {
         this.formService = formService;
+        this.templateLoaderUtil = templateLoaderUtil;
     }
 
     /**
@@ -179,4 +182,12 @@ public class FormController {
     public ResponseEntity<List<FormDTO>> getAllForms() {
         return new ResponseEntity<>(formService.getAllForms(), HttpStatus.OK);
     }
+
+    @Schema(name = "Get all template names", description = "Retrieves all available template names")
+    @GetMapping("/templates")
+    @Operation(summary = "Get all template names", description = "Retrieves all available template names")
+    public ResponseEntity<List<String>> getAllTemplateNames() throws IOException {
+        return new ResponseEntity<>(templateLoaderUtil.getAllTemplateNames(), HttpStatus.OK);
+    }
+
 }
