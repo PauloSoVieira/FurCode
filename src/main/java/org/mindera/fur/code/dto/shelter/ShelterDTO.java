@@ -1,9 +1,9 @@
 package org.mindera.fur.code.dto.shelter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.io.Serializable;
-
 import java.util.Date;
 
 
@@ -11,6 +11,8 @@ import java.util.Date;
  * DTO for a shelter.
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class ShelterDTO implements Serializable {
     private Long id;
     private String name;
@@ -23,7 +25,6 @@ public class ShelterDTO implements Serializable {
     private Long size;
     private Boolean isActive;
     private Date creationDate;
-
 
     /**
      * Constructor with parameters.
@@ -53,5 +54,8 @@ public class ShelterDTO implements Serializable {
         this.size = size;
         this.isActive = isActive;
         this.creationDate = creationDate;
+    }
+
+    public ShelterDTO() {
     }
 }
