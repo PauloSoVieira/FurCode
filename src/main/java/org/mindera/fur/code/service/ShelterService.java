@@ -211,14 +211,31 @@ public class ShelterService {
         idValidation(id);
         Shelter shelter = shelterRepository.findById(id).orElseThrow();
         Shelter updateShelter = shelterMapper.INSTANCE.toModel(shelterDTO);
-        shelter.setName(updateShelter.getName());
-        shelter.setEmail(updateShelter.getEmail());
-        shelter.setAddress1(updateShelter.getAddress1());
-        shelter.setAddress2(updateShelter.getAddress2());
-        shelter.setPostalCode(updateShelter.getPostalCode());
-        shelter.setPhone(updateShelter.getPhone());
-        shelter.setSize(updateShelter.getSize());
-        shelter.setIsActive(updateShelter.getIsActive());
+
+        if (shelterDTO.getName() != null) {
+            shelter.setName(shelterDTO.getName());
+        }
+        if (shelterDTO.getEmail() != null) {
+            shelter.setEmail(shelterDTO.getEmail());
+        }
+        if (shelterDTO.getAddress1() != null) {
+            shelter.setAddress1(shelterDTO.getAddress1());
+        }
+        if (shelterDTO.getAddress2() != null) {
+            shelter.setAddress2(shelterDTO.getAddress2());
+        }
+        if (shelterDTO.getPostalCode() != null) {
+            shelter.setPostalCode(shelterDTO.getPostalCode());
+        }
+        if (shelterDTO.getPhone() != null) {
+            shelter.setPhone(shelterDTO.getPhone());
+        }
+        if (shelterDTO.getSize() != null) {
+            shelter.setSize(shelterDTO.getSize());
+        }
+        if (shelterDTO.getIsActive() != null) {
+            shelter.setIsActive(shelterDTO.getIsActive());
+        }
         shelterRepository.save(shelter);
         return shelterMapper.INSTANCE.toDto(shelter);
     }

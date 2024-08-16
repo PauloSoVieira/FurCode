@@ -7,6 +7,8 @@ import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.dto.pet.PetCreateDTO;
+import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.model.Role;
@@ -89,6 +91,19 @@ public class PersonController {
     }
 
     /**
+     * Create a pet.
+     *
+     * @param petCreationDTO The pet creation DTO.
+     * @return The pet DTO.
+     */
+
+    @PostMapping("/create-pet")
+    @Schema(description = "Create a pet")
+    public ResponseEntity<PetDTO> createPet(@RequestBody PetCreateDTO petCreationDTO) {
+        return new ResponseEntity<>(personService.createPet(petCreationDTO), HttpStatus.CREATED);
+    }
+
+    /**
      * Get all persons.
      *
      * @return The list of person DTOs.
@@ -121,6 +136,20 @@ public class PersonController {
     @Schema(description = "Get all donations by id")
     public ResponseEntity<List<DonationDTO>> getAllDonationsById(@PathVariable Long id) {
         return new ResponseEntity<>(personService.getAllDonationsById(id), HttpStatus.OK);
+    }
+
+    /**
+     * Get all persons in a shelter.
+     *
+     * @param id The id of the shelter.
+     * @return The list of person DTOs.
+     */
+
+
+    @GetMapping("/get-all-persons-in-shelter/{id}")
+    @Schema(description = "Get all persons in a shelter")
+    public ResponseEntity<List<PersonDTO>> getAllPersonsInShelter(@PathVariable Long id) {
+        return new ResponseEntity<>(personService.getAllPersonsInShelter(id), HttpStatus.OK);
     }
 
     /**
