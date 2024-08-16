@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
+@Schema(name = "FileUploadDTO", description = "DTO for uploading a file")
 public class FileUploadDTO {
 
     @Schema(description = "File name", example = "image1.jpg")

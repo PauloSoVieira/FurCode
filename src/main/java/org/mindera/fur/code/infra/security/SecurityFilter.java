@@ -84,10 +84,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String token = authHeader.replace("Bearer ", "").trim();
 
-//        if (!isValidTokenFormat(token)) { // Verifica o formato do token
-//            throw new InvalidTokenFormatException("Token format is invalid.");
-//        }
-
         return token;
 
     }

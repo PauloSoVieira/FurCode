@@ -3,6 +3,7 @@ package org.mindera.fur.code.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,15 +20,29 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "File Operations", description = "Uploads and downloads files.")
 @RestController
+@Schema(name = "File Operations", description = "Uploads and downloads files.")
 public class FileController {
 
     private final FileService fileService;
 
+    /**
+     * Constructor for FileController
+     *
+     * @param fileService
+     */
     @Autowired
     public FileController(FileService fileService) {
         this.fileService = fileService;
     }
 
+    /**
+     * Uploads a pet image
+     *
+     * @param id
+     * @param file
+     * @return
+     */
+    @Schema(name = "Upload a pet image", description = "Uploads a pet image")
     @Operation(summary = "Upload a pet image")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "File uploaded successfully"),
@@ -42,6 +57,14 @@ public class FileController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Downloads a pet image
+     *
+     * @param id
+     * @param fileName
+     * @return
+     */
+    @Schema(name = "Download a pet image", description = "Downloads a pet image")
     @Operation(summary = "Download a pet image")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",

@@ -33,7 +33,7 @@ public class SecurityConfiguration {
      * @throws Exception The exception
      */
 
-    //filters to check the authentication
+
     @Bean
     public SecurityFilterChain securityFilters(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -41,8 +41,6 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
 
-                        //Person authorizations
-                        //anyone can create a person
                         .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/create-shelter").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/all").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}").hasAnyAuthority("USER")
@@ -52,28 +50,28 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/add-person-to-shelter").hasAnyAuthority("MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}/get-all-donations").hasAnyAuthority("ADMIN")
 
-                        //Pet authorizations
+
                         .requestMatchers(HttpMethod.POST, "/api/v1/pet").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/pet/update/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/pet/delete/{id}").hasAnyAuthority("MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/pet/{id}/create-record").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/pet/{id}/record").hasAnyAuthority("ADMIN")
 
-                        //Shelter authorizations
+
                         .requestMatchers(HttpMethod.POST, "/api/v1/shelter").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/shelter/all").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/shelter/{id}").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/shelter/delete/{id}").hasAnyAuthority("MANAGER")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/shelter/update/{id}").hasAnyAuthority("MANAGER")
 
-                        //Adoption Request authorizations
+
                         .requestMatchers(HttpMethod.POST, "/api/v1/adoption-request").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/adoption-request/update/{id}").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/all").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/adoption-request/delete/{id}").hasAnyAuthority("MANAGER")
 
-                       .anyRequest().permitAll())
+                        .anyRequest().permitAll())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -95,11 +93,9 @@ public class SecurityConfiguration {
      *
      * @return The password encoder
      */
-    //usa algoritimo de hash para criptografar a password
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
-//autenticação statefull é utilizada para armazenar informações de usuário que está ativo
-//autenticação stateless realiza autenticação via token de sessão (padrão mais utilizado na web neste momento)
