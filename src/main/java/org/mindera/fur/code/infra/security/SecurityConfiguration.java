@@ -45,7 +45,7 @@ public class SecurityConfiguration {
                         //anyone can create a person
                         .requestMatchers(HttpMethod.POST, "/api/v1/person/{id}/create-shelter").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/person/all").hasAnyAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/person/{id}").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/person/update/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/person/set-person-role/{id}").hasAnyAuthority("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/person/delete/{id}").hasAnyAuthority("MANAGER")
@@ -73,8 +73,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/adoption-request/delete/{id}").hasAnyAuthority("MANAGER")
 
-
-                        .anyRequest().permitAll())
+                       .anyRequest().permitAll())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
