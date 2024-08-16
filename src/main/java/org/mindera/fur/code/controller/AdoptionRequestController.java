@@ -44,7 +44,7 @@ public class AdoptionRequestController {
      * @param adoptionRequestCreationDTO The AdoptionRequestCreationDTO object.
      * @return The created AdoptionRequestDTO object.
      */
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = {"application/json", "application/json;charset=UTF-8"}, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create an adoption request", description = "Creates a new adoption request with the provided data")
     @Schema(description = "Create an adoption request")
     public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@RequestBody AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
