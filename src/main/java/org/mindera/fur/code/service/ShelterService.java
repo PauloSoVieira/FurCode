@@ -97,9 +97,6 @@ public class ShelterService {
         if (shelterCreationDTO.getVat() <= 0) {
             throw new PersonException(ShelterMessages.VAT_CANT_BE_ZERO_OR_LOWER);
         }
-        if (shelterCreationDTO.getVat().equals(" ")) {
-            throw new PersonException(ShelterMessages.VAT_CANT_BE_EMPTY);
-        }
         if (shelterCreationDTO.getEmail() == null) {
             throw new PersonException(ShelterMessages.EMAIL_CANT_BE_NULL);
         }
@@ -121,17 +118,11 @@ public class ShelterService {
         if (shelterCreationDTO.getPhone() == null) {
             throw new PersonException(ShelterMessages.PHONE_CANT_BE_NULL);
         }
-        if (shelterCreationDTO.getPhone().equals(" ")) {
-            throw new PersonException(ShelterMessages.PHONE_CANT_BE_EMPTY);
-        }
         if (shelterCreationDTO.getPhone() <= 0) {
             throw new PersonException(ShelterMessages.PHONE_CANT_BE_ZERO_OR_LOWER);
         }
         if (shelterCreationDTO.getSize() == null) {
             throw new PersonException(ShelterMessages.SIZE_CANT_BE_NULL);
-        }
-        if (shelterCreationDTO.getSize().equals(" ")) {
-            throw new PersonException(ShelterMessages.SIZE_CANT_BE_EMPTY);
         }
         if (shelterCreationDTO.getSize() <= 0) {
             throw new PersonException(ShelterMessages.SIZE_CANT_BE_ZERO_OR_LOWER);
