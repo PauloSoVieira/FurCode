@@ -2,7 +2,6 @@ package org.mindera.fur.code.dto.shelter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -19,7 +18,6 @@ import java.time.LocalDate;
 public class ShelterDTO implements Serializable {
     @NotNull
     @Schema(description = "The id of the shelter", example = "1", required = true)
-    @Valid
     private Long id;
     private String name;
     private Long vat;

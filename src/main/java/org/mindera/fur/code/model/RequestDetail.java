@@ -4,10 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -22,7 +20,6 @@ public class RequestDetail {
 
 
     @Id
-    @Positive
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The unique identifier of the request detail", example = "1", required = true)
     private Long id;
@@ -36,7 +33,7 @@ public class RequestDetail {
     @Schema(description = "The state of the request detail", example = "ACCEPTED", required = true)
     private State state;
 
-    @DateTimeFormat
+    @Column(name = "date")
     @Schema(description = "The date of the request detail", example = "2023-01-01 00:00:00", required = true)
     private LocalDate date;
 

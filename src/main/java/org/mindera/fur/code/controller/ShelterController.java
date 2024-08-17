@@ -3,6 +3,7 @@ package org.mindera.fur.code.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
@@ -45,7 +46,7 @@ public class ShelterController {
     @PostMapping
     @Schema(description = "Create a shelter")
     @Operation(summary = "Create a shelter", description = "Creates a new shelter with the provided data")
-    public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterCreationDTO shelterCreationDTO) {
+    public ResponseEntity<ShelterDTO> createShelter(@Valid @RequestBody ShelterCreationDTO shelterCreationDTO) {
         return new ResponseEntity<>(shelterService.createShelter(shelterCreationDTO), HttpStatus.CREATED);
     }
 
@@ -73,7 +74,7 @@ public class ShelterController {
     @GetMapping("/{id}")
     @Operation(summary = "Get a shelter by id", description = "Returns a shelter with the specified id")
     @Schema(description = "Get a shelter by id")
-    public ResponseEntity<ShelterDTO> getShelterById(@PathVariable Long id) {
+    public ResponseEntity<ShelterDTO> getShelterById(@Valid @PathVariable Long id) {
         return new ResponseEntity<>(shelterService.getShelterById(id), HttpStatus.OK);
     }
 

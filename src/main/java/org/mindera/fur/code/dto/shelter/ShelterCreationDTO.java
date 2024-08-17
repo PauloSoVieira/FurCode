@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -22,7 +21,6 @@ public class ShelterCreationDTO {
     private String name;
 
     @NotNull
-    @Positive
     @Schema(description = "The vat number of the shelter", example = "123456789", required = true)
     private Long vat;
 

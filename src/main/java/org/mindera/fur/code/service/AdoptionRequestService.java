@@ -169,19 +169,18 @@ public class AdoptionRequestService {
 
 
     /**
-     * Updates an adoption request.
+     * Updates an adoption request with the provided data.
      *
-     * @param id                 the id
-     * @param adoptionRequestDTO the adoption request dto
-     * @return the adoption request dto
+     * @param id
+     * @param adoptionRequestDTO
+     * @return the updated adoption request dto
      */
     @Operation(summary = "Update an adoption request", description = "Updates an adoption request with the provided data")
     public AdoptionRequestDTO updateAdoptionRequest(Long id, AdoptionRequestDTO adoptionRequestDTO) {
         idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
         AdoptionRequest updateAdoptionRequest = adoptionRequestMapper.INSTANCE.toModel(adoptionRequestDTO);
-        updateAdoptionRequest.setShelter(adoptionRequest.getShelter());
-        updateAdoptionRequest.setPet(adoptionRequest.getPet());
+        updateAdoptionRequest.setRequestDetails(adoptionRequest.getRequestDetails());
         adoptionRequestRepository.save(updateAdoptionRequest);
         return adoptionRequestMapper.INSTANCE.toDTO(updateAdoptionRequest);
     }
