@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import jakarta.validation.constraints.PastOrPresent;
 
 import java.util.Date;
 
@@ -17,9 +17,9 @@ import java.util.Date;
  *</p>
  *
  */
-@Data
-@Entity
-@Table(name = "pet_chip")
+//@Data
+//@Entity
+//@Table(name = "pet_chip")
 public class PetChip {
 
     @Id
@@ -36,11 +36,13 @@ public class PetChip {
 
     @Valid
     @NotNull(message = "Registration date must be provided")
+    @PastOrPresent(message = "Registration date cannot be in the future")
     @Column(nullable = false)
     private Date registrationDate;
 
     @Valid
     @NotNull(message = "Last checked date must be provided")
+    @PastOrPresent(message = "Last checked date cannot be in the future")
     @Column(nullable = false)
     private Date lastCheckedDate;
 

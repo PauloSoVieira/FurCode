@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Data
 public class PetDTO implements Serializable {
 
+    @Positive(message = "Pet ID must be greater than 0")
     @NotNull(message = "Pet ID must be provided")
     @Schema(description = "The ID of the pet", example = "2")
     private Long id;
@@ -24,10 +25,12 @@ public class PetDTO implements Serializable {
     @Schema(description = "The name of the pet", example = "Tareco")
     private String name;
 
+    @Positive(message = "Pet type ID must be greater than 0")
     @NotNull(message = "Pet type ID must be provided")
     @Schema(description = "The ID of the pet type", example = "2")
     private Long petTypeId;
 
+    @Positive(message = "Shelter ID must be greater than 0")
     @NotNull(message = "Shelter ID must be provided")
     @Schema(description = "The ID of the shelter", example = "3")
     private Long shelterId;

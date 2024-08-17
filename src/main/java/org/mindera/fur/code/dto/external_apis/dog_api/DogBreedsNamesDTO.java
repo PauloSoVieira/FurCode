@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * Dog breeds names DTO
  */
-@Data
 @AllArgsConstructor
+@Data
 @Schema(description = "Dog breeds names")
 public class DogBreedsNamesDTO implements Serializable {
 

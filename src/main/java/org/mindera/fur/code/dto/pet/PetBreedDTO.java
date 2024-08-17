@@ -3,6 +3,7 @@ package org.mindera.fur.code.dto.pet;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class PetBreedDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Positive(message = "Breed ID must be greater than 0")
     @NotNull(message = "Breed ID must be provided")
     @Schema(description = "The breed ID", example = "3")
     private Long id;

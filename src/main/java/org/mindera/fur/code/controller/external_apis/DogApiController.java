@@ -3,6 +3,8 @@ package org.mindera.fur.code.controller.external_apis;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.mindera.fur.code.dto.external_apis.dog_api.DogBreedDTO;
 import org.mindera.fur.code.dto.external_apis.dog_api.DogBreedsNamesDTO;
 import org.mindera.fur.code.service.external_apis.DogApiService;
@@ -36,7 +38,13 @@ public class DogApiController {
      */
     @Operation(summary = "Get a dog breed and description by ID")
     @GetMapping(value = "/breed-and-description/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DogBreedDTO> getBreedAndDescriptionById(@PathVariable @Valid String id) {
+    public ResponseEntity<DogBreedDTO> getBreedAndDescriptionById(
+            @PathVariable
+            @Valid
+            @NotBlank(message = "Dog breed ID is required")
+            @Size(min = 1, max = 255, message = "Dog breed ID must be between 1 and 255 characters")
+            String id
+    ) {
         DogBreedDTO dto = dogApiService.fetchBreedById(id);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -61,7 +69,12 @@ public class DogApiController {
      */
     @Operation(summary = "Get a dog breed info by name - search from all pages")
     @GetMapping("/breed/{name}")
-    public ResponseEntity<DogBreedDTO> getBreedInfoByName(@PathVariable @Valid String name) {
+    public ResponseEntity<DogBreedDTO> getBreedInfoByName(
+            @PathVariable
+            @Valid
+            @NotBlank(message = "Dog breed name is required")
+            String name
+    ) {
         DogBreedDTO dto = dogApiService.getBreedByName(name);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
