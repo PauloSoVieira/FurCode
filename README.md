@@ -122,17 +122,47 @@ FurCode is a manager for your local animal shelter.
 
 ### Run the project
 
+#### With IntelliJ IDEA
+1. Create a new project:
+    - from the Wecolme Page, click on `Get from VCS` and use the repository link
+    - otherwise go to: `File` -> `New` -> `Project From Version Control...` and use the repository link
+
+2. Run it
+   - Go to `FurCodeApplication` class and run it.
+     
+>`Spring Boot` will automatically run the `compose.yaml` and setup all the services for you
+
+#### With Maven
 1. Clone the repo
    
    ```sh
    git clone https://github.com/PauloSoVieira/FurCode.git
    ```
-3. Run it
+2. Run it
    
    ```sh
    mvn spring-boot:run
    ```
+   
+>`Spring Boot` will automatically run the `compose.yaml` and setup all the services for you
 
+#### With Docker Compose
+1. Clone the repo
+   
+   ```sh
+   git clone https://github.com/PauloSoVieira/FurCode.git
+   ```
+2. Run it
+   
+   ```sh
+   docker compose -f compose-prod.yaml up
+   ```
+    - This will build a `Docker` image using the included `Dockerfile`. To just build the image and not run all the other services in the `compose-prod.yaml` run: `docker build -t [image_name] .`
+
+### First Time Run
+
+When running the project for the fist time, there will be a URL to link a Google Account. This account will be used to send the emails used by the application.
+   
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -236,7 +266,7 @@ Project Link: [https://github.com/PauloSoVieira/FurCode](https://github.com/Paul
 [postgresql-url]: https://www.postgresql.org/
 [minio]: https://img.shields.io/badge/MinIO-2024-red?logo=minio&logoColor=white
 [minio-url]: https://min.io/
-[redis]: https://img.shields.io/badge/Redis-latest-red?logo=redis&logoColor=white
+[redis]: https://img.shields.io/badge/Redis-7.4.0-red?logo=redis&logoColor=white
 [redis-url]: https://redis.io/
 [docker-compose]: https://img.shields.io/badge/Docker--Compose-2496ED?logo=docker&logoColor=white
 [docker-compose-url]: https://docs.docker.com/compose/
