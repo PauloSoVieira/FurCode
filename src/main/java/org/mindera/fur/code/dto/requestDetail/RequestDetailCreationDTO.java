@@ -16,12 +16,10 @@ import java.time.LocalDate;
 public class RequestDetailCreationDTO {
 
     @NotNull
-    @NotBlank
     @Schema(description = "The id of the person", example = "1", required = true)
     private Long personId;
 
     @NotNull
-    @NotBlank
     @Schema(description = "The state of the RequestDetail", example = "SENT", required = true)
     private State state;
 

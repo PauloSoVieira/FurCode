@@ -3,6 +3,7 @@ package org.mindera.fur.code.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
@@ -10,6 +11,7 @@ import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.service.AdoptionRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,10 +44,10 @@ public class AdoptionRequestController {
      * @param adoptionRequestCreationDTO The AdoptionRequestCreationDTO object.
      * @return The created AdoptionRequestDTO object.
      */
-    @PostMapping
+    @PostMapping(consumes = {"application/json", "application/json;charset=UTF-8"}, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create an adoption request", description = "Creates a new adoption request with the provided data")
     @Schema(description = "Create an adoption request")
-    public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@RequestBody AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
+    public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@Valid @RequestBody AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
         return new ResponseEntity<>(adoptionRequestService.createAdoptionRequest(adoptionRequestCreationDTO), HttpStatus.CREATED);
     }
 

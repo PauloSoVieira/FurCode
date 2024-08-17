@@ -25,13 +25,13 @@ import java.util.Set;
 public class Shelter {
 
     @Id
-    @Positive
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
     private Long id;
     @Schema(description = "The name of the shelter", example = "Shelter 1", required = true)
     @Size(min = 1, max = 100, message = "Shelter name must be between 1 and 100 characters")
     private String name;
+    @Positive
     @Schema(description = "The vat of the shelter", example = "12345", required = true)
     private Integer vat;
     @Schema(description = "The email of the shelter", example = "shelter@example.com", required = true)
@@ -45,6 +45,7 @@ public class Shelter {
     private String address2;
     @Schema(description = "The postal code of the shelter", example = "12345", required = true)
     private String postalCode;
+    @Positive
     @Schema(description = "The phone of the shelter", example = "1234567890", required = true)
     private Long phone;
     @Schema(description = "The size of the shelter", example = "10", required = true)

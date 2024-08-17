@@ -27,7 +27,7 @@ public class AdoptionRequestDTO {
      * @param petId          The id of the pet.
      * @param requestDetails The request details.
      */
-    public AdoptionRequestDTO(Long id, Long shelterId, Long personId, Long petId) {
+    public AdoptionRequestDTO(Long id, Long shelterId, Long personId, Long petId, Set<RequestDetailDTO> requestDetails) {
         this.id = id;
         this.shelterId = shelterId;
         this.personId = personId;

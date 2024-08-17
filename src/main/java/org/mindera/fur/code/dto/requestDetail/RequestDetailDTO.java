@@ -3,7 +3,6 @@ package org.mindera.fur.code.dto.requestDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.mindera.fur.code.model.State;
-import org.mindera.fur.code.service.AdoptionRequestService;
 
 import java.time.LocalDate;
 
@@ -23,8 +22,6 @@ public class RequestDetailDTO {
     private LocalDate date;
     @Schema(description = "The observation of the RequestDetail", example = "The pet is missing information", required = true)
     private String observation;
-    @Schema(description = "The id of the AdoptionRequest", example = "1", required = true)
-    private AdoptionRequestService adoptionRequestService;
 
     /**
      * Constructor with parameters.
