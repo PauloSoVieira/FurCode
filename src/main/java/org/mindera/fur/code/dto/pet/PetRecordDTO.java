@@ -2,10 +2,7 @@ package org.mindera.fur.code.dto.pet;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -16,10 +13,12 @@ import java.util.Date;
 @Data
 public class PetRecordDTO {
 
+    @Positive(message = "ID must be greater than 0")
     @NotNull(message = "ID is required")
     @Schema(description = "The ID of the pet record", example = "1")
     private Long id;
 
+    @Positive(message = "Pet ID must be greater than 0")
     @NotNull(message = "Pet ID is required")
     @Schema(description = "The ID of the pet", example = "1")
     private Long petId;

@@ -3,6 +3,8 @@ package org.mindera.fur.code.service.pet;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.mindera.fur.code.dto.pet.*;
 import org.mindera.fur.code.mapper.pet.PetMapper;
 import org.mindera.fur.code.mapper.pet.PetRecordMapper;
@@ -65,7 +67,7 @@ public class PetService {
      * @param id The ID of the pet.
      * @return The pet.
      */
-    public PetDTO findPetById(@Valid Long id) {
+    public PetDTO findPetById(@Valid @NotNull @Positive Long id) {
         Pet pet = findAndAssignPet(id);
         return PetMapper.INSTANCE.toDTO(pet);
     }
@@ -100,7 +102,7 @@ public class PetService {
      */
     @Transactional
     @CacheEvict(cacheNames = "pets", allEntries = true)
-    public void updatePet(@Valid Long id, @Valid PetUpdateDTO petUpdateDTO) {
+    public void updatePet(@Valid @NotNull @Positive Long id, @Valid PetUpdateDTO petUpdateDTO) {
         Pet pet = findAndAssignPet(id);
 
         PetUpdateMapper.INSTANCE.updatePetFromDto(petUpdateDTO, pet);
@@ -122,7 +124,7 @@ public class PetService {
      * @throws EntityNotFoundException if the pet with the specified ID is not found
      */
     @CacheEvict(cacheNames = "pets", allEntries = true)
-    public void softDeletePet(@Valid Long id) {
+    public void softDeletePet(@Valid @NotNull @Positive Long id) {
         Pet pet = findAndAssignPet(id);
         petRepository.delete(pet);
     }
@@ -135,7 +137,7 @@ public class PetService {
      * @return The pet record.
      */
     @Transactional
-    public PetRecordDTO addPetRecord(@Valid Long id, @Valid PetRecordCreateDTO petRecordCreateDTO) {
+    public PetRecordDTO addPetRecord(@Valid @NotNull @Positive Long id, @Valid PetRecordCreateDTO petRecordCreateDTO) {
         Pet pet = findAndAssignPet(id);
 
         PetRecord petRecord = PetRecordMapper.INSTANCE.toModel(petRecordCreateDTO);
@@ -151,23 +153,9 @@ public class PetService {
      * @param id The ID of the pet.
      * @return A list of pet records.
      */
-    public List<PetRecordDTO> getAllPetRecordsByPetId(@Valid Long id) {
+    public List<PetRecordDTO> getAllPetRecordsByPetId(@Valid @NotNull @Positive Long id) {
         Pet pet = findAndAssignPet(id);
         return pet.getPetRecords().stream().map(PetRecordMapper.INSTANCE::toDTO).toList();
-    }
-
-    /**
-     * Deletes all pets and related records.
-     * <p>
-     * <b>Note:</b> This method is for testing purposes only and should not be used in production.
-     * It deletes all pets and pet records and should be handled with caution.
-     * It deletes all pet records and should be handled with caution.
-     * </p>
-     */
-    @Transactional
-    public void deleteAllPets() {
-        petRepository.deleteAll();
-        petRecordRepository.deleteAll();
     }
 
     private Pet findAndAssignPet(Long id) {

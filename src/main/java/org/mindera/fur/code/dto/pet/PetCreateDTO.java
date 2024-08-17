@@ -18,10 +18,12 @@ public class PetCreateDTO {
     @Schema(description = "The name of the pet", example = "Bobby")
     private String name;
 
+    @Positive(message = "Pet type ID must be greater than 0")
     @NotNull(message = "Pet type ID must be provided")
     @Schema(description = "The ID of the pet type", example = "1")
     private Long petTypeId;
 
+    @Positive(message = "Shelter ID must be greater than 0")
     @NotNull(message = "Shelter ID must be provided")
     @Schema(description = "The ID of the shelter", example = "1")
     private Long shelterId;

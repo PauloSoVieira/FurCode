@@ -3,6 +3,8 @@ package org.mindera.fur.code.controller.pet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.mindera.fur.code.dto.pet.*;
 import org.mindera.fur.code.service.AIService;
 import org.mindera.fur.code.service.pet.PetService;
@@ -52,7 +54,7 @@ public class PetController {
      */
     @Operation(summary = "Get a pet by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid Long id) {
+    public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid @NotNull @Positive Long id) {
         PetDTO petDTO = petService.findPetById(id);
         return new ResponseEntity<>(petDTO, HttpStatus.OK);
     }
@@ -92,7 +94,7 @@ public class PetController {
     @Operation(summary = "Delete a pet")
     @DeleteMapping(value = "/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deletePet(@PathVariable @Valid Long id) {
+    public ResponseEntity<Void> deletePet(@PathVariable @Valid @NotNull @Positive Long id) {
         petService.softDeletePet(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -105,7 +107,7 @@ public class PetController {
      */
     @Operation(summary = "Get all pet records by pet ID")
     @GetMapping(value = "/{id}/record", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @Valid Long id) {
+    public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @Valid @NotNull @Positive Long id) {
         List<PetRecordDTO> petRecordDTO = petService.getAllPetRecordsByPetId(id);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.OK);
     }
@@ -119,7 +121,7 @@ public class PetController {
      */
     @Operation(summary = "Create a new pet record by pet ID")
     @PostMapping(value = "/{id}/create-record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
+    public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid @NotNull @Positive Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
         PetRecordDTO petRecordDTO = petService.addPetRecord(id, petRecordCreateDTO);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
     }

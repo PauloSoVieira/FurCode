@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.mindera.fur.code.exceptions.donation.DonationNotFoundException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationAmountException;
 import org.mindera.fur.code.exceptions.donation.InvalidDonationDateException;
+import org.mindera.fur.code.exceptions.external_apis.DogApiException;
 import org.mindera.fur.code.exceptions.file.FileException;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.exceptions.token.TokenException;
@@ -283,6 +284,28 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Handles unsupported operation exceptions, returning a 501 response with the appropriate error message.
+     *
+     * @param ex      the exception
+     * @param request the request
+     * @return the response entity
+     */
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<String> handleUnsupportedOperationException(UnsupportedOperationException ex, HttpServletRequest request) {
+        logger.error("Unsupported operation: {}", ex.getMessage());
+
+        String responseJson = response(
+                HttpStatus.NOT_IMPLEMENTED.value(),
+                HttpStatus.NOT_IMPLEMENTED.getReasonPhrase(),
+                request.getRequestURI(),
+                "The requested operation is not supported.",
+                ex.getMessage(),
+                new Date());
+
+        return new ResponseEntity<>(responseJson, HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    /**
      * Handles generic exceptions, returning a 500 response with the appropriate error message.
      *
      * @param e       the exception
@@ -328,5 +351,20 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<String> handleInvalidTokenException(TokenException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DogApiException.class)
+    public ResponseEntity<String> handleDogApiException(DogApiException ex, HttpServletRequest request) {
+        logger.error("Dog API Exception: {}", ex.getMessage());
+
+        String responseJson = response(
+                ex.getStatus().value(),
+                ex.getStatus().getReasonPhrase(),
+                request.getRequestURI(),
+                ex.getMessage(),
+                "Error occurred while fetching data from the Dog API.",
+                new Date());
+
+        return new ResponseEntity<>(responseJson, ex.getStatus());
     }
 }
