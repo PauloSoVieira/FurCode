@@ -85,6 +85,12 @@ public class ShelterService {
      */
     private static void shelterValidation(ShelterCreationDTO shelterCreationDTO) {
 
+        String emailRegex = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-zA-Z]{2,})$";
+
+        if (!shelterCreationDTO.getEmail().matches(emailRegex)) {
+            throw new PersonException(ShelterMessages.EMAIL_FORMAT_INVALID);
+        }
+
         if (shelterCreationDTO.getName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ShelterMessages.NAME_CANT_BE_NULL);
         }
@@ -96,9 +102,6 @@ public class ShelterService {
         }
         if (shelterCreationDTO.getVat() <= 0) {
             throw new PersonException(ShelterMessages.VAT_CANT_BE_ZERO_OR_LOWER);
-        }
-        if (shelterCreationDTO.getVat().equals(" ")) {
-            throw new PersonException(ShelterMessages.VAT_CANT_BE_EMPTY);
         }
         if (shelterCreationDTO.getEmail() == null) {
             throw new PersonException(ShelterMessages.EMAIL_CANT_BE_NULL);
@@ -121,17 +124,11 @@ public class ShelterService {
         if (shelterCreationDTO.getPhone() == null) {
             throw new PersonException(ShelterMessages.PHONE_CANT_BE_NULL);
         }
-        if (shelterCreationDTO.getPhone().equals(" ")) {
-            throw new PersonException(ShelterMessages.PHONE_CANT_BE_EMPTY);
-        }
         if (shelterCreationDTO.getPhone() <= 0) {
             throw new PersonException(ShelterMessages.PHONE_CANT_BE_ZERO_OR_LOWER);
         }
         if (shelterCreationDTO.getSize() == null) {
             throw new PersonException(ShelterMessages.SIZE_CANT_BE_NULL);
-        }
-        if (shelterCreationDTO.getSize().equals(" ")) {
-            throw new PersonException(ShelterMessages.SIZE_CANT_BE_EMPTY);
         }
         if (shelterCreationDTO.getSize() <= 0) {
             throw new PersonException(ShelterMessages.SIZE_CANT_BE_ZERO_OR_LOWER);
@@ -145,9 +142,7 @@ public class ShelterService {
         if (shelterCreationDTO.getCreationDate() == null) {
             throw new PersonException(ShelterMessages.CREATION_DATE_CANT_BE_NULL);
         }
-        if (shelterCreationDTO.getCreationDate().equals(" ")) {
-            throw new PersonException(ShelterMessages.CREATION_DATE_CANT_BE_EMPTY);
-        }
+
         if (shelterCreationDTO.getCreationDate().isAfter(LocalDate.now())) {
             throw new PersonException(ShelterMessages.CREATION_DATE_CANT_BE_IN_FUTURE);
         }
@@ -216,14 +211,31 @@ public class ShelterService {
         idValidation(id);
         Shelter shelter = shelterRepository.findById(id).orElseThrow();
         Shelter updateShelter = shelterMapper.INSTANCE.toModel(shelterDTO);
-        shelter.setName(updateShelter.getName());
-        shelter.setEmail(updateShelter.getEmail());
-        shelter.setAddress1(updateShelter.getAddress1());
-        shelter.setAddress2(updateShelter.getAddress2());
-        shelter.setPostalCode(updateShelter.getPostalCode());
-        shelter.setPhone(updateShelter.getPhone());
-        shelter.setSize(updateShelter.getSize());
-        shelter.setIsActive(updateShelter.getIsActive());
+
+        if (shelterDTO.getName() != null) {
+            shelter.setName(shelterDTO.getName());
+        }
+        if (shelterDTO.getEmail() != null) {
+            shelter.setEmail(shelterDTO.getEmail());
+        }
+        if (shelterDTO.getAddress1() != null) {
+            shelter.setAddress1(shelterDTO.getAddress1());
+        }
+        if (shelterDTO.getAddress2() != null) {
+            shelter.setAddress2(shelterDTO.getAddress2());
+        }
+        if (shelterDTO.getPostalCode() != null) {
+            shelter.setPostalCode(shelterDTO.getPostalCode());
+        }
+        if (shelterDTO.getPhone() != null) {
+            shelter.setPhone(shelterDTO.getPhone());
+        }
+        if (shelterDTO.getSize() != null) {
+            shelter.setSize(shelterDTO.getSize());
+        }
+        if (shelterDTO.getIsActive() != null) {
+            shelter.setIsActive(shelterDTO.getIsActive());
+        }
         shelterRepository.save(shelter);
         return shelterMapper.INSTANCE.toDto(shelter);
     }

@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Schema(description = "The shelter repository")
 public interface ShelterRepository extends JpaRepository<Shelter, Long> {
+
+
 }

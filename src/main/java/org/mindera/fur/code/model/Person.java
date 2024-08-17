@@ -47,7 +47,7 @@ public class Person implements UserDetails {
     private String address2;
 
     @Schema(description = "The postal code of the person", example = "12345", required = true)
-    private Long postalCode;
+    private String postalCode;
 
     @Schema(description = "The cell phone of the person", example = "1234567890", required = true)
     private Long cellPhone;
@@ -57,7 +57,7 @@ public class Person implements UserDetails {
     private Role role;
 
 
-    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Schema(description = "The shelter person roles of the person", required = true)
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
@@ -78,6 +78,20 @@ public class Person implements UserDetails {
      * Default no-argument constructor.
      */
     public Person() {
+    }
+
+
+    /**
+     * Constructor with firstName, email and number.
+     *
+     * @param johnDoe The firstName of the person.
+     * @param mail    The email of the person.
+     * @param number  The nif of the person.
+     */
+    public Person(String johnDoe, String mail, Long number) {
+        this.firstName = johnDoe;
+        this.email = mail;
+        this.nif = number;
     }
 
     /**

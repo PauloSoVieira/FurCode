@@ -7,6 +7,8 @@ import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
+import org.mindera.fur.code.dto.pet.PetCreateDTO;
+import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
@@ -18,6 +20,7 @@ import org.mindera.fur.code.model.*;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -36,6 +39,7 @@ public class PersonService {
     private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
     private final DonationService donationService;
+    private final PetService petService;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
     private final Gmailer gmailer;
     private PersonMapper personMapper;
@@ -43,13 +47,16 @@ public class PersonService {
 
     @Autowired
     public PersonService(PersonRepository personRepository, ShelterService shelterService,
-                         ShelterPersonRolesRepository shelterPersonRolesRepository, DonationService donationService, ShelterRepository shelterRepository, Gmailer gmailer) throws Exception {
+                         ShelterPersonRolesRepository shelterPersonRolesRepository, DonationService donationService,
+                         ShelterRepository shelterRepository, Gmailer gmailer,
+                         PetService petService) throws Exception {
         this.personRepository = personRepository;
         this.shelterService = shelterService;
         this.shelterPersonRolesRepository = shelterPersonRolesRepository;
         this.shelterRepository = shelterRepository;
         this.gmailer = new Gmailer();
         this.donationService = donationService;
+        this.petService = petService;
     }
 
     /**
@@ -81,7 +88,12 @@ public class PersonService {
         if (personCreationDTO.getFirstName() == null) {
             throw new PersonException(PersonMessages.NAME_CANT_BE_NULL);
         }
-
+        if (personCreationDTO.getNif() == null) {
+            throw new PersonException(PersonMessages.NIF_CANT_BE_NULL);
+        }
+        if (personCreationDTO.getNif() <= 0) {
+            throw new PersonException(PersonMessages.NIF_CANT_BE_ZERO);
+        }
         if (personCreationDTO.getFirstName().equals(" ")) {
             throw new PersonException(PersonMessages.NAME_CANT_BE_EMPTY);
         }
@@ -316,15 +328,27 @@ public class PersonService {
         Person person = personRepository.findById(id).orElseThrow(
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
         );
-        Person updatedPerson = personMapper.INSTANCE.toModel(personDTO);
-        person.setFirstName(updatedPerson.getFirstName());
-        person.setLastName(updatedPerson.getLastName());
-        person.setEmail(updatedPerson.getEmail());
-        person.setPassword(updatedPerson.getPassword());
-        person.setAddress1(updatedPerson.getAddress1());
-        person.setAddress2(updatedPerson.getAddress2());
-        person.setPostalCode(updatedPerson.getPostalCode());
-        person.setCellPhone(updatedPerson.getCellPhone());
+        if (personDTO.getFirstName() != null) {
+            person.setFirstName(personDTO.getFirstName());
+        }
+        if (personDTO.getLastName() != null) {
+            person.setLastName(personDTO.getLastName());
+        }
+        if (personDTO.getEmail() != null) {
+            person.setEmail(personDTO.getEmail());
+        }
+        if (personDTO.getAddress1() != null) {
+            person.setAddress1(personDTO.getAddress1());
+        }
+        if (personDTO.getAddress2() != null) {
+            person.setAddress2(personDTO.getAddress2());
+        }
+        if (personDTO.getPostalCode() != null) {
+            person.setPostalCode(personDTO.getPostalCode());
+        }
+        if (personDTO.getCellPhone() != null) {
+            person.setCellPhone(personDTO.getCellPhone());
+        }
         personRepository.save(person);
         return personMapper.INSTANCE.toDTO(person);
     }
@@ -382,6 +406,20 @@ public class PersonService {
         Long shelterId = shelter.getId();
         return addPersonToShelter(id, shelterId);
     }
+
+    /**
+     * Create a pet.
+     *
+     * @param petCreationDTO The pet creation DTO.
+     * @return The pet DTO.
+     */
+
+    @Transactional
+    @Schema(description = "Create a pet")
+    public PetDTO createPet(PetCreateDTO petCreationDTO) {
+        return petService.addPet(petCreationDTO);
+    }
+
 
     /**
      * Sets the role of a person based on the provided PersonDTO.
@@ -460,10 +498,31 @@ public class PersonService {
         return donationService.getAllDonationsByPersonId(id);
     }
 
+    /**
+     * Gets a person by email
+     *
+     * @param email the email of the person
+     * @return a PersonDTO object representing the person
+     */
+
     public PersonDTO getPersonByEmail(String email) {
         Person person = personRepository.findByEmail(email);
 
         return PersonMapper.INSTANCE.toDTO(person);
 
     }
+
+
+    /**
+     * Gets all persons in a shelter
+     *
+     * @param id the id of the shelter
+     * @return a list of PersonDTO objects representing the persons in the shelter
+     */
+
+    public List<PersonDTO> getAllPersonsInShelter(Long id) {
+        List<Person> persons = shelterPersonRolesRepository.findPersonsByShelterId(id);
+        return personMapper.INSTANCE.toDTO(persons);
+    }
+
 }

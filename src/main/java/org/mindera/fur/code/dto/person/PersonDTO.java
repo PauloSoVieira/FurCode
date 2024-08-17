@@ -22,9 +22,9 @@ public class PersonDTO implements Serializable {
     @Schema(description = "The second line of the address of the person", example = "123 Main St", required = true)
     private String address2;
     @Schema(description = "The city of the person", example = "New York", required = true)
-    private Integer postalCode;
+    private String postalCode;
     @Schema(description = "The state of the person", example = "NY", required = true)
-    private Integer cellPhone;
+    private Long cellPhone;
 
     /**
      * Constructor for PersonDTO
