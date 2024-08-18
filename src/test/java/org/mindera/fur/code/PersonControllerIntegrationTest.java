@@ -275,7 +275,6 @@ public class PersonControllerIntegrationTest {
         @Test
         @DirtiesContext
         void createShelterShouldReturn201() {
-            // Step 1: Create a person
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
                     "jojo",
                     "da wish",
