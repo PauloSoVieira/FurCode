@@ -78,6 +78,7 @@ public class ShelterService {
         }
     }
 
+
     /**
      * Validates the shelter creation dto.
      *
