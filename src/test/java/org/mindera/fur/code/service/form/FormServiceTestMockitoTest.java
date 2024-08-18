@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindera.fur.code.controller.form.TemplateLoaderUtil;
 import org.mindera.fur.code.dto.form.*;
+import org.mindera.fur.code.messages.form.FormMessages;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.form.FormField;
 import org.mindera.fur.code.model.form.FormFieldAnswer;
@@ -184,19 +185,18 @@ class FormServiceTestMockitoTest {
     @Nested
     class TemplateOperations {
         @Test
-        void createFormFromTemplate_withInvalidTemplateName_shouldThrowException() {
-            String invalidTemplateName = "invalid-template";
+            void createFormFromTemplate_withInvalidTemplateName_shouldThrowException() {
+                String invalidTemplateName = "invalid-template";
 
-            ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                    () -> formService.createFormFromTemplate(invalidTemplateName));
+                ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                        () -> formService.createFormFromTemplate(invalidTemplateName));
 
-            try {
-                verify(templateLoader, never()).loadTemplate(anyString());
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading template: " + invalidTemplateName);
+                assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+                assertEquals("Invalid template name: " + invalidTemplateName, exception.getReason());
+
+                verifyNoInteractions(templateLoader);
             }
-            assert (exception.getReason().contains("Teste: " + invalidTemplateName));
-        }
+
 
         @Test
         void createFormFromTemplate_withValidTemplate_shouldCreateForm() {
@@ -268,26 +268,17 @@ class FormServiceTestMockitoTest {
         }
 
         @Test
-        void createFormFromTemplate_withNullTemplate_shouldThrowException() {
-            String validTemplateName = "null-template";
+        void createFormFromTemplate_withNullTemplate_shouldThrowException() throws IOException {
+            String templateName = null;
 
-            doReturn(true).when(formService).isValidTemplateName(validTemplateName);
+            ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                    () -> formService.createFormFromTemplate(templateName));
 
-            try {
-                when(templateLoader.loadTemplate(validTemplateName)).thenReturn(null);
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading template: " + validTemplateName);
-            }
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+            assertEquals(FormMessages.TEMPLATE_NAME_INVALID + ": " + templateName, exception.getReason());
 
-            assertThrows(ResponseStatusException.class,
-                    () -> formService.createFormFromTemplate(validTemplateName));
-
-            try {
-                verify(templateLoader).loadTemplate(validTemplateName);
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading template: " + validTemplateName);
-            }
-            verify(formRepository, never()).save(any());
+            verifyNoInteractions(templateLoader);
+            verifyNoInteractions(formRepository);
         }
 
         @Test
@@ -492,6 +483,33 @@ class FormServiceTestMockitoTest {
                 verify(formRepository, times(1)).save(any(Form.class));
             }
 
+
+
+            @Test
+            void createFormFromTemplate_withValidFields_shouldReturnFormDTO() throws IOException {
+                String templateName = "adoption-template";
+                FormTemplateDTO template = new FormTemplateDTO();
+                template.setName("Test Template");
+                template.setType("TEST");
+                List<FormFieldCreateDTO> fields = new ArrayList<>();
+                fields.add(new FormFieldCreateDTO("TEXT", "Sample Question"));
+                template.setFields(fields);
+
+                when(templateLoader.loadTemplate(templateName)).thenReturn(template);
+                when(formRepository.save(any(Form.class))).thenAnswer(invocation -> {
+                    Form savedForm = invocation.getArgument(0);
+                    savedForm.setId(1L);
+                    return savedForm;
+                });
+
+                FormDTO result = formService.createFormFromTemplate(templateName);
+
+                assertNotNull(result);
+                assertEquals(template.getName(), result.getName());
+                assertEquals(template.getType(), result.getType());
+                verify(templateLoader, times(1)).loadTemplate(templateName);
+                verify(formRepository, times(1)).save(any(Form.class));
+            }
             @Test
             void submitFormAnswers_shouldReturnUpdatedFormDTO() {
                 Long formId = 1L;

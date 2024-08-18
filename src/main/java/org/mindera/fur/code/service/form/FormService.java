@@ -139,11 +139,15 @@ public class FormService {
     @Transactional
     public FormDTO createFormFromTemplate(String templateName) {
         if (!isValidTemplateName(templateName)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.FORM_ID_NOT_FOUND + ": " + templateName);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.TEMPLATE_NAME_INVALID + ": " + templateName);
         }
 
         try {
             FormTemplateDTO template = templateLoader.loadTemplate(templateName);
+
+            if (template == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.TEMPLATE_NOT_FOUND + ": " + templateName);
+            }
 
             List<FormField> existingFields = formFieldRepository.findByQuestionIn(
                     template.getFields().stream().map(FormFieldCreateDTO::getQuestion).collect(Collectors.toList())
@@ -177,9 +181,6 @@ public class FormService {
             form.setFormFieldAnswers(formFieldAnswers);
             Form savedForm = formRepository.save(form);
             return FormMapper.INSTANCE.toDTO(savedForm);
-        } catch (IOException e) {
-            logger.error(FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE + ": " + templateName);
         } catch (Exception e) {
             logger.error(FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FormMessages.ERROR_IN_CREATING_FORM_FROM_TEMPLATE + ": " + templateName);

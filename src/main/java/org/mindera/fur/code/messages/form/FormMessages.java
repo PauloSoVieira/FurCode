@@ -15,6 +15,8 @@ public class FormMessages {
     public static final String ERROR_IN_CREATING_FORM_FROM_TEMPLATE = "Error creating form from template: ";
     public static final String DONATION_TEMPLATE = "donation-template";
     public static final String ADOPTION_TEMPLATE = "adoption-template";
+    public static final String TEMPLATE_NOT_FOUND =  "Template not found: ";
+    public static final String TEMPLATE_NAME_INVALID = "Invalid template name";
 }
 
 
