@@ -195,16 +195,13 @@ public class PersonService {
 
 
             try {
-                // Send welcome email to the user
                 gmailer.sendMail(savedPerson.getEmail(), "Welcome to FurCode",
                         "Dear " + savedPerson.getFirstName() + ",\n\nWelcome to FurCode! We're excited to have you on board.");
 
-                // Send notification to the company
                 gmailer.sendMail(COMPANY_EMAIL, "New user registration",
                         "A new user has registered:\nName: " + savedPerson.getFirstName() + " " + savedPerson.getLastName() +
                                 "\nEmail: " + savedPerson.getEmail());
             } catch (Exception e) {
-                // Log the error, but don't prevent user creation if email sending fails
                 System.err.println("Failed to send email: " + e.getMessage());
             }
 
@@ -380,8 +377,14 @@ public class PersonService {
      * @throws PersonException if no person with the specified ID is found
      */
 
+    @Transactional
     public void deleteAllPersons() {
-        personRepository.deleteAll();
+        List<Person> persons = personRepository.findAll();
+        for (Person person : persons) {
+            person.getShelterPersonRoles().clear();
+        }
+        personRepository.saveAll(persons);
+        personRepository.deleteAllInBatch();
     }
 
     /**

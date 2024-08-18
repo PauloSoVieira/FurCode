@@ -16,8 +16,12 @@ import org.mindera.fur.code.service.ShelterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
+
 public class ShelterControllerIntegrationTest {
 
     @LocalServerPort
