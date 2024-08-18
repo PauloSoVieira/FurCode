@@ -23,7 +23,7 @@ services:
     environment:
       MINIO_ROOT_USER: test_root
       MINIO_ROOT_PASSWORD: test_roottoor
-      MINIO_DEFAULT_BUCKETS: furcode_test
+      MINIO_DEFAULT_BUCKETS: furcodetest
     volumes:
       - minio-data-test:/data
 
