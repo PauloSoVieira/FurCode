@@ -76,4 +76,11 @@ public class Shelter {
     @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
     @OneToMany(mappedBy = "shelter")
     private Set<Donation> donations;
+
+    public Shelter(Long shelterId) {
+        this.id = shelterId;
+    }
+
+    public Shelter() {
+    }
 }

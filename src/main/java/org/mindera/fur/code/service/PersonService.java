@@ -15,6 +15,7 @@ import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
+import org.mindera.fur.code.messages.email.EmailMessages;
 import org.mindera.fur.code.messages.person.PersonMessages;
 import org.mindera.fur.code.model.*;
 import org.mindera.fur.code.repository.PersonRepository;
@@ -34,7 +35,9 @@ import java.util.regex.Pattern;
 @Service
 @Schema(description = "The person service")
 public class PersonService {
+    private  static final Integer MAX_PASSWORD_LENGTH = 100;
     private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com";
+    private static final int MIN_PASSWORD_LENGTH = 6;
     private final PersonRepository personRepository;
     private final ShelterRepository shelterRepository;
     private final ShelterService shelterService;
@@ -195,14 +198,15 @@ public class PersonService {
 
 
             try {
-                gmailer.sendMail(savedPerson.getEmail(), "Welcome to FurCode",
-                        "Dear " + savedPerson.getFirstName() + ",\n\nWelcome to FurCode! We're excited to have you on board.");
+                gmailer.sendMail(savedPerson.getEmail(), EmailMessages.WELCOME_TO_FURCODE,
+                        EmailMessages.DEAR + savedPerson.getFirstName() + EmailMessages.MESSAGE_WELCOME_TO_FURCODE);
 
-                gmailer.sendMail(COMPANY_EMAIL, "New user registration",
-                        "A new user has registered:\nName: " + savedPerson.getFirstName() + " " + savedPerson.getLastName() +
-                                "\nEmail: " + savedPerson.getEmail());
+                gmailer.sendMail(COMPANY_EMAIL, EmailMessages.NEW_USER_REGISTRATION,
+                        EmailMessages.NEW_USER_MESSAGE + savedPerson.getFirstName() + " " + savedPerson.getLastName() +
+                               EmailMessages.NEW_USER_EMAIL + savedPerson.getEmail());
             } catch (Exception e) {
-                System.err.println("Failed to send email: " + e.getMessage());
+                System.err.println(EmailMessages.FAILED_TO_SEND_EMAIL + e.getMessage());
+
             }
 
             return personMapper.INSTANCE.toDTO(savedPerson);
@@ -224,10 +228,10 @@ public class PersonService {
         if (password.equals(" ")) {
             throw new PersonException(PersonMessages.PASSWORD_CANT_BE_EMPTY);
         }
-        if (password.length() < 6) {
+        if (password.length() < MIN_PASSWORD_LENGTH) {
             throw new PersonException(PersonMessages.PASSWORD_CANT_BE_LESS_THAN_6);
         }
-        if (password.length() > 100) {
+        if (password.length() > MAX_PASSWORD_LENGTH) {
             throw new PersonException(PersonMessages.PASSWORD_CANT_BE_MORE_THAN_100);
         }
     }
