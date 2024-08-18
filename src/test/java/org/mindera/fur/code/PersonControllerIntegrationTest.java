@@ -19,7 +19,9 @@ import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,6 +34,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 public class PersonControllerIntegrationTest {
 
     private static final String TEST_EMAIL = "test@example.com";
@@ -270,6 +273,7 @@ public class PersonControllerIntegrationTest {
         }
 
         @Test
+        @DirtiesContext
         void createShelterShouldReturn201() {
             // Step 1: Create a person
             PersonCreationDTO personCreationDTO = new PersonCreationDTO(
