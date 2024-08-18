@@ -68,7 +68,7 @@ public class RequestDetailService {
     /**
      * Validates person id.
      *
-     * @param personId
+     * @param personId the person id
      */
     private static void personIdValidation(Long personId) {
         if (personId == null) {
@@ -85,7 +85,7 @@ public class RequestDetailService {
     /**
      * Validates state.
      *
-     * @param state
+     * @param state the state
      */
     private static void stateValidation(State state) {
         if (state == null) {
@@ -99,7 +99,7 @@ public class RequestDetailService {
     /**
      * Validates date.
      *
-     * @param date
+     * @param date the date
      */
     private static void dateValidation(LocalDate date) {
         if (date == null) {
@@ -119,7 +119,7 @@ public class RequestDetailService {
     /**
      * Validates observation.
      *
-     * @param observation
+     * @param observation the observation
      */
     private static void observationValidation(String observation) {
         if (observation.length() > 1000) {
@@ -152,9 +152,9 @@ public class RequestDetailService {
     /**
      * Creates a request detail.
      *
-     * @param id
-     * @param requestDetailCreationDTO
-     * @return
+     * @param id                       the id
+     * @param requestDetailCreationDTO the request detail creation dto
+     * @return the request detail dto
      */
     public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
