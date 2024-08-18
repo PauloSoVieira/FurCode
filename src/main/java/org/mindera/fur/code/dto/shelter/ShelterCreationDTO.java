@@ -55,7 +55,6 @@ public class ShelterCreationDTO {
     private Boolean isActive;
 
     @NotNull
-    @NotBlank
     @Schema(description = "The creation date of the shelter", example = "2023-01-01", required = true)
     private LocalDate creationDate;
 

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:16.3-alpine
+    restart: always
+    volumes:
+      - db-data-test:/var/lib/postgresql/data
+    networks:
+      - spring-postgres-test
+    environment:
+      - POSTGRES_DB=furcode_test
+      - POSTGRES_PASSWORD=test_password
+    ports:
+      - 5433:5432
+
+  minio-test:
+    image: bitnami/minio:2024
+    restart: always
+    ports:
+      - 9090:9000
+      - 9091:9001
+    environment:
+      MINIO_ROOT_USER: test_root
+      MINIO_ROOT_PASSWORD: test_roottoor
+      MINIO_DEFAULT_BUCKETS: furcode_test
+    volumes:
+      - minio-data-test:/data
+
+  redis-test:
+    container_name: redis-test
+    hostname: redis-test
+    restart: always
+    image: redis:latest
+    ports:
+      - "6380:6379"
+
+volumes:
+  db-data-test:
+  minio-data-test:
+
+networks:
+  spring-postgres-test:
