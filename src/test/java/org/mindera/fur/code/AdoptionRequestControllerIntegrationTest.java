@@ -123,7 +123,6 @@ public class AdoptionRequestControllerIntegrationTest {
 
         @Test
         void getAdoptionRequestByIdShouldReturn200() {
-            // First, create an adoption request
             Set<RequestDetailDTO> requestDetails = new HashSet<>();
             requestDetails.add(new RequestDetailDTO(1L, 1L, State.SENT, LocalDate.now(), "Test observation"));
             AdoptionRequestCreationDTO request = new AdoptionRequestCreationDTO(1L, 1L, 1L, requestDetails);
@@ -138,7 +137,6 @@ public class AdoptionRequestControllerIntegrationTest {
                     .statusCode(201)
                     .extract().body().as(AdoptionRequestDTO.class);
 
-            // Then, retrieve it
             AdoptionRequestDTO retrievedRequest =
                     given()
                             .header("Authorization", "Bearer " + userToken)
@@ -168,7 +166,6 @@ public class AdoptionRequestControllerIntegrationTest {
                     .then()
                     .statusCode(201);
 
-            // Then, get all adoption requests
             AdoptionRequestDTO[] requests =
                     given()
                             .header("Authorization", "Bearer " + userToken)
@@ -183,7 +180,6 @@ public class AdoptionRequestControllerIntegrationTest {
 
         @Test
         void deleteAdoptionRequestShouldReturn204() {
-            // First, create an adoption request
             Set<RequestDetailDTO> requestDetails = new HashSet<>();
             requestDetails.add(new RequestDetailDTO(1L, 1L, State.SENT, LocalDate.now(), "Test observation"));
             AdoptionRequestCreationDTO request = new AdoptionRequestCreationDTO(1L, 1L, 1L, requestDetails);
@@ -198,7 +194,6 @@ public class AdoptionRequestControllerIntegrationTest {
                     .statusCode(201)
                     .extract().body().as(AdoptionRequestDTO.class);
 
-            // Then, delete it
             given()
                     .header("Authorization", "Bearer " + userToken)
                     .when()
@@ -212,7 +207,6 @@ public class AdoptionRequestControllerIntegrationTest {
     class RequestDetails {
         @Test
         void createRequestDetailShouldReturn201() {
-            // First, create an adoption request
             Set<RequestDetailDTO> requestDetails = new HashSet<>();
             requestDetails.add(new RequestDetailDTO(1L, 1L, State.SENT, LocalDate.now(), "Test observation"));
             AdoptionRequestCreationDTO request = new AdoptionRequestCreationDTO(1L, 1L, 1L, requestDetails);
@@ -227,7 +221,6 @@ public class AdoptionRequestControllerIntegrationTest {
                     .statusCode(201)
                     .extract().body().as(AdoptionRequestDTO.class);
 
-            // Then, create a request detail
             RequestDetailCreationDTO detailRequest = new RequestDetailCreationDTO(
                     1L,
                     State.SENT,
