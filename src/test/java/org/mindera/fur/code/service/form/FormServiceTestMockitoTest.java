@@ -190,12 +190,15 @@ class FormServiceTestMockitoTest {
             ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                     () -> formService.createFormFromTemplate(invalidTemplateName));
 
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+            assertTrue(exception.getReason().contains(invalidTemplateName),
+                    "Exception reason should contain the invalid template name");
+
             try {
                 verify(templateLoader, never()).loadTemplate(anyString());
             } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading template: " + invalidTemplateName);
+                fail("Unexpected IOException during verification: " + e.getMessage());
             }
-            assert (exception.getReason().contains("Teste: " + invalidTemplateName));
         }
 
         @Test
