@@ -23,12 +23,15 @@ public interface RequestDetailMapper {
     RequestDetailMapper INSTANCE = Mappers.getMapper(RequestDetailMapper.class);
 
     /**
-     * Method to map a RequestDetail to a RequestDetailDTO.
+     * Method to map a RequestDetail to a RequestDetailDTO
      *
-     * @param requestDetail The RequestDetail to map.
-     * @return The RequestDetailDTO.
+     * @param requestDetail The RequestDetail to map
+     * @return RequestDetailDTO
      */
     @Mapping(source = "personId", target = "personId")
+    @Mapping(source = "observation", target = "observation")
+    @Mapping(source = "state", target = "state")
+    @Mapping(source = "date", target = "date")
     RequestDetailDTO toDTO(RequestDetail requestDetail);
 
     /**
@@ -46,6 +49,9 @@ public interface RequestDetailMapper {
      * @return The RequestDetail.
      */
     @Mapping(source = "personId", target = "personId")
+    @Mapping(source = "observation", target = "observation")
+    @Mapping(source = "state", target = "state")
+    @Mapping(source = "date", target = "date")
     RequestDetail toModel(RequestDetailCreationDTO requestDetailCreationDTO);
 
     /**

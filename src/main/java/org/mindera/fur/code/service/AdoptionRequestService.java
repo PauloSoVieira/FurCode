@@ -36,7 +36,7 @@ import java.util.List;
 @Tag(name = "Adoption Requests", description = "Adoption Requests")
 public class AdoptionRequestService {
 
-    public AdoptionRequestRepository adoptionRequestRepository;
+    private AdoptionRequestRepository adoptionRequestRepository;
     private PetRepository petRepository;
     private AdoptionRequestMapper adoptionRequestMapper;
     private RequestDetailMapper requestDetailMapper;
@@ -92,7 +92,7 @@ public class AdoptionRequestService {
     /**
      * Validates shelter id.
      *
-     * @param shelterId
+     * @param shelterId the shelter id
      */
     private static void shelterIdValidation(Long shelterId) {
         if (shelterId == null) {
@@ -109,7 +109,7 @@ public class AdoptionRequestService {
     /**
      * Validates person id.
      *
-     * @param personId
+     * @param personId the person id
      */
     private static void personIdValidation(Long personId) {
         if (personId == null) {
@@ -126,7 +126,7 @@ public class AdoptionRequestService {
     /**
      * Validates pet id.
      *
-     * @param petId
+     * @param petId the pet id
      */
     private static void petIdValidation(Long petId) {
         if (petId == null) {
@@ -171,8 +171,8 @@ public class AdoptionRequestService {
     /**
      * Updates an adoption request with the provided data.
      *
-     * @param id
-     * @param adoptionRequestDTO
+     * @param id                 the id
+     * @param adoptionRequestDTO the adoption request dto
      * @return the updated adoption request dto
      */
     @Operation(summary = "Update an adoption request", description = "Updates an adoption request with the provided data")
@@ -247,9 +247,9 @@ public class AdoptionRequestService {
     /**
      * Creates a request detail.
      *
-     * @param id
-     * @param requestDetailCreationDTO
-     * @return
+     * @param id                       the id
+     * @param requestDetailCreationDTO the request detail creation dto
+     * @return the request detail dto
      */
     @Operation(summary = "Create a request detail", description = "Creates a new request detail for the specified adoption request")
     public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {

@@ -206,6 +206,7 @@ public class PersonService {
                                EmailMessages.NEW_USER_EMAIL + savedPerson.getEmail());
             } catch (Exception e) {
                 System.err.println(EmailMessages.FAILED_TO_SEND_EMAIL + e.getMessage());
+
             }
 
             return personMapper.INSTANCE.toDTO(savedPerson);

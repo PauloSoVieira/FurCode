@@ -44,11 +44,11 @@ public class ShelterService {
     /**
      * Constructor for the ShelterService.
      *
-     * @param shelterRepository
-     * @param personRepository
-     * @param petRepository
-     * @param petService
-     * @param donationService
+     * @param shelterRepository the shelter repository
+     * @param personRepository  the person repository
+     * @param petRepository     the pet repository
+     * @param petService        the pet service
+     * @param donationService   the donation service
      */
     @Autowired
     public ShelterService(ShelterRepository shelterRepository,
@@ -67,7 +67,7 @@ public class ShelterService {
     /**
      * Validates the id.
      *
-     * @param id
+     * @param id the id
      */
     private static void idValidation(Long id) {
         if (id == null) {
@@ -78,10 +78,11 @@ public class ShelterService {
         }
     }
 
+
     /**
      * Validates the shelter creation dto.
      *
-     * @param shelterCreationDTO
+     * @param shelterCreationDTO the shelter creation dto
      */
     private static void shelterValidation(ShelterCreationDTO shelterCreationDTO) {
 
@@ -151,7 +152,7 @@ public class ShelterService {
     /**
      * Gets all shelters.
      *
-     * @return
+     * @return the list of shelter dtos
      */
     @Cacheable(cacheNames = "shelters")
     public List<ShelterDTO> getAllShelters() {
@@ -162,8 +163,8 @@ public class ShelterService {
     /**
      * Gets a shelter by id.
      *
-     * @param id
-     * @return
+     * @param id the id
+     * @return the shelter dto
      */
     public ShelterDTO getShelterById(Long id) {
         idValidation(id);
@@ -174,8 +175,8 @@ public class ShelterService {
     /**
      * Creates a shelter.
      *
-     * @param shelterCreationDTO
-     * @return
+     * @param shelterCreationDTO the shelter creation dto
+     * @return the shelter dto
      */
     @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO createShelter(ShelterCreationDTO shelterCreationDTO) {
@@ -188,8 +189,8 @@ public class ShelterService {
     /**
      * Deletes a shelter by id.
      *
-     * @param id
-     * @return
+     * @param id the id
+     * @return the shelter dto
      */
     @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO deleteShelter(Long id) {
@@ -202,9 +203,9 @@ public class ShelterService {
     /**
      * Updates a shelter.
      *
-     * @param id
-     * @param shelterDTO
-     * @return
+     * @param id         the id
+     * @param shelterDTO the shelter dto
+     * @return the shelter dto
      */
     @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO updateShelter(Long id, ShelterDTO shelterDTO) {
@@ -250,8 +251,8 @@ public class ShelterService {
     /**
      * Adds a pet to a shelter.
      *
-     * @param shelterId
-     * @param petId
+     * @param shelterId the shelter id
+     * @param petId     the pet id
      */
     public void addPetToShelter(Long shelterId, Long petId) {
         idValidation(shelterId);
@@ -265,8 +266,8 @@ public class ShelterService {
     /**
      * Gets all pets in a shelter.
      *
-     * @param id
-     * @return
+     * @param id the id
+     * @return the list of pet dtos
      */
     public List<PetDTO> getAllPetsInShelter(Long id) {
         idValidation(id);
@@ -281,8 +282,8 @@ public class ShelterService {
     /**
      * Gets all donations by id.
      *
-     * @param id
-     * @return
+     * @param id the id
+     * @return the list of donation dtos
      */
     public List<DonationDTO> getAllDonationsById(Long id) {
         idValidation(id);

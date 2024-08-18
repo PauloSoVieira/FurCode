@@ -33,7 +33,7 @@ public class Shelter {
     private String name;
     @Positive
     @Schema(description = "The vat of the shelter", example = "12345", required = true)
-    private Integer vat;
+    private Long vat;
     @Schema(description = "The email of the shelter", example = "shelter@example.com", required = true)
     @Size(min = 1, max = 50, message = "Email must be between 1 and 50 characters")
     private String email;
