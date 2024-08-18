@@ -65,9 +65,14 @@ public class PersonControllerIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        shelterPersonRolesRepository.deleteAll();
-        shelterRepository.deleteAll();
-        personService.deleteAllPersons();
+        try {
+            shelterPersonRolesRepository.deleteAll();
+            shelterRepository.deleteAll();
+            personService.deleteAllPersons();
+        } catch (Exception e) {
+            System.out.println("Failed to delete all records: " + e.getMessage());
+        }
+
     }
 
     private void createTestUsers() {

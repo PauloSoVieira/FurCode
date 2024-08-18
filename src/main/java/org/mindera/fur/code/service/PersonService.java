@@ -380,8 +380,14 @@ public class PersonService {
      * @throws PersonException if no person with the specified ID is found
      */
 
+    @Transactional
     public void deleteAllPersons() {
-        personRepository.deleteAll();
+        List<Person> persons = personRepository.findAll();
+        for (Person person : persons) {
+            person.getShelterPersonRoles().clear();
+        }
+        personRepository.saveAll(persons);
+        personRepository.deleteAllInBatch();
     }
 
     /**
