@@ -19,7 +19,9 @@ import org.mindera.fur.code.repository.form.FormRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.service.form.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -70,7 +72,7 @@ public class DonationService {
             throw new IllegalArgumentException(DonationMessages.DONATION_HAS_INVALID_DATA_FIELDS);
         }
         if (donationCreateDTO.getTotal() >= DONATION_AMOUNT_MAX) {
-            throw new InvalidDonationAmountException("Donation total must be less than 999999");
+            throw new InvalidDonationAmountException(DonationMessages.DONATION_AMOUNT_EXCEEDS_MAXIMUM);
         }
     }
 
@@ -93,6 +95,10 @@ public class DonationService {
      * @operationId createDonation
      */
     public DonationDTO createDonation(DonationCreateDTO donationCreateDTO) {
+
+        if (donationCreateDTO.getTotal() == null) {
+            throw new IllegalArgumentException(DonationMessages.DONATION_HAS_INVALID_DATA_FIELDS);
+        }
         donationValidations(donationCreateDTO);
         FormDTO formDTO = formService.createFormFromTemplate("donation-template");
 
@@ -102,7 +108,7 @@ public class DonationService {
         newDonation.setShelter(shelterRepository.findById(donationCreateDTO.getShelterId())
                 .orElseThrow(() -> new IllegalArgumentException(ShelterMessages.SHELTER_NOT_FOUND)));
         Form form = formRepository.findById(formDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Form not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         newDonation.setForm(form);
         Donation savedDonation = donationRepository.save(newDonation);
         return DonationMapper.INSTANCE.toDTO(savedDonation);
