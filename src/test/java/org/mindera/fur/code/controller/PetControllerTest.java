@@ -4,7 +4,10 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,44 +28,130 @@ import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class PetControllerTest {
 
+    // A validPetJson to use globally across multiple tests
+    private static final String VALID_PET_JSON = """
+                {
+                  "name": "Max",
+                  "petTypeId": 1,
+                  "shelterId": 1,
+                  "isAdopted": false,
+                  "isVaccinated": true,
+                  "size": "LARGE",
+                  "weight": 25.5,
+                  "color": "Brown",
+                  "age": 3,
+                  "observations": "Healthy and active"
+                }
+            """;
     private String managerToken;
     private String adminToken;
     private String userToken;
     private Long petId;
-
     @LocalServerPort
     private int port;
-
     @Autowired
     private PersonService personService;
-
     @Autowired
     private PersonRepository personRepository;
-
     @Autowired
     private ShelterRepository shelterRepository;
-
     @Autowired
     private PetBreedRepository petBreedRepository;
-
     @Autowired
     private PetTypeRepository petTypeRepository;
-
     @Autowired
     private PetRepository petRepository;
+
+    private static Stream<Arguments> provideValidPetJson() {
+        return Stream.of(
+                Arguments.of("""
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Max"),
+                Arguments.of("""
+                            {
+                              "name": "Buddy",
+                              "petTypeId": 2,
+                              "shelterId": 2,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "MEDIUM",
+                              "weight": 18.0,
+                              "color": "Black",
+                              "age": 4,
+                              "observations": "Very playful"
+                            }
+                        """, "Buddy"),
+                Arguments.of("""
+                            {
+                              "name": "Charlie",
+                              "petTypeId": 3,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "SMALL",
+                              "weight": 10.0,
+                              "color": "White",
+                              "age": 2,
+                              "observations": "Gentle and calm"
+                            }
+                        """, "Charlie")
+        );
+    }
+
+    private static Stream<Arguments> provideEndpointsForRolePermissionTests() {
+        return Stream.of(
+
+                // Test POST endpoints
+                Arguments.of("ADMIN", "POST", "/api/v1/pet", 201),
+                Arguments.of("USER", "POST", "/api/v1/pet", 403),
+                Arguments.of("ADMIN", "POST", "/api/v1/pet/%d/create-record", 201),
+                Arguments.of("USER", "POST", "/api/v1/pet/%d/create-record", 403),
+
+                // Test GET endpoints
+                Arguments.of("ADMIN", "GET", "/api/v1/pet/%d", 200),
+                Arguments.of("USER", "GET", "/api/v1/pet/%d", 200), // No security for this endpoint
+                Arguments.of("ADMIN", "GET", "/api/v1/pet/%d/record", 200),
+                Arguments.of("USER", "GET", "/api/v1/pet/%d/record", 403),
+
+                // Test PUT endpoints
+                Arguments.of("ADMIN", "PUT", "/api/v1/pet/update/%d", 200), // Suppose to be 204
+                Arguments.of("USER", "PUT", "/api/v1/pet/update/%d", 403),
+
+                // Test DELETE endpoints
+                Arguments.of("MANAGER", "DELETE", "/api/v1/pet/delete/%d", 204),
+                Arguments.of("ADMIN", "DELETE", "/api/v1/pet/delete/%d", 403),
+                Arguments.of("USER", "DELETE", "/api/v1/pet/delete/%d", 403)
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -169,22 +258,6 @@ class PetControllerTest {
                 .then()
                 .statusCode(200);
     }
-
-    // A validPetJson to use globally across multiple tests
-    private static final String VALID_PET_JSON = """
-                {
-                  "name": "Max",
-                  "petTypeId": 1,
-                  "shelterId": 1,
-                  "isAdopted": false,
-                  "isVaccinated": true,
-                  "size": "LARGE",
-                  "weight": 25.5,
-                  "color": "Brown",
-                  "age": 3,
-                  "observations": "Healthy and active"
-                }
-            """;
 
     // A validPetRecordJson to use globally across multiple tests
     private String createPetRecordJson(Long petId) {
@@ -328,53 +401,6 @@ class PetControllerTest {
         }
     }
 
-    private static Stream<Arguments> provideValidPetJson() {
-        return Stream.of(
-                Arguments.of("""
-                        {
-                          "name": "Max",
-                          "petTypeId": 1,
-                          "shelterId": 1,
-                          "isAdopted": false,
-                          "isVaccinated": true,
-                          "size": "LARGE",
-                          "weight": 25.5,
-                          "color": "Brown",
-                          "age": 3,
-                          "observations": "Healthy and active"
-                        }
-                    """, "Max"),
-                Arguments.of("""
-                        {
-                          "name": "Buddy",
-                          "petTypeId": 2,
-                          "shelterId": 2,
-                          "isAdopted": false,
-                          "isVaccinated": true,
-                          "size": "MEDIUM",
-                          "weight": 18.0,
-                          "color": "Black",
-                          "age": 4,
-                          "observations": "Very playful"
-                        }
-                    """, "Buddy"),
-                Arguments.of("""
-                        {
-                          "name": "Charlie",
-                          "petTypeId": 3,
-                          "shelterId": 1,
-                          "isAdopted": false,
-                          "isVaccinated": true,
-                          "size": "SMALL",
-                          "weight": 10.0,
-                          "color": "White",
-                          "age": 2,
-                          "observations": "Gentle and calm"
-                        }
-                    """, "Charlie")
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("provideInvalidPetData")
     void createPet_withInvalidData_shouldReturn400(String petJson, String expectedErrorMessage) {
@@ -394,387 +420,387 @@ class PetControllerTest {
 
                 // Invalid name: integer
                 Arguments.of("""
-            {
-              "name": 33,.repeat(300),
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet name must be provided"),
+                            {
+                              "name": 33,.repeat(300),
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet name must be provided"),
 
                 // Invalid name: null
                 Arguments.of("""
-            {
-              "name": null,
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet name must be provided"),
+                            {
+                              "name": null,
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet name must be provided"),
 
                 // Invalid name: too short
                 Arguments.of("""
-            {
-              "name": "",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet name must be between 1 and 30 characters"),
+                            {
+                              "name": "",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet name must be between 1 and 30 characters"),
 
                 // Invalid name: too high
                 Arguments.of("""
-            {
-              "name": "A".repeat(31),
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet name must be between 1 and 30 characters"),
+                            {
+                              "name": "A".repeat(31),
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet name must be between 1 and 30 characters"),
 
                 // Invalid petTypeId: integer zero
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 0,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet type ID must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 0,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet type ID must be provided"),
 
                 // Invalid petTypeId: negative integer
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": -1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet type ID must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": -1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet type ID must be provided"),
 
                 // Invalid petTypeId: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": null,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet type ID must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": null,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet type ID must be provided"),
 
                 // Invalid shelterId: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": null,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Shelter ID must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": null,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Shelter ID must be provided"),
 
                 // Invalid isAdopted: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": null,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Adopted status must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": null,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Adopted status must be provided"),
 
                 // Invalid isVaccinated: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": null,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Vaccination status is required"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": null,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Vaccination status is required"),
 
                 // Invalid size enum: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": null,
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Size must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": null,
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Size must be provided"),
 
                 // Invalid weight: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": null,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet weight must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": null,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet weight must be provided"),
 
                 // Invalid weight: too low
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 0.0,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet weight must be greater than 0.01 kilos"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 0.0,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet weight must be greater than 0.01 kilos"),
 
                 // Invalid weight: too high
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 1000.0,
-              "color": "Brown",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet weight must be less than 999.99 kilos"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 1000.0,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet weight must be less than 999.99 kilos"),
 
                 // Invalid color: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": null,
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet color must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": null,
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet color must be provided"),
 
                 // Invalid color: empty
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet color must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet color must be provided"),
 
                 // Invalid color: too short
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Br",
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet color must be between 3 and 99 characters"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Br",
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet color must be between 3 and 99 characters"),
 
                 // Invalid color: too high
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "B",.repeat(100),
-              "age": 3,
-              "observations": "Healthy and active"
-            }
-        """, "Pet color must be between 3 and 99 characters"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "B",.repeat(100),
+                              "age": 3,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet color must be between 3 and 99 characters"),
 
                 // Invalid age: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": null,
-              "observations": "Healthy and active"
-            }
-        """, "Pet age must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": null,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet age must be provided"),
 
                 // Invalid age: too low
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 0,
-              "observations": "Healthy and active"
-            }
-        """, "Pet age must be greater than 1"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 0,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet age must be greater than 1"),
 
                 // Invalid age: too high
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 100,
-              "observations": "Healthy and active"
-            }
-        """, "Pet age must be less than 99"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 100,
+                              "observations": "Healthy and active"
+                            }
+                        """, "Pet age must be less than 99"),
 
                 // Invalid observations: null
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": null
-            }
-        """, "Pet observation must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": null
+                            }
+                        """, "Pet observation must be provided"),
 
                 // Invalid observations: too low
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": ""
-            }
-        """, "Pet observation must be provided"),
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": ""
+                            }
+                        """, "Pet observation must be provided"),
 
                 // Invalid observations: too high
                 Arguments.of("""
-            {
-              "name": "Max",
-              "petTypeId": 1,
-              "shelterId": 1,
-              "isAdopted": false,
-              "isVaccinated": true,
-              "size": "LARGE",
-              "weight": 25.5,
-              "color": "Brown",
-              "age": 3,
-              "observations": "C".repeat(1000)
-            }
-        """, "Pet observation must be between 1 and 999 characters")
+                            {
+                              "name": "Max",
+                              "petTypeId": 1,
+                              "shelterId": 1,
+                              "isAdopted": false,
+                              "isVaccinated": true,
+                              "size": "LARGE",
+                              "weight": 25.5,
+                              "color": "Brown",
+                              "age": 3,
+                              "observations": "C".repeat(1000)
+                            }
+                        """, "Pet observation must be between 1 and 999 characters")
         );
     }
 
@@ -838,53 +864,27 @@ class PetControllerTest {
         String requestBody;
         if (url.contains("/create-record")) {
             requestBody = """
-        {
-          "petId": %d,
-          "intervention": "Pet was vaccinated",
-          "createdAt": "2024-08-15T11:08:13.990Z"
-        }
-    """.formatted(petId);
+                        {
+                          "petId": %d,
+                          "intervention": "Pet was vaccinated",
+                          "createdAt": "2024-08-15T11:08:13.990Z"
+                        }
+                    """.formatted(petId);
         } else if (url.equals("/api/v1/pet")) {
             requestBody = VALID_PET_JSON; // Valid pet creation JSON
         } else if (url.contains("/update")) {
             requestBody = """
-        {
-        "_comment": "missing fields are intentionally left out: color, isVaccinated, size.",
-          "isAdopted": false,
-          "weight": 9.9,
-          "age": 3,
-          "observations": "Healthy"
-        }
-    """; // Valid pet update JSON
+                        {
+                        "_comment": "missing fields are intentionally left out: color, isVaccinated, size.",
+                          "isAdopted": false,
+                          "weight": 9.9,
+                          "age": 3,
+                          "observations": "Healthy"
+                        }
+                    """; // Valid pet update JSON
         } else {
             requestBody = ""; // For endpoints that don’t need a body, like DELETE
         }
         return requestBody;
-    }
-
-    private static Stream<Arguments> provideEndpointsForRolePermissionTests() {
-        return Stream.of(
-
-                // Test POST endpoints
-                Arguments.of("ADMIN", "POST", "/api/v1/pet", 201),
-                Arguments.of("USER", "POST", "/api/v1/pet", 403),
-                Arguments.of("ADMIN", "POST", "/api/v1/pet/%d/create-record", 201),
-                Arguments.of("USER", "POST", "/api/v1/pet/%d/create-record", 403),
-
-                // Test GET endpoints
-                Arguments.of("ADMIN", "GET", "/api/v1/pet/%d", 200),
-                Arguments.of("USER", "GET", "/api/v1/pet/%d", 200), // No security for this endpoint
-                Arguments.of("ADMIN", "GET", "/api/v1/pet/%d/record", 200),
-                Arguments.of("USER", "GET", "/api/v1/pet/%d/record", 403),
-
-                // Test PUT endpoints
-                Arguments.of("ADMIN", "PUT", "/api/v1/pet/update/%d", 200), // Suppose to be 204
-                Arguments.of("USER", "PUT", "/api/v1/pet/update/%d", 403),
-
-                // Test DELETE endpoints
-                Arguments.of("MANAGER", "DELETE", "/api/v1/pet/delete/%d", 204),
-                Arguments.of("ADMIN", "DELETE", "/api/v1/pet/delete/%d", 403),
-                Arguments.of("USER", "DELETE", "/api/v1/pet/delete/%d", 403)
-        );
     }
 }
