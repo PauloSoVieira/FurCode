@@ -21,7 +21,7 @@ import java.util.List;
  * Pet Controller for managing Pet entities.
  */
 @Validated
-@Tag(name = "Pet", description = "Operations for pets")
+@Tag(name = "Pet Controller", description = "Operations for pets")
 @RestController
 @RequestMapping(path = "/api/v1/pet")
 public class PetController {
@@ -80,10 +80,9 @@ public class PetController {
      */
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         petService.updatePet(id, petUpdateDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -93,7 +92,6 @@ public class PetController {
      */
     @Operation(summary = "Delete a pet")
     @DeleteMapping(value = "/delete/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deletePet(@PathVariable @Valid @NotNull @Positive Long id) {
         petService.softDeletePet(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

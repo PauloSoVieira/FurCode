@@ -25,6 +25,9 @@ import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
@@ -34,9 +37,9 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class PetControllerTest {
 
@@ -66,11 +69,14 @@ class PetControllerTest {
     @Autowired
     private PetRepository petRepository;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
 
-        personRepository.deleteAll();
         createTestUsers();
 
         // Create and save a shelter
@@ -103,14 +109,18 @@ class PetControllerTest {
 
         // Create the pet once and store its ID for use in all tests
         petId = createPetAndGetId();
-        // Create the pet record using the pet ID and store its ID
-        createPetRecordAndGetId(petId);
+        // Create the pet record using the pet ID
+        createPetRecord(petId);
     }
 
     @AfterEach
     void tearDown() {
         petRepository.deleteAll();
         personRepository.deleteAll();
+
+        // Reset the auto-increment IDs
+        jdbcTemplate.execute("ALTER SEQUENCE pet_id_seq RESTART WITH 1");
+        // jdbcTemplate.execute("ALTER SEQUENCE person_id_seq RESTART WITH 1");
     }
 
     private void createTestUsers() {
@@ -202,7 +212,7 @@ class PetControllerTest {
     private Long createPetAndGetId() {
         Integer idAsInteger = given()
                 .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + adminToken) // adminToken is used
+                .header("Authorization", "Bearer " + adminToken) // Admin token
                 .body(VALID_PET_JSON)
                 .when()
                 .post("/api/v1/pet")
@@ -214,25 +224,33 @@ class PetControllerTest {
         return idAsInteger.longValue();
     }
 
-    private void createPetRecordAndGetId(Long petId) {
+    private void createPetRecord(Long petId) {
         given()
                 .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + adminToken)
+                .header("Authorization", "Bearer " + adminToken) // Admin token
                 .body(createPetRecordJson(petId))
                 .when()
                 .post(String.format("/api/v1/pet/%d/create-record", petId))
                 .then()
-                .statusCode(201)
-                .extract()
-                .path("id");
+                .statusCode(201);
     }
 
     @Test
-    void createThreePets_withSameData_shouldHaveDifferentIds() {
+    void createAndRetrievePetRecord() {
+        given()
+                .header("Authorization", "Bearer " + adminToken)
+                .when()
+                .get("/api/v1/pet/" + petId + "/record")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0)); // Assert that at least one record is returned
+    }
 
+    @Test
+    void createTwoPets_withSameData_shouldHaveDifferentIds() {
         PetDTO dto1 = given()
                 .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + adminToken) // Use the admin token
+                .header("Authorization", "Bearer " + adminToken) // Admin token
                 .body(VALID_PET_JSON)
                 .when()
                 .post("/api/v1/pet")
@@ -264,17 +282,6 @@ class PetControllerTest {
         assertEquals(dto1.getColor(), dto2.getColor());
         assertEquals(dto1.getAge(), dto2.getAge());
         assertEquals(dto1.getObservations(), dto2.getObservations());
-    }
-
-    @Test
-    void createAndRetrievePetRecord() {
-        given()
-                .header("Authorization", "Bearer " + adminToken)
-                .when()
-                .get("/api/v1/pet/" + petId + "/record")
-                .then()
-                .statusCode(200)
-                .body("size()", greaterThan(0)); // Assert that at least one record is returned
     }
 
     @ParameterizedTest
@@ -868,19 +875,27 @@ class PetControllerTest {
         return Stream.of(
 
                 // Test POST endpoints
+                Arguments.of("MANAGER", "POST", "/api/v1/pet", 201),
                 Arguments.of("ADMIN", "POST", "/api/v1/pet", 201),
                 Arguments.of("USER", "POST", "/api/v1/pet", 403),
+                Arguments.of("MANAGER", "POST", "/api/v1/pet/%d/create-record", 201),
                 Arguments.of("ADMIN", "POST", "/api/v1/pet/%d/create-record", 201),
                 Arguments.of("USER", "POST", "/api/v1/pet/%d/create-record", 403),
 
                 // Test GET endpoints
+                Arguments.of("MANAGER", "GET", "/api/v1/pet/all", 200),
+                Arguments.of("ADMIN", "GET", "/api/v1/pet/all", 200),
+                Arguments.of("USER", "GET", "/api/v1/pet/all", 200), // No security for this endpoint
+                Arguments.of("MANAGER", "GET", "/api/v1/pet/%d", 200),
                 Arguments.of("ADMIN", "GET", "/api/v1/pet/%d", 200),
                 Arguments.of("USER", "GET", "/api/v1/pet/%d", 200), // No security for this endpoint
+                Arguments.of("MANAGER", "GET", "/api/v1/pet/%d/record", 200),
                 Arguments.of("ADMIN", "GET", "/api/v1/pet/%d/record", 200),
                 Arguments.of("USER", "GET", "/api/v1/pet/%d/record", 403),
 
                 // Test PUT endpoints
-                Arguments.of("ADMIN", "PUT", "/api/v1/pet/update/%d", 200), // Suppose to be 204
+                Arguments.of("MANAGER", "PUT", "/api/v1/pet/update/%d", 204),
+                Arguments.of("ADMIN", "PUT", "/api/v1/pet/update/%d", 204),
                 Arguments.of("USER", "PUT", "/api/v1/pet/update/%d", 403),
 
                 // Test DELETE endpoints
