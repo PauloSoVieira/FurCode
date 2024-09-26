@@ -42,13 +42,6 @@ public class FavoriteController {
         return new ResponseEntity<>(favorites, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get all favorites for a pet")
-    @GetMapping(value = "/pet/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FavoriteDTO>> getFavoritesByPet(@PathVariable @NotNull @Positive Long id) {
-        List<FavoriteDTO> favorites = favoriteService.getFavoritesByPet(id);
-        return new ResponseEntity<>(favorites, HttpStatus.OK);
-    }
-
     @Operation(summary = "Check if a pet is favorited by a person")
     @GetMapping(value = "/{personId}/{petId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> isFavorite(
@@ -67,5 +60,4 @@ public class FavoriteController {
         favoriteService.removeFavorite(personId, petId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }
