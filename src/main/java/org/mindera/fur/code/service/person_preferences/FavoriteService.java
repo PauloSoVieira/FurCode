@@ -42,7 +42,7 @@ public class FavoriteService {
         Pet pet = petService.findPetEntityById(petId);
 
         // Validate Pet availability
-        if (Boolean.FALSE.equals(pet.getIsAdopted())) {
+        if (Boolean.TRUE.equals(pet.getIsAdopted())) {
             throw new EntityExistsException("Only available pets can be favorited.");
         }
         // Check if favorite already exists
@@ -72,13 +72,7 @@ public class FavoriteService {
     public List<FavoriteDTO> getFavoritesByPerson(@NotNull @Positive Long personId) {
         Person person = personService.getPersonEntityById(personId);
         List<Favorite> favorites = favoriteRepository.findByPerson(person);
-        return  FavoriteMapper.INSTANCE.toDtoList(favorites);
-    }
-
-    public List<FavoriteDTO> getFavoritesByPet(Long petId) {
-        Pet pet = petService.findPetEntityById(petId);
-        List<Favorite> favorites = favoriteRepository.findByPet(pet);
-        return FavoriteMapper.INSTANCE.toDtoList(favorites);
+        return favorites.stream().map(FavoriteMapper.INSTANCE::toDto).toList();
     }
 
     public boolean isFavorite(Long personId, Long petId) {

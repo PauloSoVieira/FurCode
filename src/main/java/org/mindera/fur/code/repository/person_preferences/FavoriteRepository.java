@@ -19,7 +19,4 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
     @Schema(description = "Find all favorites by person")
     List<Favorite> findByPerson(Person person);
-
-    @Schema(description = "Find all favorites by pet")
-    List<Favorite> findByPet(Pet pet);
 }
