@@ -301,6 +301,12 @@ public class PersonService {
         return personMapper.INSTANCE.toDTO(person);
     }
 
+    // Returns a Person Entity, to be used in internal operations
+    public Person getPersonEntityById(Long id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new PersonException(PersonMessages.PERSON_NOT_FOUND));
+    }
+
     /**
      * Updates a person based on the provided PersonDTO.
      *

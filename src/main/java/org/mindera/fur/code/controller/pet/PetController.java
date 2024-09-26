@@ -3,6 +3,7 @@ package org.mindera.fur.code.controller.pet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.mindera.fur.code.dto.pet.*;
@@ -54,7 +55,7 @@ public class PetController {
      */
     @Operation(summary = "Get a pet by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PetDTO> getPetById(@PathVariable @Valid @NotNull @Positive Long id) {
+    public ResponseEntity<PetDTO> getPetById(@PathVariable @NotNull @Positive Long id) {
         PetDTO petDTO = petService.findPetById(id);
         return new ResponseEntity<>(petDTO, HttpStatus.OK);
     }
@@ -80,7 +81,7 @@ public class PetController {
      */
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updatePet(@PathVariable @Valid Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
+    public ResponseEntity<Void> updatePet(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         petService.updatePet(id, petUpdateDTO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -92,7 +93,7 @@ public class PetController {
      */
     @Operation(summary = "Delete a pet")
     @DeleteMapping(value = "/delete/{id}")
-    public ResponseEntity<Void> deletePet(@PathVariable @Valid @NotNull @Positive Long id) {
+    public ResponseEntity<Void> deletePet(@PathVariable @NotNull @Positive Long id) {
         petService.softDeletePet(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -105,7 +106,7 @@ public class PetController {
      */
     @Operation(summary = "Get all pet records by pet ID")
     @GetMapping(value = "/{id}/record", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @Valid @NotNull @Positive Long id) {
+    public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @NotNull @Positive Long id) {
         List<PetRecordDTO> petRecordDTO = petService.getAllPetRecordsByPetId(id);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.OK);
     }
@@ -119,7 +120,7 @@ public class PetController {
      */
     @Operation(summary = "Create a new pet record by pet ID")
     @PostMapping(value = "/{id}/create-record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @Valid @NotNull @Positive Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
+    public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
         PetRecordDTO petRecordDTO = petService.addPetRecord(id, petRecordCreateDTO);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
     }
@@ -132,7 +133,7 @@ public class PetController {
      */
     @Operation(summary = "Generate a new pet description with AI")
     @PostMapping(value = "/{id}/new-description")
-    public ResponseEntity<String> generatePetDescription(@PathVariable @Valid Long id) {
+    public ResponseEntity<String> generatePetDescription(@PathVariable @NotNull @Positive Long id) {
         return new ResponseEntity<>(aiService.generateNewPetDescription(petService.findPetById(id)), HttpStatus.OK);
     }
 
@@ -144,7 +145,7 @@ public class PetController {
      */
     @Operation(summary = "Search a pet with natural language")
     @PostMapping(value = "/search/nl/{searchQuery}")
-    public ResponseEntity<String> searchPetWithNaturalLanguage(@PathVariable @Valid String searchQuery) {
+    public ResponseEntity<String> searchPetWithNaturalLanguage(@PathVariable @NotEmpty String searchQuery) {
         return new ResponseEntity<>(aiService.generateNewPetSearchQuery(searchQuery), HttpStatus.OK);
     }
 }

@@ -67,9 +67,15 @@ public class PetService {
      * @param id The ID of the pet.
      * @return The pet.
      */
-    public PetDTO findPetById(@Valid @NotNull @Positive Long id) {
+    public PetDTO findPetById(@NotNull @Positive Long id) {
         Pet pet = findAndAssignPet(id);
         return PetMapper.INSTANCE.toDTO(pet);
+    }
+
+    // Returns a Pet Entity, to be used in internal operations
+    public Pet findPetEntityById(@NotNull @Positive Long id) {
+        return petRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + id));
     }
 
     /**
@@ -102,7 +108,7 @@ public class PetService {
      */
     @Transactional
     @CacheEvict(cacheNames = "pets", allEntries = true)
-    public void updatePet(@Valid @NotNull @Positive Long id, @Valid PetUpdateDTO petUpdateDTO) {
+    public void updatePet(@NotNull @Positive Long id, @Valid PetUpdateDTO petUpdateDTO) {
         Pet pet = findAndAssignPet(id);
 
         PetUpdateMapper.INSTANCE.updatePetFromDto(petUpdateDTO, pet);
@@ -124,7 +130,7 @@ public class PetService {
      * @throws EntityNotFoundException if the pet with the specified ID is not found
      */
     @CacheEvict(cacheNames = "pets", allEntries = true)
-    public void softDeletePet(@Valid @NotNull @Positive Long id) {
+    public void softDeletePet(@NotNull @Positive Long id) {
         Pet pet = findAndAssignPet(id);
         petRepository.delete(pet);
     }
@@ -137,7 +143,7 @@ public class PetService {
      * @return The pet record.
      */
     @Transactional
-    public PetRecordDTO addPetRecord(@Valid @NotNull @Positive Long id, @Valid PetRecordCreateDTO petRecordCreateDTO) {
+    public PetRecordDTO addPetRecord(@NotNull @Positive Long id, @Valid PetRecordCreateDTO petRecordCreateDTO) {
         Pet pet = findAndAssignPet(id);
 
         PetRecord petRecord = PetRecordMapper.INSTANCE.toModel(petRecordCreateDTO);
@@ -153,7 +159,7 @@ public class PetService {
      * @param id The ID of the pet.
      * @return A list of pet records.
      */
-    public List<PetRecordDTO> getAllPetRecordsByPetId(@Valid @NotNull @Positive Long id) {
+    public List<PetRecordDTO> getAllPetRecordsByPetId(@NotNull @Positive Long id) {
         Pet pet = findAndAssignPet(id);
         return pet.getPetRecords().stream().map(PetRecordMapper.INSTANCE::toDTO).toList();
     }
