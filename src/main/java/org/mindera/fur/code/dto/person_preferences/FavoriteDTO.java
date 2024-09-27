@@ -2,6 +2,7 @@ package org.mindera.fur.code.dto.person_preferences;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
@@ -20,6 +21,8 @@ public class FavoriteDTO {
     @NotNull(message = "Pet ID must be provided")
     private Long petId;
 
-    @Schema(description = "The date and time the pet was favorited")
-    private LocalDateTime favoritedAt;
+    @Schema(description = "The date and time the pet was favorite")
+    @NotNull(message = "Favorite status must be provided")
+    @PastOrPresent(message = "Favorite status must be in the past or present")
+    private LocalDateTime favoriteAt;
 }

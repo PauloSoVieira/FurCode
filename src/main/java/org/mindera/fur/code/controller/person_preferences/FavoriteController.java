@@ -42,7 +42,7 @@ public class FavoriteController {
         return new ResponseEntity<>(favorites, HttpStatus.OK);
     }
 
-    @Operation(summary = "Check if a pet is favorited by a person")
+    @Operation(summary = "Check if a pet is favorite by a person")
     @GetMapping(value = "/{personId}/{petId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> isFavorite(
             @PathVariable @NotNull @Positive Long personId,

@@ -11,7 +11,7 @@ import org.mindera.fur.code.model.person_preferences.Favorite;
 import java.util.List;
 
 @Schema(description = "The favorite mapper")
-@Mapper(componentModel = "spring")
+@Mapper
 public interface FavoriteMapper {
 
     FavoriteMapper INSTANCE = Mappers.getMapper(FavoriteMapper.class);
@@ -22,6 +22,4 @@ public interface FavoriteMapper {
 
     @InheritInverseConfiguration
     Favorite toModel(FavoriteDTO favoriteDTO);
-
-    List<FavoriteDTO> toDtoList(List<Favorite> favorites);
 }
