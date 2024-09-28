@@ -30,6 +30,7 @@ public class FileService {
 
     private static final String BUCKET_NAME = "furcode";
     private static final int MAX_FILE_UPLOAD_SIZE = 10000000;
+    private static final List<String> SUPPORTED_EXTENSIONS = List.of("jpg", "png", "gif", "pdf");
 
     private final MinioClient minioClient;
     private final PetService petService;
@@ -52,9 +53,9 @@ public class FileService {
             throw new IllegalArgumentException("Pet ID must be provided");
         }
 
-        if (petService.findPetById(id) == null) {
-            throw new IllegalArgumentException("Pet not found");
-        }
+        //if (petService.findPetById(id) == null) {
+        //    throw new IllegalArgumentException("Pet not found");
+        //}
 
         checkFileValidity(file);
         checkImageType(file.getFileData());
@@ -146,11 +147,26 @@ public class FileService {
             throw new IllegalArgumentException("Pet ID must be provided");
         }
 
-        if (petService.findPetById(id) == null) {
-            throw new IllegalArgumentException("Pet not found");
-        }
+        //if (petService.findPetById(id) == null) {
+        //    throw new IllegalArgumentException("Pet not found");
+        //}
 
-        return downloadFileFromBucket(filePath);
+        byte[] fileData = null;
+        try {
+            fileData = downloadFileFromBucket(filePath);
+            return fileData;
+        } catch (FileException e) {
+            for (String extension : SUPPORTED_EXTENSIONS) {
+                try {
+                    String fileWithExtension = filePath + "." + extension;
+                    fileData = downloadFileFromBucket(fileWithExtension);
+                    return fileData; // Return if successful
+                } catch (FileException ignored) {
+                    // Ignore the error and try the next extension
+                }
+            }
+        }
+        throw new FileException("File not found for name: " + filePath + " with any supported extensions");
     }
 
     /**
@@ -182,6 +198,18 @@ public class FileService {
      * @return the MIME type of the file.
      */
     public String getFileMimeTypeFromFileName(String fileName) {
+        return URLConnection.guessContentTypeFromName(fileName);
+    }
+
+    /**
+     * Gets the MIME type of file from its file path.
+     *
+     * @param filePath the name of the file.
+     * @return the MIME type of the file.
+     */
+    public String getFileMimeTypeFromFilePath(String filePath) {
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        System.out.println(fileName);
         return URLConnection.guessContentTypeFromName(fileName);
     }
 
@@ -245,6 +273,20 @@ public class FileService {
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
             throw new FileException(e.getMessage());
+        }
+    }
+
+    /**
+     * Gets the MIME type of file from its byte array.
+     *
+     * @param fileData the byte array.
+     * @return the MIME type of the file.
+     */
+    public String getMimeTypeFromBytes(byte[] fileData) {
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(fileData)) {
+            return URLConnection.guessContentTypeFromStream(inputStream);
+        } catch (IOException e) {
+            return "application/octet-stream";
         }
     }
 

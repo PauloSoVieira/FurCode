@@ -89,11 +89,11 @@ public class FileController {
         byte[] file = fileService.downloadImagePet(filePath, id);
 
         Resource resource = new ByteArrayResource(file);
-        String mimeType = fileService.getFileMimeTypeFromFileName(fileName);
+        String mimeType = fileService.getMimeTypeFromBytes(file);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, mimeType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                //.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"") // "inline" to display in browser
                 .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length))
                 .body(resource);
     }
