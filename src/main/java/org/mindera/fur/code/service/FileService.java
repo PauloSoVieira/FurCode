@@ -1,10 +1,8 @@
 package org.mindera.fur.code.service;
 
-import io.minio.GetObjectArgs;
-import io.minio.GetObjectResponse;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
+import io.minio.messages.Item;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
@@ -16,11 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -330,5 +330,53 @@ public class FileService {
                  XmlParserException e) {
             throw new FileException(e.getMessage());
         }
+    }
+
+
+    public List<String> getAllImagesFromPet(Long petId) {
+        List<String> imageUrls = new ArrayList<>();
+        String prefix = String.format("pet/%s/image/", petId);
+
+        try {
+            for (Result<Item> result : minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(BUCKET_NAME)
+                    .prefix(prefix)
+                    .build())) {
+                Item item = result.get(); // Extract the Item from the Result
+                String objectName = item.objectName();
+
+                String imageUrl = String.format("/api/v1/download/%s", objectName);
+                imageUrls.add(imageUrl);
+            }
+        } catch (Exception e) {
+            throw new FileException("Error listing pet images: " + e.getMessage());
+        }
+
+        return imageUrls;
+    }
+
+    public List<String> getAllImagesFromPetAsBase64(Long petId) {
+        List<String> base64Images = new ArrayList<>();
+        String prefix = String.format("pet/%s/image/", petId);
+
+        try {
+            for (Result<Item> result : minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(BUCKET_NAME)
+                    .prefix(prefix)
+                    .build())) {
+                Item item = result.get();
+                String objectName = item.objectName();
+
+                byte[] fileBytes = downloadFileFromBucket(objectName);
+                String mimeType = getMimeTypeFromBytes(fileBytes);
+                String base64Image = Base64.getEncoder().encodeToString(fileBytes);
+                String base64DataUrl = String.format("data:%s;base64,%s", mimeType, base64Image);
+                base64Images.add(base64DataUrl);
+            }
+        } catch (Exception e) {
+            throw new FileException("Error listing pet images: " + e.getMessage());
+        }
+
+        return base64Images;
     }
 }

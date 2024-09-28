@@ -18,6 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
+import java.util.List;
+
 @Tag(name = "File Operations", description = "Uploads and downloads files.")
 @RestController
 @Schema(name = "File Operations", description = "Uploads and downloads files.")
@@ -93,10 +96,38 @@ public class FileController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, mimeType)
-                //.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"") // "inline" to display in browser
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"") // "inline" to display in browser
                 .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length))
                 .body(resource);
     }
 
-    //TODO: add a list all files/image from a pet
+    @GetMapping("api/v1/download/pet/{id}/image/")
+    public ResponseEntity<List<String>> getAllImagesFromPet(
+            @Parameter(description = "Pet ID", required = true)
+            @PathVariable("id") Long id ) {
+        List<String> imageUrls = fileService.getAllImagesFromPetAsBase64(id);
+
+        return ResponseEntity.ok(imageUrls);
+    }
+
+    @GetMapping("api/v1/download/pet/{id}/image/{fileName}/base64")
+    public ResponseEntity<String> downloadImagePetAsBase64(
+            @Parameter(description = "Pet ID", required = true)
+            @PathVariable("id") Long id,
+
+            @Parameter(description = "File name", required = true)
+            @PathVariable("fileName") String fileName) {
+        String filePath = String.format("/pet/%s/image/%s", id, fileName);
+        byte[] file = fileService.downloadImagePet(filePath, id);
+
+        String mimeType = fileService.getMimeTypeFromBytes(file);
+        String base64Image = Base64.getEncoder().encodeToString(file);
+        String base64DataUrl = String.format("data:%s;base64,%s", mimeType, base64Image);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(base64DataUrl.length()))
+                .body(base64DataUrl);
+    }
+
 }
