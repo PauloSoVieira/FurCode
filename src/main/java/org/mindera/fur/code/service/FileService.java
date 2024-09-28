@@ -20,9 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @Schema(description = "The file service")
 @Service
@@ -355,8 +353,8 @@ public class FileService {
         return imageUrls;
     }
 
-    public List<String> getAllImagesFromPetAsBase64(Long petId) {
-        List<String> base64Images = new ArrayList<>();
+    public List<Map<String, String>> getAllImagesFromPetAsBase64(Long petId) {
+        List<Map<String, String>> imageList = new ArrayList<>();
         String prefix = String.format("pet/%s/image/", petId);
 
         try {
@@ -371,12 +369,32 @@ public class FileService {
                 String mimeType = getMimeTypeFromBytes(fileBytes);
                 String base64Image = Base64.getEncoder().encodeToString(fileBytes);
                 String base64DataUrl = String.format("data:%s;base64,%s", mimeType, base64Image);
-                base64Images.add(base64DataUrl);
+
+                // Create a map for the image
+                Map<String, String> imageMap = new HashMap<>();
+                imageMap.put("id", item.objectName());
+                imageMap.put("name", objectName);
+                imageMap.put("data", base64DataUrl);
+
+                imageList.add(imageMap);
             }
         } catch (Exception e) {
             throw new FileException("Error listing pet images: " + e.getMessage());
         }
 
-        return base64Images;
+        return imageList;
     }
+
+    public void deleteImagePet(String filePath, Long petId) {
+        try {
+            // Logic to delete the file from the storage (e.g., Minio, S3)
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(BUCKET_NAME)
+                    .object(filePath)
+                    .build());
+        } catch (Exception e) {
+            throw new FileException("Error deleting image: " + e.getMessage());
+        }
+    }
+
 }

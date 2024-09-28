@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "File Operations", description = "Uploads and downloads files.")
 @RestController
@@ -102,10 +103,10 @@ public class FileController {
     }
 
     @GetMapping("api/v1/download/pet/{id}/image/")
-    public ResponseEntity<List<String>> getAllImagesFromPet(
+    public ResponseEntity<List<Map<String, String>> > getAllImagesFromPet(
             @Parameter(description = "Pet ID", required = true)
             @PathVariable("id") Long id ) {
-        List<String> imageUrls = fileService.getAllImagesFromPetAsBase64(id);
+        List<Map<String, String>>  imageUrls = fileService.getAllImagesFromPetAsBase64(id);
 
         return ResponseEntity.ok(imageUrls);
     }
@@ -128,6 +129,24 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_TYPE, "text/plain")
                 .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(base64DataUrl.length()))
                 .body(base64DataUrl);
+    }
+
+    @DeleteMapping("api/v1/pet/{id}/image/{fileName}")
+    public ResponseEntity<Void> deleteImagePet(
+            @Parameter(description = "Pet ID", required = true)
+            @PathVariable("id") Long id,
+
+            @Parameter(description = "File name", required = true)
+            @PathVariable("fileName") String fileName) {
+        String filePath = String.format("/pet/%s/image/%s", id, fileName);
+
+        try {
+            fileService.deleteImagePet(filePath, id);
+            return ResponseEntity.noContent().build(); // Return 204 No Content on successful deletion
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null); // Return 500 Internal Server Error on failure
+        }
     }
 
 }
