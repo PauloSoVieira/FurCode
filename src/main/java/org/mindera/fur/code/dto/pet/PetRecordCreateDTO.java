@@ -1,6 +1,6 @@
 package org.mindera.fur.code.dto.pet;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -25,5 +25,5 @@ public class PetRecordCreateDTO {
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
     @Schema(description = "The date of the pet record", example = "2024-08-15T11:08:13.990Z")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 }

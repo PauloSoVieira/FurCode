@@ -37,4 +37,9 @@ public class Favorite {
     @PastOrPresent(message = "Favorite status must be in the past or present")
     @Column(name = "favorite_at", nullable = false)
     private LocalDateTime favoriteAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.favoriteAt = LocalDateTime.now();
+    }
 }

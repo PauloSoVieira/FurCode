@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
+import org.mindera.fur.code.model.interfaces.SoftDeletable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -14,27 +17,26 @@ import java.util.List;
  */
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "pet")
-public class Pet {
+public class Pet implements SoftDeletable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Pet name must be provided")
-    @Size(min = 1, max = 30, message = "Pet name must be between 1 and 30 characters")
+    @Size(max = 30, message = "Pet name must be between 1 and 30 characters")
     @Column(nullable = false)
     private String name;
 
-    @Valid
     @NotNull(message = "Pet Type must be provided")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_type_id", nullable = false)
     private PetType petType;
 
-    @Valid
     @NotNull(message = "Shelter must be provided")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shelter_id", nullable = false)
     private Shelter shelter;
 
@@ -76,4 +78,18 @@ public class Pet {
     @Valid
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRecord> petRecords;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    // SoftDeletable methods
+    @Override
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    @Override
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
 }

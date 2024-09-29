@@ -81,9 +81,9 @@ public class PetController {
      */
     @Operation(summary = "Update a pet")
     @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updatePet(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
-        petService.updatePet(id, petUpdateDTO);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<PetDTO> updatePet(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
+        PetDTO petDTO = petService.updatePet(id, petUpdateDTO);
+        return new ResponseEntity<>(petDTO, HttpStatus.OK);
     }
 
     /**

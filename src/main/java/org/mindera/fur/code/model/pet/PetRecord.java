@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * A model class for a pet record.
@@ -33,5 +33,5 @@ public class PetRecord {
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 }
