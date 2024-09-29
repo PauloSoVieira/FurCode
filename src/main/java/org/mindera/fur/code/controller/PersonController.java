@@ -14,6 +14,7 @@ import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.model.Role;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,8 +73,13 @@ public class PersonController {
 
     @PostMapping("/add-person-to-shelter")
     @Schema(description = "Add a person to a shelter")
-    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestBody AddPersonToShelterRequest request) {
-        return new ResponseEntity<>(personService.addPersonToShelter(request.getPersonId(), request.getShelterId()), HttpStatus.OK);
+    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                                    @RequestBody AddPersonToShelterRequest request) {
+        return new ResponseEntity<>(personService.addPersonToShelter(
+                authorizationHeader,
+                request.getPersonId(),
+                request.getShelterId()),
+                HttpStatus.OK);
     }
 
     /**
@@ -99,8 +105,9 @@ public class PersonController {
 
     @PostMapping("/create-pet")
     @Schema(description = "Create a pet")
-    public ResponseEntity<PetDTO> createPet(@RequestBody PetCreateDTO petCreationDTO) {
-        return new ResponseEntity<>(personService.createPet(petCreationDTO), HttpStatus.CREATED);
+    public ResponseEntity<PetDTO> createPet(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                            @RequestBody PetCreateDTO petCreationDTO) {
+        return new ResponseEntity<>(personService.createPet(authorizationHeader,petCreationDTO), HttpStatus.CREATED);
     }
 
     /**
