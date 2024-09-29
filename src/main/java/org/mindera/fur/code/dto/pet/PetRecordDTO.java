@@ -5,13 +5,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * A DTO class for a pet record.
  */
 @Data
-public class PetRecordDTO {
+public class PetRecordDTO implements Serializable {
 
     @Positive(message = "ID must be greater than 0")
     @NotNull(message = "ID is required")
@@ -32,5 +33,5 @@ public class PetRecordDTO {
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
     @Schema(description = "The date of the pet record", example = "2024-08-15T11:08:13.990Z")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 }

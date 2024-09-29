@@ -39,20 +39,20 @@ public class FavoriteService {
     @Transactional
     public FavoriteDTO addFavorite(@NotNull @Positive Long personId, @NotNull @Positive Long petId) {
         Person person = personService.getPersonEntityById(personId);
-        Pet pet = petService.findPetEntityById(petId);
+        Pet pet = petService.findActivePetEntityById(petId);
 
         // Validate Pet availability
         if (Boolean.TRUE.equals(pet.getIsAdopted())) {
-            throw new EntityExistsException("Only available pets can be favorited.");
+            throw new EntityExistsException("Only available pets can be favorite");
         }
         // Check if favorite already exists
         favoriteRepository.findByPersonAndPet(person, pet)
-                .ifPresent(favorite -> {throw new EntityExistsException("Pet is already in favorites.");
+                .ifPresent(favorite -> {throw new EntityExistsException("Pet is already in favorites");
         });
         Favorite favorite = new Favorite();
         favorite.setPerson(person);
         favorite.setPet(pet);
-        favorite.setFavoritedAt(LocalDateTime.now());
+        favorite.setFavoriteAt(LocalDateTime.now());
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
         return FavoriteMapper.INSTANCE.toDto(savedFavorite);
@@ -61,7 +61,7 @@ public class FavoriteService {
     @Transactional
     public void removeFavorite(@NotNull @Positive Long personId, @NotNull @Positive Long petId) {
         Person person = personService.getPersonEntityById(personId);
-        Pet pet = petService.findPetEntityById(petId);
+        Pet pet = petService.findActivePetEntityById(petId);
 
         Favorite favorite = favoriteRepository.findByPersonAndPet(person, pet)
                 .orElseThrow(() -> new EntityNotFoundException("Pet is not in favorites")
@@ -77,7 +77,7 @@ public class FavoriteService {
 
     public boolean isFavorite(Long personId, Long petId) {
         Person person = personService.getPersonEntityById(personId);
-        Pet pet = petService.findPetEntityById(petId);
+        Pet pet = petService.findActivePetEntityById(petId);
 
         return favoriteRepository.findByPersonAndPet(person, pet).isPresent();
     }

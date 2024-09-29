@@ -36,7 +36,7 @@ import static javax.mail.Message.RecipientType.TO;
 public class Gmailer {
 
 
-    private static final String TEST_EMAIL = "paulo.vieira@minderacodeacademy.com";
+    private static final String TEST_EMAIL = "test@gmail.com";
     private Gmail service;
 
     /**
