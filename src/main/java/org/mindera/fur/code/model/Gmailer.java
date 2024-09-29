@@ -85,7 +85,7 @@ public class Gmailer {
     public static void main(String[] args) {
         try {
             Gmailer gmailer = new Gmailer();
-            gmailer.sendMail("test@mail.com", "test", "test");
+            gmailer.sendMail("test@mail", "Não é scam ", "Test email");
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
