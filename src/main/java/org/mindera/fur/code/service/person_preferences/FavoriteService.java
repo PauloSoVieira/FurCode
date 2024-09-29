@@ -52,7 +52,7 @@ public class FavoriteService {
         Favorite favorite = new Favorite();
         favorite.setPerson(person);
         favorite.setPet(pet);
-        favorite.setFavoritedAt(LocalDateTime.now());
+        favorite.setFavoriteAt(LocalDateTime.now());
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
         return FavoriteMapper.INSTANCE.toDto(savedFavorite);
