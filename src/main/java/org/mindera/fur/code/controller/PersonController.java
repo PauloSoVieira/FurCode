@@ -3,6 +3,7 @@ package org.mindera.fur.code.controller;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
+import org.mindera.fur.code.aspect.roleauth.RequiresRole;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
@@ -11,7 +12,10 @@ import org.mindera.fur.code.dto.pet.PetCreateDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
+import org.mindera.fur.code.infra.security.TokenService;
 import org.mindera.fur.code.model.Role;
+import org.mindera.fur.code.repository.PersonRepository;
+import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -71,14 +75,14 @@ public class PersonController {
      * @return The shelter person roles DTO.
      */
 
+    @RequiresRole(value = Role.ADMIN, shelterIdParam = 1)
     @PostMapping("/add-person-to-shelter")
     @Schema(description = "Add a person to a shelter")
-    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                                                    @RequestBody AddPersonToShelterRequest request) {
+    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestBody AddPersonToShelterRequest request) {
         return new ResponseEntity<>(personService.addPersonToShelter(
-                authorizationHeader,
                 request.getPersonId(),
-                request.getShelterId()),
+                request.getShelterId()
+                ),
                 HttpStatus.OK);
     }
 
@@ -102,12 +106,11 @@ public class PersonController {
      * @param petCreationDTO The pet creation DTO.
      * @return The pet DTO.
      */
-
+    @RequiresRole(value = Role.ADMIN, shelterIdField = "shelterId")
     @PostMapping("/create-pet")
     @Schema(description = "Create a pet")
-    public ResponseEntity<PetDTO> createPet(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                            @RequestBody PetCreateDTO petCreationDTO) {
-        return new ResponseEntity<>(personService.createPet(authorizationHeader,petCreationDTO), HttpStatus.CREATED);
+    public ResponseEntity<PetDTO> createPet(@RequestBody PetCreateDTO petCreationDTO) {
+        return new ResponseEntity<>(personService.createPet(petCreationDTO), HttpStatus.CREATED);
     }
 
     /**
@@ -152,7 +155,7 @@ public class PersonController {
      * @return The list of person DTOs.
      */
 
-
+    @RequiresRole(value = Role.ADMIN, shelterIdParam = 0)
     @GetMapping("/get-all-persons-in-shelter/{id}")
     @Schema(description = "Get all persons in a shelter")
     public ResponseEntity<List<PersonDTO>> getAllPersonsInShelter(@PathVariable Long id) {
@@ -179,6 +182,7 @@ public class PersonController {
      * @param role The role of the person.
      * @return The person DTO.
      */
+
     @PatchMapping("/set-person-role/{id}")
     @Schema(description = "Set the role of a person")
     public ResponseEntity<PersonDTO> setPersonRole(@PathVariable Long id, @RequestBody Role role) {

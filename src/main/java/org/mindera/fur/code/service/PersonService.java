@@ -255,33 +255,13 @@ public class PersonService {
      */
 
     @Transactional
-    public ShelterPersonRolesDTO addPersonToShelter(String authorizationHeader, Long personId, Long shelterId) {
+    public ShelterPersonRolesDTO addPersonToShelter(Long personId, Long shelterId) {
         Person person = personRepository.findById(personId).orElseThrow(
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
         );
         Shelter shelter = shelterRepository.findById(shelterId).orElseThrow(
                 () -> new PersonException(PersonMessages.SHELTER_NOT_FOUND)
         );
-
-        String jwtToken = extractJwtFromAuthorizationHeader(authorizationHeader);
-        String email = tokenService.validateToken(jwtToken);
-
-        Person personAuthorized = personRepository.findByEmail(email);
-        if (personAuthorized == null) {
-            throw new PersonException(PersonMessages.PERSON_NOT_FOUND);
-        }
-
-        ShelterPersonRoles personAuthorizedRole = shelterPersonRolesRepository
-                .findByPersonIdAndShelterId(personAuthorized.getId(), shelterId)
-                .orElseThrow(() -> new PersonException("PERSON_NOT_ASSOCIATED_WITH_SHELTER"));
-
-//        MASTER: 0
-//        ADMIN: 1
-//        MANAGER: 2
-//        USER: 3
-        if (personAuthorizedRole.getRole().ordinal() > Role.ADMIN.ordinal()) {
-            throw new PersonException("INSUFFICIENT_PERMISSIONS_TO_ADD_PERSON_TO_SHELTER");
-        }
 
         ShelterPersonRoles shelterPersonRoles = new ShelterPersonRoles();
         shelterPersonRoles.setPerson(person);
@@ -452,8 +432,8 @@ public class PersonService {
         personRepository.save(person);
         ShelterDTO shelter = shelterService.createShelter(shelterCreationDTO);
         Long shelterId = shelter.getId();
-        String test = "";
-        return addPersonToShelter(test, id, shelterId);
+
+        return addPersonToShelter(id, shelterId);
     }
 
     /**
@@ -465,31 +445,9 @@ public class PersonService {
 
     @Transactional
     @Schema(description = "Create a pet")
-    public PetDTO createPet(String authorizationHeader, PetCreateDTO petCreationDTO) {
-        Long shelterId = petCreationDTO.getShelterId();
-        String jwtToken = extractJwtFromAuthorizationHeader(authorizationHeader);
-        String email = tokenService.validateToken(jwtToken);
-
-        Person personAuthorized = personRepository.findByEmail(email);
-        if (personAuthorized == null) {
-            throw new PersonException(PersonMessages.PERSON_NOT_FOUND);
-        }
-
-        ShelterPersonRoles personAuthorizedRole = shelterPersonRolesRepository
-                .findByPersonIdAndShelterId(personAuthorized.getId(), shelterId)
-                .orElseThrow(() -> new PersonException("PERSON_NOT_ASSOCIATED_WITH_SHELTER"));
-
-//        MASTER: 0
-//        ADMIN: 1
-//        MANAGER: 2
-//        USER: 3
-        if (personAuthorizedRole.getRole().ordinal() > Role.MANAGER.ordinal()) {
-            throw new PersonException("INSUFFICIENT_PERMISSIONS_TO_CREATE_PET");
-        }
-
+    public PetDTO createPet(PetCreateDTO petCreationDTO) {
         return petService.addPet(petCreationDTO);
     }
-
 
     /**
      * Sets the role of a person based on the provided PersonDTO.
