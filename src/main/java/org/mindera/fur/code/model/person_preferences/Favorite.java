@@ -1,7 +1,9 @@
 package org.mindera.fur.code.model.person_preferences;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.model.pet.Pet;
@@ -19,15 +21,20 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Person must be provided")
+    @Positive(message = "Person ID must be greater than 0")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
 
+    @NotNull(message = "Pet must be provided")
+    @Positive(message = "Pet ID must be greater than 0")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id", nullable = false)
     private Pet pet;
 
-    @Schema(description = "The date and time the pet was favorited")
-    @Column(name = "favorited_at", nullable = false)
-    private LocalDateTime favoritedAt;
+    @NotNull(message = "Favorite status must be provided")
+    @PastOrPresent(message = "Favorite status must be in the past or present")
+    @Column(name = "favorite_at", nullable = false)
+    private LocalDateTime favoriteAt;
 }

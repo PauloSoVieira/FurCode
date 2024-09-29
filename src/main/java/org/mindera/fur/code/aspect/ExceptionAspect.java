@@ -1,5 +1,6 @@
 package org.mindera.fur.code.aspect;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -295,8 +296,8 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
         logger.error("Unsupported operation: {}", ex.getMessage());
 
         String responseJson = response(
-                HttpStatus.NOT_IMPLEMENTED.value(),
-                HttpStatus.NOT_IMPLEMENTED.getReasonPhrase(),
+                NOT_IMPLEMENTED.value(),
+                NOT_IMPLEMENTED.getReasonPhrase(),
                 request.getRequestURI(),
                 "The requested operation is not supported.",
                 ex.getMessage(),
@@ -366,5 +367,21 @@ public class ExceptionAspect extends ResponseEntityExceptionHandler {
                 new Date());
 
         return new ResponseEntity<>(responseJson, ex.getStatus());
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex, HttpServletRequest request) {
+        logger.error("Entity exists conflict: {}", ex.getMessage());
+
+        String response = response(
+                CONFLICT.value(),
+                CONFLICT.getReasonPhrase(),
+                request.getRequestURI(),
+                "Conflict occurred.",
+                ex.getMessage(),
+                new Date()
+        );
+
+        return new ResponseEntity<>(response, CONFLICT);
     }
 }
