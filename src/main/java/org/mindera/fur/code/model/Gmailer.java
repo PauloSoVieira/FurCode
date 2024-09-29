@@ -36,7 +36,7 @@ import static javax.mail.Message.RecipientType.TO;
 public class Gmailer {
 
 
-    private static final String TEST_EMAIL = "test@gmail.com";
+    private static final String TEST_EMAIL = "test@mail.com";
     private Gmail service;
 
     /**
@@ -85,7 +85,7 @@ public class Gmailer {
     public static void main(String[] args) {
         try {
             Gmailer gmailer = new Gmailer();
-            gmailer.sendMail("paulo.vieira@minderacodeacademy.com", "Não é scam ", "Test email");
+            gmailer.sendMail("test@mail.com", "test", "test");
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
