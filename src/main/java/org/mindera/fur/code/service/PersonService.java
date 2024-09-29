@@ -44,20 +44,20 @@ public class PersonService {
     private final DonationService donationService;
     private final PetService petService;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
-    private final Gmailer gmailer;
+    //private final Gmailer gmailer;
     private PersonMapper personMapper;
     private ShelterPersonRolesMapper shelterPersonRolesMapper;
 
     @Autowired
     public PersonService(PersonRepository personRepository, ShelterService shelterService,
                          ShelterPersonRolesRepository shelterPersonRolesRepository, DonationService donationService,
-                         ShelterRepository shelterRepository, Gmailer gmailer,
+                         ShelterRepository shelterRepository, //Gmailer gmailer,
                          PetService petService) throws Exception {
         this.personRepository = personRepository;
         this.shelterService = shelterService;
         this.shelterPersonRolesRepository = shelterPersonRolesRepository;
         this.shelterRepository = shelterRepository;
-        this.gmailer = new Gmailer();
+        //this.gmailer = new Gmailer();
         this.donationService = donationService;
         this.petService = petService;
     }
@@ -197,17 +197,17 @@ public class PersonService {
             Person savedPerson = personRepository.save(person);
 
 
-            try {
-                gmailer.sendMail(savedPerson.getEmail(), EmailMessages.WELCOME_TO_FURCODE,
-                        EmailMessages.DEAR + savedPerson.getFirstName() + EmailMessages.MESSAGE_WELCOME_TO_FURCODE);
-
-                gmailer.sendMail(COMPANY_EMAIL, EmailMessages.NEW_USER_REGISTRATION,
-                        EmailMessages.NEW_USER_MESSAGE + savedPerson.getFirstName() + " " + savedPerson.getLastName() +
-                               EmailMessages.NEW_USER_EMAIL + savedPerson.getEmail());
-            } catch (Exception e) {
-                System.err.println(EmailMessages.FAILED_TO_SEND_EMAIL + e.getMessage());
-
-            }
+//            try {
+//                gmailer.sendMail(savedPerson.getEmail(), EmailMessages.WELCOME_TO_FURCODE,
+//                        EmailMessages.DEAR + savedPerson.getFirstName() + EmailMessages.MESSAGE_WELCOME_TO_FURCODE);
+//
+//                gmailer.sendMail(COMPANY_EMAIL, EmailMessages.NEW_USER_REGISTRATION,
+//                        EmailMessages.NEW_USER_MESSAGE + savedPerson.getFirstName() + " " + savedPerson.getLastName() +
+//                               EmailMessages.NEW_USER_EMAIL + savedPerson.getEmail());
+//            } catch (Exception e) {
+//                System.err.println(EmailMessages.FAILED_TO_SEND_EMAIL + e.getMessage());
+//
+//            }
 
             return personMapper.INSTANCE.toDTO(savedPerson);
         } catch (Exception e) {

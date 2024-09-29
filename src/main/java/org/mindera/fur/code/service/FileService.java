@@ -1,10 +1,8 @@
 package org.mindera.fur.code.service;
 
-import io.minio.GetObjectArgs;
-import io.minio.GetObjectResponse;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
+import io.minio.messages.Item;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
@@ -16,13 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @Schema(description = "The file service")
 @Service
@@ -30,6 +28,7 @@ public class FileService {
 
     private static final String BUCKET_NAME = "furcode";
     private static final int MAX_FILE_UPLOAD_SIZE = 10000000;
+    private static final List<String> SUPPORTED_EXTENSIONS = List.of("jpg", "png", "gif", "pdf");
 
     private final MinioClient minioClient;
     private final PetService petService;
@@ -52,9 +51,9 @@ public class FileService {
             throw new IllegalArgumentException("Pet ID must be provided");
         }
 
-        if (petService.findPetById(id) == null) {
-            throw new IllegalArgumentException("Pet not found");
-        }
+        //if (petService.findPetById(id) == null) {
+        //    throw new IllegalArgumentException("Pet not found");
+        //}
 
         checkFileValidity(file);
         checkImageType(file.getFileData());
@@ -146,11 +145,26 @@ public class FileService {
             throw new IllegalArgumentException("Pet ID must be provided");
         }
 
-        if (petService.findPetById(id) == null) {
-            throw new IllegalArgumentException("Pet not found");
-        }
+        //if (petService.findPetById(id) == null) {
+        //    throw new IllegalArgumentException("Pet not found");
+        //}
 
-        return downloadFileFromBucket(filePath);
+        byte[] fileData = null;
+        try {
+            fileData = downloadFileFromBucket(filePath);
+            return fileData;
+        } catch (FileException e) {
+            for (String extension : SUPPORTED_EXTENSIONS) {
+                try {
+                    String fileWithExtension = filePath + "." + extension;
+                    fileData = downloadFileFromBucket(fileWithExtension);
+                    return fileData; // Return if successful
+                } catch (FileException ignored) {
+                    // Ignore the error and try the next extension
+                }
+            }
+        }
+        throw new FileException("File not found for name: " + filePath + " with any supported extensions");
     }
 
     /**
@@ -182,6 +196,18 @@ public class FileService {
      * @return the MIME type of the file.
      */
     public String getFileMimeTypeFromFileName(String fileName) {
+        return URLConnection.guessContentTypeFromName(fileName);
+    }
+
+    /**
+     * Gets the MIME type of file from its file path.
+     *
+     * @param filePath the name of the file.
+     * @return the MIME type of the file.
+     */
+    public String getFileMimeTypeFromFilePath(String filePath) {
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        System.out.println(fileName);
         return URLConnection.guessContentTypeFromName(fileName);
     }
 
@@ -249,6 +275,20 @@ public class FileService {
     }
 
     /**
+     * Gets the MIME type of file from its byte array.
+     *
+     * @param fileData the byte array.
+     * @return the MIME type of the file.
+     */
+    public String getMimeTypeFromBytes(byte[] fileData) {
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(fileData)) {
+            return URLConnection.guessContentTypeFromStream(inputStream);
+        } catch (IOException e) {
+            return "application/octet-stream";
+        }
+    }
+
+    /**
      * Uploads a file to the Minio bucket.
      *
      * @param filePath the path to the file in the Minio bucket.
@@ -289,4 +329,72 @@ public class FileService {
             throw new FileException(e.getMessage());
         }
     }
+
+
+    public List<String> getAllImagesFromPet(Long petId) {
+        List<String> imageUrls = new ArrayList<>();
+        String prefix = String.format("pet/%s/image/", petId);
+
+        try {
+            for (Result<Item> result : minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(BUCKET_NAME)
+                    .prefix(prefix)
+                    .build())) {
+                Item item = result.get(); // Extract the Item from the Result
+                String objectName = item.objectName();
+
+                String imageUrl = String.format("/api/v1/download/%s", objectName);
+                imageUrls.add(imageUrl);
+            }
+        } catch (Exception e) {
+            throw new FileException("Error listing pet images: " + e.getMessage());
+        }
+
+        return imageUrls;
+    }
+
+    public List<Map<String, String>> getAllImagesFromPetAsBase64(Long petId) {
+        List<Map<String, String>> imageList = new ArrayList<>();
+        String prefix = String.format("pet/%s/image/", petId);
+
+        try {
+            for (Result<Item> result : minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(BUCKET_NAME)
+                    .prefix(prefix)
+                    .build())) {
+                Item item = result.get();
+                String objectName = item.objectName();
+
+                byte[] fileBytes = downloadFileFromBucket(objectName);
+                String mimeType = getMimeTypeFromBytes(fileBytes);
+                String base64Image = Base64.getEncoder().encodeToString(fileBytes);
+                String base64DataUrl = String.format("data:%s;base64,%s", mimeType, base64Image);
+
+                // Create a map for the image
+                Map<String, String> imageMap = new HashMap<>();
+                imageMap.put("id", item.objectName());
+                imageMap.put("name", objectName);
+                imageMap.put("data", base64DataUrl);
+
+                imageList.add(imageMap);
+            }
+        } catch (Exception e) {
+            throw new FileException("Error listing pet images: " + e.getMessage());
+        }
+
+        return imageList;
+    }
+
+    public void deleteImagePet(String filePath, Long petId) {
+        try {
+            // Logic to delete the file from the storage (e.g., Minio, S3)
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(BUCKET_NAME)
+                    .object(filePath)
+                    .build());
+        } catch (Exception e) {
+            throw new FileException("Error deleting image: " + e.getMessage());
+        }
+    }
+
 }
