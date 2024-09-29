@@ -5,8 +5,10 @@ import io.minio.errors.*;
 import io.minio.messages.Item;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
+import org.mindera.fur.code.aspect.roleauth.RequiresRole;
 import org.mindera.fur.code.dto.file.FileUploadDTO;
 import org.mindera.fur.code.exceptions.file.FileException;
+import org.mindera.fur.code.model.Role;
 import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -46,6 +48,7 @@ public class FileService {
      * @param id       the ID of the pet associated with the file.
      * @param file     the file to upload.
      */
+    @RequiresRole(value = Role.ADMIN, isPetOperation = true, petIdParam = 2)
     public void uploadImagePet(String filePath, FileUploadDTO file, Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Pet ID must be provided");
@@ -385,6 +388,7 @@ public class FileService {
         return imageList;
     }
 
+    @RequiresRole(value = Role.ADMIN, isPetOperation = true, petIdParam = 1)
     public void deleteImagePet(String filePath, Long petId) {
         try {
             // Logic to delete the file from the storage (e.g., Minio, S3)

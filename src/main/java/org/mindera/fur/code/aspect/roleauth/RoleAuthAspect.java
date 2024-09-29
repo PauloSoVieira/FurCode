@@ -1,15 +1,19 @@
 package org.mindera.fur.code.aspect.roleauth;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.infra.security.TokenService;
+import org.mindera.fur.code.messages.pet.PetMessages;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.model.ShelterPersonRoles;
+import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
+import org.mindera.fur.code.repository.pet.PetRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -24,13 +28,16 @@ public class RoleAuthAspect {
     private final TokenService tokenService;
     private final PersonRepository personRepository;
     private final ShelterPersonRolesRepository shelterPersonRolesRepository;
+    private final PetRepository petRepository;
 
     public RoleAuthAspect(TokenService tokenService,
                           PersonRepository personRepository,
-                          ShelterPersonRolesRepository shelterPersonRolesRepository) {
+                          ShelterPersonRolesRepository shelterPersonRolesRepository,
+                          PetRepository petRepository) {
         this.tokenService = tokenService;
         this.personRepository = personRepository;
         this.shelterPersonRolesRepository = shelterPersonRolesRepository;
+        this.petRepository = petRepository;
     }
 
     /**
@@ -61,7 +68,12 @@ public class RoleAuthAspect {
             throw new PersonException("PERSON_NOT_FOUND");
         }
 
-        Long shelterId = extractShelterId(joinPoint, requiresRole);
+        Long shelterId;
+        if (requiresRole.isPetOperation()) {
+            shelterId = extractShelterIdFromPet(joinPoint, requiresRole);
+        } else {
+            shelterId = extractShelterId(joinPoint, requiresRole);
+        }
 
         ShelterPersonRoles personRole = shelterPersonRolesRepository
                 .findByPersonIdAndShelterId(person.getId(), shelterId)
@@ -99,6 +111,17 @@ public class RoleAuthAspect {
         } else {
             throw new IllegalArgumentException("No shelter ID source specified");
         }
+    }
+
+    private Long extractShelterIdFromPet(ProceedingJoinPoint joinPoint, RequiresRole requiresRole) {
+        Object[] args = joinPoint.getArgs();
+        if (requiresRole.petIdParam() >= args.length) {
+            throw new IllegalArgumentException("Invalid pet ID parameter index");
+        }
+        Long petId = (Long) args[requiresRole.petIdParam()];
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + petId));
+        return pet.getShelter().getId();
     }
 
     /**

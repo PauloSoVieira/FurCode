@@ -13,4 +13,6 @@ public @interface RequiresRole {
     Role value();
     String shelterIdField() default "";
     int shelterIdParam() default -1;
+    boolean isPetOperation() default false;
+    int petIdParam() default -1;
 }
