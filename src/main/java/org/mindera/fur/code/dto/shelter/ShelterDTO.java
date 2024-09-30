@@ -1,65 +1,71 @@
 package org.mindera.fur.code.dto.shelter;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-
 
 /**
  * DTO for a shelter.
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-@Schema(description = "A shelter")
+@NoArgsConstructor
 public class ShelterDTO implements Serializable {
-    @NotNull
-    @Schema(description = "The id of the shelter", example = "1", required = true)
+
+    @Positive(message = "Id must be greater than 0")
+    @NotNull(message = "Id must be provided")
+    @Schema(description = "The id of the shelter", example = "1")
     private Long id;
+
+    @NotBlank(message = "Name can't be empty")
+    @Size(max = 100, message = "Name must be between 1 and 100 characters")
+    @Schema(description = "The name of the shelter", example = "Shelter 1")
     private String name;
-    private Long vat;
+
+    @NotBlank(message = "Vat can't be empty")
+    @Size(max = 50, message = "Vat must be between 1 and 50 characters")
+    @Schema(description = "The vat of the shelter", example = "12345")
+    private String vat;
+
+    @NotBlank(message = "Email can't be null")
+    @Size(max = 50, message = "Email must be between 1 and 50 characters")
+    @Email(message = "Email must be valid")
+    @Schema(description = "The email of the shelter", example = "shelter@example.com")
     private String email;
+
+    @NotBlank(message = "Address1 can't be empty")
+    @Size(max = 200, message = "Address1 must be between 1 and 200 characters")
+    @Schema(description = "The address1 of the shelter", example = "123 Main Street")
     private String address1;
+
+    @NotBlank(message = "Address2 can't be empty")
+    @Size(max = 200, message = "Address2 must be between 1 and 200 characters")
+    @Schema(description = "The address2 of the shelter", example = "Apartment 1")
     private String address2;
+
+    @NotBlank(message = "Postal code can't be empty")
+    @Size(max = 20, message = "Postal code must be between 1 and 20 characters")
+    @Schema(description = "The postal code of the shelter", example = "12345")
     private String postalCode;
-    private Long phone;
-    private Long size;
+
+    @NotBlank(message = "Phone can't be empty")
+    @Size(max = 20, message = "Phone must be between 1 and 20 characters")
+    @Schema(description = "The phone of the shelter", example = "1234567890")
+    private String phone;
+
+    @NotBlank(message = "Size can't be empty")
+    @Size(max = 20, message = "Size must be between 1 and 20 characters")
+    @Schema(description = "The size of the shelter", example = "10")
+    private String size;
+
+    @NotNull(message = "IsActive can't be null")
+    @Schema(description = "The is active of the shelter", example = "true")
     private Boolean isActive;
+
+    @NotNull(message = "CreationDate can't be null")
+    @Schema(description = "The creation date of the shelter", example = "2023-01-01")
     private LocalDate creationDate;
-
-    /**
-     * Constructor with parameters.
-     *
-     * @param id           The id of the shelter.
-     * @param name         The name of the shelter.
-     * @param vat          The vat number of the shelter.
-     * @param email        The email of the shelter.
-     * @param address1     The address1 of the shelter.
-     * @param address2     The address2 of the shelter.
-     * @param postalCode   The postal code of the shelter.
-     * @param phone        The phone number of the shelter.
-     * @param size         The size of the shelter.
-     * @param isActive     The isActive status of the shelter.
-     * @param creationDate The creation date of the shelter.
-     */
-    public ShelterDTO(Long id, String name, Long vat, String email, String address1, String address2, String postalCode, Long phone, Long size, Boolean isActive, LocalDate creationDate) {
-        this.id = id;
-
-        this.name = name;
-        this.vat = vat;
-        this.email = email;
-        this.address1 = address1;
-        this.address2 = address2;
-        this.postalCode = postalCode;
-        this.phone = phone;
-        this.size = size;
-        this.isActive = isActive;
-        this.creationDate = creationDate;
-    }
-
-    public ShelterDTO() {
-    }
 }

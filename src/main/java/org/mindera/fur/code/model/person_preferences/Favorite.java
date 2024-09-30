@@ -22,13 +22,11 @@ public class Favorite {
     private Long id;
 
     @NotNull(message = "Person must be provided")
-    @Positive(message = "Person ID must be greater than 0")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", nullable = false)
     private Person person;
 
     @NotNull(message = "Pet must be provided")
-    @Positive(message = "Pet ID must be greater than 0")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id", nullable = false)
     private Pet pet;
