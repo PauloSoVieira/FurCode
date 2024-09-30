@@ -1,6 +1,10 @@
 package org.mindera.fur.code.service;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
@@ -13,6 +17,7 @@ import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
 import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
+import org.mindera.fur.code.infra.security.TokenService;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
 import org.mindera.fur.code.messages.email.EmailMessages;
@@ -47,12 +52,13 @@ public class PersonService {
     //private final Gmailer gmailer;
     private PersonMapper personMapper;
     private ShelterPersonRolesMapper shelterPersonRolesMapper;
+    private TokenService tokenService;
 
     @Autowired
     public PersonService(PersonRepository personRepository, ShelterService shelterService,
                          ShelterPersonRolesRepository shelterPersonRolesRepository, DonationService donationService,
                          ShelterRepository shelterRepository, //Gmailer gmailer,
-                         PetService petService) throws Exception {
+                         PetService petService, TokenService tokenService) throws Exception {
         this.personRepository = personRepository;
         this.shelterService = shelterService;
         this.shelterPersonRolesRepository = shelterPersonRolesRepository;
@@ -60,6 +66,7 @@ public class PersonService {
         //this.gmailer = new Gmailer();
         this.donationService = donationService;
         this.petService = petService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -266,6 +273,14 @@ public class PersonService {
         return shelterPersonRolesMapper.INSTANCE.toDto(shelterPersonRoles);
     }
 
+    private String extractJwtFromAuthorizationHeader(String authorizationHeader) {
+        // Typically, the Authorization header is in the format "Bearer <token>"
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7); // "Bearer ".length() == 7
+        }
+        throw new IllegalArgumentException("Invalid Authorization header");
+    }
+
     /**
      * Retrieves all persons from the repository.
      *
@@ -417,6 +432,7 @@ public class PersonService {
         personRepository.save(person);
         ShelterDTO shelter = shelterService.createShelter(shelterCreationDTO);
         Long shelterId = shelter.getId();
+
         return addPersonToShelter(id, shelterId);
     }
 
@@ -432,7 +448,6 @@ public class PersonService {
     public PetDTO createPet(PetCreateDTO petCreationDTO) {
         return petService.addPet(petCreationDTO);
     }
-
 
     /**
      * Sets the role of a person based on the provided PersonDTO.
