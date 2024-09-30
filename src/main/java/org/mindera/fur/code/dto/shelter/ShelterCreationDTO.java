@@ -1,10 +1,12 @@
 package org.mindera.fur.code.dto.shelter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -12,85 +14,58 @@ import java.time.LocalDate;
  * DTO for creating a shelter.
  */
 @Data
+@NoArgsConstructor
 @Schema(description = "A shelter creation request")
-@Tag(name = "Shelter Creation", description = "Details about the shelter creation request")
 public class ShelterCreationDTO {
-    @NotNull
-    @NotBlank
-    @Schema(description = "The name of the shelter", example = "The name of the shelter", required = true)
+
+    @NotBlank(message = "Name can't be empty")
+    @Size(max = 100, message = "Name must be between 1 and 100 characters")
+    @Schema(description = "The name of the shelter", example = "Shelter 1")
     private String name;
 
-    @NotNull
-    @Schema(description = "The vat number of the shelter", example = "123456789", required = true)
-    private Long vat;
+    @NotBlank(message = "Vat can't be empty")
+    @Size(max = 50, message = "Vat must be between 1 and 50 characters")
+    @Schema(description = "The vat of the shelter", example = "12345")
+    private String vat;
 
-    @NotNull
-    @NotBlank
-    @Schema(description = "The email of the shelter", example = "email@email.com", required = true)
+    @NotBlank(message = "Email can't be null")
+    @Size(max = 50, message = "Email must be between 1 and 50 characters")
+    @Email(message = "Email must be valid")
+    @Schema(description = "The email of the shelter", example = "shelter@example.com")
     private String email;
 
-    @NotNull
-    @NotBlank
-    @Schema(description = "The address1 of the shelter", example = "The address1 of the shelter", required = true)
+    @NotBlank(message = "Address1 can't be empty")
+    @Size(max = 200, message = "Address1 must be between 1 and 200 characters")
+    @Schema(description = "The address1 of the shelter", example = "123 Main Street")
     private String address1;
 
-    @Schema(description = "The address2 of the shelter", example = "The address2 of the shelter")
+    @NotBlank(message = "Address2 can't be empty")
+    @Size(max = 200, message = "Address2 must be between 1 and 200 characters")
+    @Schema(description = "The address2 of the shelter", example = "Apartment 1")
     private String address2;
 
-    @NotNull
-    @NotBlank
-    @Schema(description = "The postal code of the shelter", example = "12345", required = true)
+    @NotBlank(message = "Postal code can't be empty")
+    @Size(max = 20, message = "Postal code must be between 1 and 20 characters")
+    @Schema(description = "The postal code of the shelter", example = "12345")
     private String postalCode;
 
-    @NotNull
-    @Schema(description = "The phone number of the shelter", example = "123456789", required = true)
-    private Long phone;
+    @NotBlank(message = "Phone can't be empty")
+    @Size(max = 20, message = "Phone must be between 1 and 20 characters")
+    @Schema(description = "The phone of the shelter", example = "1234567890")
+    private String phone;
 
-    @NotNull
-    @Schema(description = "The size of the shelter", example = "1", required = true)
-    private Long size;
+    @NotBlank(message = "Size can't be empty")
+    @Size(max = 20, message = "Size must be between 1 and 20 characters")
+    @Schema(description = "The size of the shelter", example = "10")
+    private String size;
 
-    @NotNull
-    @Schema(description = "The isActive status of the shelter", example = "true", required = true)
+    @NotNull(message = "IsActive can't be null")
+    @Schema(description = "The is active of the shelter", example = "true")
     private Boolean isActive;
 
-    @NotNull
-    @Schema(description = "The creation date of the shelter", example = "2023-01-01", required = true)
+    @NotNull(message = "CreationDate can't be null")
+    @Schema(description = "The creation date of the shelter", example = "2023-01-01")
     private LocalDate creationDate;
-
-    /**
-     * Constructor with parameters.
-     *
-     * @param name         The name of the shelter.
-     * @param vat          The vat number of the shelter.
-     * @param email        The email of the shelter.
-     * @param address1     The address1 of the shelter.
-     * @param address2     The address2 of the shelter.
-     * @param postalCode   The postal code of the shelter.
-     * @param phone        The phone number of the shelter.
-     * @param size         The size of the shelter.
-     * @param isActive     The isActive status of the shelter.
-     * @param creationDate The creation date of the shelter.
-     */
-    public ShelterCreationDTO(String name, Long vat, String email, String address1, String address2, String postalCode, Long phone, Long size, Boolean isActive, LocalDate creationDate) {
-        this.name = name;
-        this.vat = vat;
-        this.email = email;
-        this.address1 = address1;
-        this.address2 = address2;
-        this.postalCode = postalCode;
-        this.phone = phone;
-        this.size = size;
-        this.isActive = isActive;
-        this.creationDate = creationDate;
-    }
-
-    /**
-     * Default constructor.
-     */
-    public ShelterCreationDTO() {
-    }
-
 
     /**
      * Constructor with parameters.
@@ -100,5 +75,4 @@ public class ShelterCreationDTO {
     public ShelterCreationDTO(String name) {
         this.name = name;
     }
-
 }

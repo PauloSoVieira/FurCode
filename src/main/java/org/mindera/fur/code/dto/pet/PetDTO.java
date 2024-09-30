@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
 import java.io.Serializable;
@@ -13,6 +14,8 @@ import java.io.Serializable;
  * A DTO class for a pet.
  */
 @Data
+@NoArgsConstructor
+@Schema(description = "A pet creation request")
 public class PetDTO implements Serializable {
 
     @Positive(message = "Pet ID must be greater than 0")
@@ -21,7 +24,7 @@ public class PetDTO implements Serializable {
     private Long id;
 
     @NotBlank(message = "Pet name must be provided")
-    @Size(min = 1, max = 30, message = "Pet name must be between 1 and 30 characters")
+    @Size(max = 30, message = "Pet name must be between 1 and 30 characters")
     @Schema(description = "The name of the pet", example = "Tareco")
     private String name;
 

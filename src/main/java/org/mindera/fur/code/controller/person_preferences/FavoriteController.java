@@ -31,7 +31,7 @@ public class FavoriteController {
     @Operation(summary = "Add a favorite")
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FavoriteDTO> addFavorite(@RequestBody @Valid FavoriteDTO favoriteDTO) {
-        FavoriteDTO favoriteDto = favoriteService.addFavorite(favoriteDTO.getPersonId(), favoriteDTO.getPetId());
+        FavoriteDTO favoriteDto = favoriteService.addFavorite(favoriteDTO);
         return new ResponseEntity<>(favoriteDto, HttpStatus.CREATED);
     }
 
@@ -46,7 +46,8 @@ public class FavoriteController {
     @GetMapping(value = "/{personId}/{petId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> isFavorite(
             @PathVariable @NotNull @Positive Long personId,
-            @PathVariable @NotNull @Positive Long petId) {
+            @PathVariable @NotNull @Positive Long petId
+    ) {
         boolean isFavorite = favoriteService.isFavorite(personId, petId);
         return new ResponseEntity<>(isFavorite, HttpStatus.OK);
     }

@@ -3,6 +3,7 @@ package org.mindera.fur.code.service.person_preferences;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.mindera.fur.code.dto.person_preferences.FavoriteDTO;
@@ -15,10 +16,12 @@ import org.mindera.fur.code.service.PersonService;
 import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Validated
 @Service
 public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
@@ -37,7 +40,10 @@ public class FavoriteService {
     }
 
     @Transactional
-    public FavoriteDTO addFavorite(@NotNull @Positive Long personId, @NotNull @Positive Long petId) {
+    public FavoriteDTO addFavorite(@Valid FavoriteDTO favoriteDTO) {
+        Long personId = favoriteDTO.getPersonId();
+        Long petId = favoriteDTO.getPetId();
+
         Person person = personService.getPersonEntityById(personId);
         Pet pet = petService.findActivePetEntityById(petId);
 
@@ -75,7 +81,7 @@ public class FavoriteService {
         return favorites.stream().map(FavoriteMapper.INSTANCE::toDto).toList();
     }
 
-    public boolean isFavorite(Long personId, Long petId) {
+    public boolean isFavorite(@NotNull @Positive Long personId, @NotNull @Positive Long petId) {
         Person person = personService.getPersonEntityById(personId);
         Pet pet = petService.findActivePetEntityById(petId);
 

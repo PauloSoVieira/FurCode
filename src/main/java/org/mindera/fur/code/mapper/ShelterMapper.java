@@ -28,7 +28,7 @@ public interface ShelterMapper {
      * @param shelter The Shelter object to convert.
      * @return The converted ShelterDTO object.
      */
-    ShelterDTO toDto(Shelter shelter);
+    ShelterDTO toDTO(Shelter shelter);
 
     /**
      * Converts a ShelterDTO object to a Shelter object.

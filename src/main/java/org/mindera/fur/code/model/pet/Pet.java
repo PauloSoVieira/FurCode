@@ -75,7 +75,6 @@ public class Pet implements SoftDeletable {
     @Column(nullable = false)
     private String observations;
 
-    @Valid
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRecord> petRecords;
 

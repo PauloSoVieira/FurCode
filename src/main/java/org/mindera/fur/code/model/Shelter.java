@@ -1,17 +1,15 @@
 package org.mindera.fur.code.model;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.mindera.fur.code.model.interfaces.SoftDeletable;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -19,68 +17,98 @@ import java.util.Set;
  */
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "shelter")
-@Tag(name = "Shelter", description = "Details about the shelter entity")
-
-public class Shelter {
+public class Shelter implements SoftDeletable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
     private Long id;
-    @Schema(description = "The name of the shelter", example = "Shelter 1", required = true)
-    @Size(min = 1, max = 100, message = "Shelter name must be between 1 and 100 characters")
+
+    @NotBlank(message = "Name can't be empty")
+    @Size(max = 100, message = "Shelter name must be between 1 and 100 characters")
+    @Column(nullable = false)
     private String name;
-    @Positive
-    @Schema(description = "The vat of the shelter", example = "12345", required = true)
-    private Long vat;
-    @Schema(description = "The email of the shelter", example = "shelter@example.com", required = true)
-    @Size(min = 1, max = 50, message = "Email must be between 1 and 50 characters")
+
+    @NotBlank(message = "Vat can't be empty")
+    @Size(max = 50, message = "Vat must be between 1 and 50 characters")
+    @Column(nullable = false)
+    private String vat;
+
+    @NotBlank(message = "Email can't be empty")
+    @Size(max = 50, message = "Email must be between 1 and 50 characters")
+    @Column(nullable = false)
     private String email;
-    @Schema(description = "The address1 of the shelter", example = "123 Main Street", required = true)
-    @Size(min = 1, max = 200, message = "Address1 must be between 1 and 200 characters")
+
+    @NotBlank(message = "Address1 can't be empty")
+    @Size(max = 200, message = "Address1 must be between 1 and 200 characters")
+    @Column(nullable = false)
     private String address1;
-    @Schema(description = "The address2 of the shelter", example = "Apartment 1", required = true)
-    @Size(min = 1, max = 200, message = "Address2 must be between 1 and 200 characters")
+
+    @NotBlank(message = "Address2 can't be empty")
+    @Size(max = 200, message = "Address2 must be between 1 and 200 characters")
+    @Column(nullable = false)
     private String address2;
-    @Schema(description = "The postal code of the shelter", example = "12345", required = true)
+
+    @NotBlank(message = "Postal code can't be empty")
+    @Size(max = 20, message = "Postal code must be between 1 and 20 characters")
+    @Column(nullable = false)
     private String postalCode;
-    @Positive
-    @Schema(description = "The phone of the shelter", example = "1234567890", required = true)
-    private Long phone;
-    @Schema(description = "The size of the shelter", example = "10", required = true)
-    @Min(value = 1, message = "Size must be greater than or equal to 1")
-    @Max(value = 1000, message = "Size must be less than or equal to 1000")
-    private Long size;
-    @Schema(description = "The is active of the shelter", example = "true", required = true)
+
+    @NotBlank(message = "Phone can't be empty")
+    @Size(max = 20, message = "Phone must be between 1 and 20 characters")
+    @Column(nullable = false)
+    private String phone;
+
+    @NotBlank(message = "Size can't be empty")
+    @Size(max = 20, message = "Size must be between 1 and 20 characters")
+    @Column(nullable = false)
+    private String size;
+
+    @NotNull(message = "IsActive can't be null")
+    @Column(nullable = false)
     private Boolean isActive;
-    @Schema(description = "The creation date of the shelter", example = "2023-01-01", required = true)
+
+    @NotNull(message = "CreationDate can't be null")
+    @Column(nullable = false)
     private LocalDate creationDate;
 
     /**
      * The set of ShelterPersonRoles.
      */
-    @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
     @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @Schema(description = "The collection of person roles associated with the shelter")
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
     /**
      * The set of Pet.
      */
-    @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
-    @OneToMany(mappedBy = "shelter")
+    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @Schema(description = "The collection of pets associated with the shelter")
     private Set<Pet> pet;
+
     /**
      * The set of Donation.
      */
-    @Schema(description = "The unique identifier of the shelter", example = "1", required = true)
     @OneToMany(mappedBy = "shelter")
+    @Schema(description = "The collection of donations associated with the shelter")
     private Set<Donation> donations;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    // SoftDeletable methods
+    @Override
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    @Override
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
 
     public Shelter(Long shelterId) {
         this.id = shelterId;
-    }
-
-    public Shelter() {
     }
 }
