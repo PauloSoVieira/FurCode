@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1.4
 
+ARG VERSION=latest
+
 FROM --platform=$BUILDPLATFORM maven:3.8.5-eclipse-temurin-17 AS builder
 WORKDIR /workdir/server
 COPY pom.xml /workdir/server/pom.xml
