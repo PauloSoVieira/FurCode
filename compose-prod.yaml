@@ -1,9 +1,12 @@
 services:
 
   backend:
+    image: furcode:${VERSION:-latest}
     build: 
       context: .
       dockerfile: Dockerfile
+      args:
+        VERSION: ${VERSION:-latest} 
     restart: always
     environment:
       - POSTGRES_DB=example
