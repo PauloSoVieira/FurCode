@@ -10,7 +10,9 @@ import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
-import org.mindera.fur.code.mapper.ShelterMapper;
+import org.mindera.fur.code.dto.shelter.ShelterUpdateDTO;
+import org.mindera.fur.code.mapper.shelter.ShelterMapper;
+import org.mindera.fur.code.mapper.shelter.ShelterUpdateMapper;
 import org.mindera.fur.code.messages.shelter.ShelterMessages;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.pet.Pet;
@@ -109,20 +111,18 @@ public class ShelterService {
      * Updates a shelter's details.
      *
      * @param id         the ID of the shelter.
-     * @param shelterDTO The DTO containing updated pet information.
+     * @param shelterUpdateDTO The DTO containing updated pet information.
      * @throws EntityNotFoundException if the shelter with the specified ID is not found
      */
     @Transactional
     @CachePut(cacheNames = "shelter", key = "#id")
     @CacheEvict(cacheNames = "shelters", allEntries = true)
-    public ShelterDTO updateShelter(@NotNull @Positive Long id, @Valid ShelterDTO shelterDTO) {
+    public ShelterDTO updateShelter(@NotNull @Positive Long id, @Valid ShelterUpdateDTO shelterUpdateDTO) {
         Shelter shelter = findActiveShelterEntityById(id);
 
-        if (shelterDTO.getName() != null) {
-            shelter.setName(shelterDTO.getName());
-        }
+        ShelterUpdateMapper.INSTANCE.updateShelterFromDto(shelterUpdateDTO, shelter);
 
-        shelterRepository.save(shelter);
+        shelter = shelterRepository.save(shelter);
         return ShelterMapper.INSTANCE.toDTO(shelter);
     }
 
@@ -141,13 +141,6 @@ public class ShelterService {
         Shelter shelter = findActiveShelterEntityById(id);
         shelter.setDeletedAt(LocalDateTime.now());
         shelterRepository.save(shelter);
-    }
-
-    /**
-     * Deletes all shelters.
-     */
-    public void deleteAllShelters() {
-        shelterRepository.deleteAll();
     }
 
     /**
