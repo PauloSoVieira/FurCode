@@ -1,7 +1,6 @@
 package org.mindera.fur.code.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +9,7 @@ import org.mindera.fur.code.dto.donation.DonationDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
 import org.mindera.fur.code.dto.shelter.ShelterCreationDTO;
 import org.mindera.fur.code.dto.shelter.ShelterDTO;
+import org.mindera.fur.code.dto.shelter.ShelterUpdateDTO;
 import org.mindera.fur.code.service.ShelterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,14 +81,13 @@ public class ShelterController {
      * Endpoint to update a shelter.
      *
      * @param id         The id of the shelter.
-     * @param shelterDTO The ShelterDTO object.
+     * @param shelterUpdateDTO The ShelterUpdateDTO object.
      * @return The updated ShelterDTO object.
      */
-    @PatchMapping("/update/{id}")
-    @Schema(description = "Update a shelter")
     @Operation(summary = "Update a shelter", description = "Updates a shelter with the provided data")
-    public ResponseEntity<ShelterDTO> updateShelter(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid ShelterDTO shelterDTO) {
-        return new ResponseEntity<>(shelterService.updateShelter(id, shelterDTO), HttpStatus.OK);
+    @PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ShelterDTO> updateShelter(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid ShelterUpdateDTO shelterUpdateDTO) {
+        return new ResponseEntity<>(shelterService.updateShelter(id, shelterUpdateDTO), HttpStatus.OK);
     }
 
     /**
@@ -97,9 +96,8 @@ public class ShelterController {
      * @param id The id of the shelter.
      * @return The deleted shelter.
      */
-    @DeleteMapping("/delete/{id}")
     @Operation(summary = "Delete a shelter by id", description = "Deletes a shelter with the specified id")
-    @Schema(description = "Delete a shelter by id")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteShelter(@PathVariable @NotNull @Positive Long id) {
         shelterService.softDeleteShelter(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -111,10 +109,9 @@ public class ShelterController {
      * @param id The id of the shelter.
      * @return The list of donations.
      */
-    @GetMapping("/{id}/get-all-donations")
     @Operation(summary = "Get all donations in a shelter", description = "Returns a list of donations in a shelter")
-    @Schema(description = "Get all donations in a shelter")
-    public ResponseEntity<List<DonationDTO>> getAllDonationsById(@PathVariable Long id) {
+    @GetMapping("/{id}/get-all-donations")
+    public ResponseEntity<List<DonationDTO>> getAllDonationsById(@PathVariable @NotNull @Positive Long id) {
         return new ResponseEntity<>(shelterService.getAllDonationsById(id), HttpStatus.OK);
     }
 
@@ -124,10 +121,9 @@ public class ShelterController {
      * @param id The id of the shelter.
      * @return The list of pets.
      */
-    @GetMapping("/{id}/allPets")
     @Operation(summary = "Get all pets in a shelter", description = "Returns a list of pets in a shelter")
-    @Schema(description = "Get all pets in a shelter")
-    public ResponseEntity<List<PetDTO>> getAllPetsInShelter(@PathVariable Long id) {
+    @GetMapping(value = "/{id}/allPets", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PetDTO>> getAllPetsInShelter(@PathVariable @NotNull @Positive Long id) {
         return new ResponseEntity<>(shelterService.getAllPetsInShelter(id), HttpStatus.OK);
     }
 }

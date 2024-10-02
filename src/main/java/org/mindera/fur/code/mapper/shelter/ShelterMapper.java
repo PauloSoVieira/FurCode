@@ -1,4 +1,4 @@
-package org.mindera.fur.code.mapper;
+package org.mindera.fur.code.mapper.shelter;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
