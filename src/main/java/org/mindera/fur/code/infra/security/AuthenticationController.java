@@ -30,6 +30,15 @@ public class AuthenticationController {
     private final PersonRepository personRepository;
     private final PersonMapper personMapper;
 
+    /**
+     * Authentication controller constructor.
+     *
+     * @param tokenService
+     * @param authenticationManager
+     * @param personRepository
+     * @param personMapper
+     */
+
     @Autowired
     public AuthenticationController(TokenService tokenService,
                                     AuthenticationManager authenticationManager,
@@ -40,6 +49,13 @@ public class AuthenticationController {
         this.personRepository = personRepository;
         this.personMapper = personMapper;
     }
+
+    /**
+     * Login a person.
+     *
+     * @param personAuthenticationDTO
+     * @return
+     */
 
     @Schema(description = "Login a person")
     @PostMapping("/login")
