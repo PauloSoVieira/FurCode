@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @Schema(description = "RequestDetail update DTO")
 public class RequestDetailUpdateDTO {
 
+    @Schema(description = "The id of the request detail")
+    private Long id;
+
     @Schema(description = "The id of the person", example = "1")
     private Long personId;
 

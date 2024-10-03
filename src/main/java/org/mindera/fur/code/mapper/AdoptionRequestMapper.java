@@ -36,16 +36,16 @@ public interface AdoptionRequestMapper {
     /**
      * Converts an AdoptionRequestDTO object to an AdoptionRequest object.
      *
-     * @param adoptionRequestDTO
-     * @return
+     * @param adoptionRequestDTO The AdoptionRequestDTO object to convert.
+     * @return The converted AdoptionRequest object.
      */
     AdoptionRequest toModel(AdoptionRequestDTO adoptionRequestDTO);
 
     /**
      * Converts an AdoptionRequestCreationDTO object to an AdoptionRequest object.
      *
-     * @param adoptionRequestCreationDTO
-     * @return
+     * @param adoptionRequestCreationDTO The AdoptionRequestCreationDTO object to convert.
+     * @return The converted AdoptionRequest object.
      */
     @Mapping(source = "personId", target = "person.id")
     @Mapping(source = "petId", target = "pet.id")
@@ -55,16 +55,16 @@ public interface AdoptionRequestMapper {
     /**
      * Converts a list of AdoptionRequestDTO objects to a list of AdoptionRequest objects.
      *
-     * @param adoptionRequest
-     * @return
+     * @param adoptionRequest The list of AdoptionRequestDTO objects to convert.
+     * @return The converted list of AdoptionRequest objects.
      */
     List<AdoptionRequestDTO> toDTO(List<AdoptionRequest> adoptionRequest);
 
     /**
      * Converts a list of AdoptionRequest objects to a list of AdoptionRequestDTO objects.
      *
-     * @param adoptionRequestDTO
-     * @return
+     * @param adoptionRequestDTO The list of AdoptionRequest objects to convert.
+     * @return The converted list of AdoptionRequestDTO objects.
      */
     List<AdoptionRequest> toModel(List<AdoptionRequestDTO> adoptionRequestDTO);
 }

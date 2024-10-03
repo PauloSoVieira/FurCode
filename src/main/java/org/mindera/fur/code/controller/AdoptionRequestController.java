@@ -44,27 +44,30 @@ public class AdoptionRequestController {
     /**
      * Endpoint to create an adoption request.
      *
-     * @param adoptionRequestCreationDTO The AdoptionRequestCreationDTO object.
+     * @param creationDto The AdoptionRequestCreationDTO object.
      * @return The created AdoptionRequestDTO object.
      */
     @Operation(summary = "Create an adoption request", description = "Creates a new adoption request with the provided data")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@RequestBody @Valid AdoptionRequestCreationDTO adoptionRequestCreationDTO) {
-        return new ResponseEntity<>(adoptionRequestService.createAdoptionRequest(adoptionRequestCreationDTO), HttpStatus.CREATED);
+    public ResponseEntity<AdoptionRequestDTO> createAdoptionRequest(@RequestBody @Valid AdoptionRequestCreationDTO creationDto) {
+        AdoptionRequestDTO adoptionDto = adoptionRequestService.createAdoptionRequest(creationDto);
+        return new ResponseEntity<>(adoptionDto, HttpStatus.CREATED);
     }
 
     /**
      * Endpoint to update an adoption request.
      *
-     * @param id                 The id of the adoption request.
-     * @param dto The AdoptionRequestUpdateDTO object.
+     * @param id         The id of the adoption request.
+     * @param updateDto The AdoptionRequestUpdateDTO object.
      * @return The updated AdoptionRequestDTO object.
      */
     @Operation(summary = "Update an adoption request", description = "Updates an adoption request with the provided data")
-    @PatchMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdoptionRequestDTO> updateAdoptionRequest(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid AdoptionRequestUpdateDTO dto) {
-        AdoptionRequestDTO adoptionRequestDTO = adoptionRequestService.updateAdoptionRequest(id, dto);
-        return new ResponseEntity<>(adoptionRequestDTO, HttpStatus.OK);
+    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AdoptionRequestDTO> updateAdoptionRequest(
+            @PathVariable @NotNull @Positive Long id,
+            @RequestBody @Valid AdoptionRequestUpdateDTO updateDto) {
+        AdoptionRequestDTO adoptionDto = adoptionRequestService.updateAdoptionRequest(id, updateDto);
+        return new ResponseEntity<>(adoptionDto, HttpStatus.OK);
     }
 
     /**
@@ -75,7 +78,8 @@ public class AdoptionRequestController {
     @Operation(summary = "Get all adoption requests", description = "Returns a list of all adoption requests")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AdoptionRequestDTO>> getAllAdoptionRequests() {
-        return new ResponseEntity<>(adoptionRequestService.getAllAdoptionRequests(), HttpStatus.OK);
+        List<AdoptionRequestDTO> adoptionDtoList = adoptionRequestService.getAllAdoptionRequests();
+        return new ResponseEntity<>(adoptionDtoList, HttpStatus.OK);
     }
 
     /**
@@ -87,7 +91,8 @@ public class AdoptionRequestController {
     @Operation(summary = "Get an adoption request by id", description = "Returns an adoption request with the specified id")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdoptionRequestDTO> getAdoptionRequestById(@PathVariable @NotNull @Positive Long id) {
-        return new ResponseEntity<>(adoptionRequestService.getAdoptionRequestById(id), HttpStatus.OK);
+        AdoptionRequestDTO adoptionDto = adoptionRequestService.getAdoptionRequestById(id);
+        return new ResponseEntity<>(adoptionDto, HttpStatus.OK);
     }
 
     /**
@@ -112,25 +117,24 @@ public class AdoptionRequestController {
     @Operation(summary = "Get all request details of an adoption request", description = "Returns a list of request details for an adoption request")
     @GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RequestDetailDTO>> getAllRequestDetails(@PathVariable @NotNull @Positive Long id) {
-        return new ResponseEntity<>(adoptionRequestService.getAllRequestDetails(id), HttpStatus.OK);
+        List<RequestDetailDTO> detailDtoList = adoptionRequestService.getAllRequestDetails(id);
+        return new ResponseEntity<>(detailDtoList, HttpStatus.OK);
     }
 
     /**
      * Endpoint to create a new request detail.
      *
      * @param id                       The id of the adoption request.
-     * @param requestDetailCreationDTO The RequestDetailCreationDTO object.
+     * @param creationDto The RequestDetailCreationDTO object.
      * @return The created RequestDetailDTO object.
      */
     @Operation(summary = "Create a new request detail", description = "Creates a new request detail for an adoption request")
     @PostMapping(value = "/{id}/detail-request", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RequestDetailDTO> createRequestDetail(
             @PathVariable @NotNull @Positive Long id,
-            @RequestBody @Valid RequestDetailCreationDTO requestDetailCreationDTO
-    ) {
-        return new ResponseEntity<>(
-                adoptionRequestService.createRequestDetail(id, requestDetailCreationDTO), HttpStatus.CREATED
-        );
+            @RequestBody @Valid RequestDetailCreationDTO creationDto) {
+        RequestDetailDTO detailDto = adoptionRequestService.createRequestDetail(id, creationDto);
+        return new ResponseEntity<>(detailDto, HttpStatus.CREATED);
     }
 
     /**
@@ -144,8 +148,8 @@ public class AdoptionRequestController {
     @GetMapping("/{id}/detail-request/{detailId}")
     public ResponseEntity<RequestDetailDTO> getRequestDetailById(
             @PathVariable @NotNull @Positive Long id,
-            @PathVariable @NotNull @Positive Long detailId
-    ) {
-        return new ResponseEntity<>(adoptionRequestService.getRequestDetailById(id, detailId), HttpStatus.OK);
+            @PathVariable @NotNull @Positive Long detailId) {
+        RequestDetailDTO detailDto = adoptionRequestService.getRequestDetailById(id, detailId);
+        return new ResponseEntity<>(detailDto, HttpStatus.OK);
     }
 }
