@@ -11,6 +11,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ShelterUpdateDTO implements Serializable {
 
+    @Schema(description = "The id of the shelter", example = "1")
+    private Long id;
+
     @Size(max = 100, message = "Name must be between 1 and 100 characters")
     @Schema(description = "The name of the shelter", example = "Shelter 1")
     private String name;

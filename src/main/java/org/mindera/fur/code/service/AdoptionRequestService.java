@@ -1,21 +1,25 @@
 package org.mindera.fur.code.service;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
+import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestUpdateDTO;
 import org.mindera.fur.code.dto.form.FormDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
 import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.exceptions.adoptionRequest.AdoptionRequestNotFound;
 import org.mindera.fur.code.mapper.AdoptionRequestMapper;
 import org.mindera.fur.code.mapper.RequestDetailMapper;
-import org.mindera.fur.code.messages.adoptionRequest.AdoptionRequestMessage;
+import org.mindera.fur.code.mapper.adoption_request.AdoptionRequestUpdateMapper;
 import org.mindera.fur.code.model.AdoptionRequest;
+import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.model.RequestDetail;
+import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.form.Form;
+import org.mindera.fur.code.model.pet.Pet;
 import org.mindera.fur.code.repository.AdoptionRequestRepository;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.RequestDetailRepository;
@@ -23,29 +27,31 @@ import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.form.FormRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.service.form.FormService;
+import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 /**
  * Service class for handling AdoptionRequests.
  */
+@Validated
 @Service
-@Schema(description = "The adoption request service")
-@Tag(name = "Adoption Requests", description = "Adoption Requests")
 public class AdoptionRequestService {
 
-    private AdoptionRequestRepository adoptionRequestRepository;
-    private PetRepository petRepository;
-    private AdoptionRequestMapper adoptionRequestMapper;
-    private RequestDetailMapper requestDetailMapper;
-    private ShelterRepository shelterRepository;
-    private PersonRepository personRepository;
-    private RequestDetailService requestDetailService;
-    private RequestDetailRepository requestDetailRepository;
-    private FormService formService;
-    private FormRepository formRepository;
+    private final AdoptionRequestRepository adoptionRequestRepository;
+    private final RequestDetailService requestDetailService;
+    private final RequestDetailRepository requestDetailRepository;
+    private final FormService formService;
+    private final FormRepository formRepository;
+    private final PersonRepository personRepository;
+    private final ShelterRepository shelterRepository;
+    private final PetRepository petRepository;
+    private final PetService petService;
+    private final ShelterService shelterService;
+    private final PersonService personService;
 
     /**
      * Constructor for the AdoptionRequestService.
@@ -56,14 +62,23 @@ public class AdoptionRequestService {
      * @param personRepository          the personRepository
      * @param requestDetailService      the requestDetailService
      * @param requestDetailRepository   the requestDetailRepository
+     * @param formService               the formService
+     * @param formRepository            the formRepository
      */
     @Autowired
-    public AdoptionRequestService(AdoptionRequestRepository adoptionRequestRepository,
-                                  PetRepository petRepository,
-                                  ShelterRepository shelterRepository,
-                                  PersonRepository personRepository,
-                                  RequestDetailService requestDetailService,
-                                  RequestDetailRepository requestDetailRepository, FormService formService, FormRepository formRepository) {
+    public AdoptionRequestService(
+            AdoptionRequestRepository adoptionRequestRepository,
+            PetRepository petRepository,
+            ShelterRepository shelterRepository,
+            PersonRepository personRepository,
+            RequestDetailService requestDetailService,
+            RequestDetailRepository requestDetailRepository,
+            FormService formService,
+            FormRepository formRepository,
+            PetService petService,
+            ShelterService shelterService,
+            PersonService personService
+    ) {
         this.adoptionRequestRepository = adoptionRequestRepository;
         this.petRepository = petRepository;
         this.shelterRepository = shelterRepository;
@@ -72,72 +87,9 @@ public class AdoptionRequestService {
         this.requestDetailRepository = requestDetailRepository;
         this.formService = formService;
         this.formRepository = formRepository;
-    }
-
-    /**
-     * Validates the id.
-     *
-     * @param id the id
-     */
-    @Operation(summary = "Validates the id", description = "Validates the id")
-    private static void idValidation(Long id) {
-        if (id == null) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.ADOPTION_REQUEST_ID_CANT_BE_EMPTY);
-        }
-        if (id <= 0) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.ADOPTION_REQUEST_ID_CANT_BE_ZERO_OR_LOWER);
-        }
-    }
-
-    /**
-     * Validates shelter id.
-     *
-     * @param shelterId the shelter id
-     */
-    private static void shelterIdValidation(Long shelterId) {
-        if (shelterId == null) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.SHELTER_ID_CANT_BE_NULL);
-        }
-        if (shelterId <= 0) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.SHELTER_ID_CANT_BE_ZERO_OR_LOWER);
-        }
-        if (shelterId.equals(" ")) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.SHELTER_ID_CANT_BE_EMPTY);
-        }
-    }
-
-    /**
-     * Validates person id.
-     *
-     * @param personId the person id
-     */
-    private static void personIdValidation(Long personId) {
-        if (personId == null) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PERSON_ID_CANT_BE_NULL);
-        }
-        if (personId <= 0) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PERSON_ID_CANT_BE_ZERO_OR_LOWER);
-        }
-        if (personId.equals(" ")) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PERSON_ID_CANT_BE_EMPTY);
-        }
-    }
-
-    /**
-     * Validates pet id.
-     *
-     * @param petId the pet id
-     */
-    private static void petIdValidation(Long petId) {
-        if (petId == null) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PET_ID_CANT_BE_NULL);
-        }
-        if (petId <= 0) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PET_ID_CANT_BE_ZERO_OR_LOWER);
-        }
-        if (petId.equals(" ")) {
-            throw new AdoptionRequestNotFound(AdoptionRequestMessage.PET_ID_CANT_BE_EMPTY);
-        }
+        this.petService = petService;
+        this.shelterService = shelterService;
+        this.personService = personService;
     }
 
     /**
@@ -149,16 +101,17 @@ public class AdoptionRequestService {
      * @return DTO representing the created adoption request
      * @throws RuntimeException if the pet, shelter, person, or form is not found
      */
-    @Operation(summary = "Create a new adoption request", description = "Creates a new adoption request with associated pet, shelter, person, and form")
     @Transactional
-    public AdoptionRequestDTO createAdoptionRequest(AdoptionRequestCreationDTO dto) {
+    @Operation(summary = "Create a new adoption request", description = "Creates a new adoption request with associated pet, shelter, person, and form")
+    public AdoptionRequestDTO createAdoptionRequest(@Valid AdoptionRequestCreationDTO dto) {
         AdoptionRequest request = new AdoptionRequest();
 
-        request.setPet(petRepository.findById(dto.getPetId()).orElseThrow(() -> new RuntimeException("Pet not found")));
-        request.setShelter(shelterRepository.findById(dto.getShelterId()).orElseThrow(() -> new RuntimeException("Shelter not found")));
-        request.setPerson(personRepository.findById(dto.getPersonId()).orElseThrow(() -> new RuntimeException("Person not found")));
+        request.setPet(findAndAssignPet(dto.getPetId()));
+        request.setShelter(findAndAssignShelter(dto.getShelterId()));
+        request.setPerson(findAndAssignPerson(dto.getPersonId()));
 
         FormDTO formDTO = formService.createFormFromTemplate("adoption-template");
+
         Form form = formRepository.findById(formDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Form not found after creation"));
         request.setForm(form);
@@ -167,22 +120,26 @@ public class AdoptionRequestService {
         return AdoptionRequestMapper.INSTANCE.toDTO(savedRequest);
     }
 
-
     /**
      * Updates an adoption request with the provided data.
      *
      * @param id                 the id
-     * @param adoptionRequestDTO the adoption request dto
+     * @param updateDto the adoption request dto
      * @return the updated adoption request dto
      */
+    @Transactional
     @Operation(summary = "Update an adoption request", description = "Updates an adoption request with the provided data")
-    public AdoptionRequestDTO updateAdoptionRequest(Long id, AdoptionRequestDTO adoptionRequestDTO) {
-        idValidation(id);
+    public AdoptionRequestDTO updateAdoptionRequest(Long id, AdoptionRequestUpdateDTO updateDto) {
+
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
-        AdoptionRequest updateAdoptionRequest = adoptionRequestMapper.INSTANCE.toModel(adoptionRequestDTO);
-        updateAdoptionRequest.setRequestDetails(adoptionRequest.getRequestDetails());
-        adoptionRequestRepository.save(updateAdoptionRequest);
-        return adoptionRequestMapper.INSTANCE.toDTO(updateAdoptionRequest);
+
+        AdoptionRequest updatedAdoptedRequest = AdoptionRequestUpdateMapper.INSTANCE.updateAdoptionRequestFromDto(updateDto, adoptionRequest);
+
+        // AdoptionRequest updateAdoptionRequest = AdoptionRequestMapper.INSTANCE.toModel(adoptionRequestDTO);
+        //updateAdoptionRequest.setRequestDetails(adoptionRequest.getRequestDetails());
+
+        updatedAdoptedRequest = adoptionRequestRepository.save(updatedAdoptedRequest);
+        return AdoptionRequestMapper.INSTANCE.toDTO(updatedAdoptedRequest);
     }
 
     /**
@@ -193,7 +150,7 @@ public class AdoptionRequestService {
     @Operation(summary = "Get all adoption requests", description = "Returns a list of all adoption requests")
     public List<AdoptionRequestDTO> getAllAdoptionRequests() {
         List<AdoptionRequest> adoptionRequest = adoptionRequestRepository.findAll();
-        return adoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
+        return AdoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
     }
 
     /**
@@ -204,9 +161,8 @@ public class AdoptionRequestService {
      */
     @Operation(summary = "Get an adoption request by id", description = "Returns an adoption request with the specified id")
     public AdoptionRequestDTO getAdoptionRequestById(Long id) {
-        idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
-        return adoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
+        return AdoptionRequestMapper.INSTANCE.toDTO(adoptionRequest);
     }
 
     /**
@@ -214,10 +170,12 @@ public class AdoptionRequestService {
      *
      * @param id the id
      */
+    @Transactional
     @Operation(summary = "Delete an adoption request by id", description = "Deletes an adoption request with the specified id")
     public void deleteAdoptionRequestById(Long id) {
-        idValidation(id);
-        AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
+        AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Adoption request with id %s not found", id)));
+
         adoptionRequestRepository.delete(adoptionRequest);
     }
 
@@ -237,11 +195,9 @@ public class AdoptionRequestService {
      */
     @Operation(summary = "Get all request details by id", description = "Returns a list of request details for the specified adoption request")
     public List<RequestDetailDTO> getAllRequestDetails(Long id) {
-        idValidation(id);
         AdoptionRequest adoptionRequest = adoptionRequestRepository.findById(id).orElseThrow();
         List<RequestDetail> requestDetails = requestDetailRepository.findAllByAdoptionRequestId(adoptionRequest.getId());
-        return requestDetailMapper.INSTANCE.toDTO(requestDetails);
-
+        return requestDetails.stream().map(RequestDetailMapper.INSTANCE::toDTO).toList();
     }
 
     /**
@@ -253,8 +209,9 @@ public class AdoptionRequestService {
      */
     @Operation(summary = "Create a request detail", description = "Creates a new request detail for the specified adoption request")
     public RequestDetailDTO createRequestDetail(Long id, RequestDetailCreationDTO requestDetailCreationDTO) {
-        idValidation(id);
-        adoptionRequestRepository.findById(id).orElseThrow(() -> new AdoptionRequestNotFound("AdoptionRequest not found"));
+        adoptionRequestRepository.findById(id)
+                .orElseThrow(() -> new AdoptionRequestNotFound("AdoptionRequest not found"));
+
         return requestDetailService.createRequestDetail(id, requestDetailCreationDTO);
     }
 
@@ -267,8 +224,21 @@ public class AdoptionRequestService {
      */
     @Operation(summary = "Get a request detail by id", description = "Returns a request detail with the specified id for the specified adoption request")
     public RequestDetailDTO getRequestDetailById(Long id, Long detailId) {
-        idValidation(id);
-        adoptionRequestRepository.findById(id).orElseThrow();
+        adoptionRequestRepository.findById(id)
+                .orElseThrow(() -> new AdoptionRequestNotFound("AdoptionRequest not found"));
+
         return requestDetailService.getRequestDetailById(detailId);
+    }
+
+    private Pet findAndAssignPet(Long id) {
+        return petService.findActivePetEntityById(id);
+    }
+
+    private Shelter findAndAssignShelter(Long id) {
+        return shelterService.findActiveShelterEntityById(id);
+    }
+
+    private Person findAndAssignPerson(Long id) {
+        return personService.getPersonEntityById(id);
     }
 }

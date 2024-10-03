@@ -21,10 +21,6 @@ import org.mindera.fur.code.repository.ShelterRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -74,7 +70,7 @@ public class ShelterService {
      *
      * @return a list of all active shelters.
      */
-    @Cacheable(cacheNames = "shelters")
+//    @Cacheable(cacheNames = "shelters")
     public List<ShelterDTO> getAllShelters() {
         List<Shelter> shelters = shelterRepository.findAllActive();
         return shelters.stream().map(ShelterMapper.INSTANCE::toDTO).toList();
@@ -86,7 +82,7 @@ public class ShelterService {
      * @param id the ID of the shelter.
      * @return The shelter.
      */
-    @Cacheable(cacheNames = "shelter", key = "#id")
+//    @Cacheable(cacheNames = "shelter", key = "#id")
     public ShelterDTO getShelterById(@NotNull @Positive Long id) {
         Shelter shelter = findActiveShelterEntityById(id);
         return ShelterMapper.INSTANCE.toDTO(shelter);
@@ -98,9 +94,9 @@ public class ShelterService {
      * @param shelterCreationDTO The DTO containing shelter creation data.
      * @return The created shelter.
      */
+//    @CachePut(cacheNames = "shelter", key = "#result.id")
+//    @CacheEvict(cacheNames = "shelters", allEntries = true)
     @Transactional
-    @CachePut(cacheNames = "shelter", key = "#result.id")
-    @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO createShelter(@Valid ShelterCreationDTO shelterCreationDTO) {
         Shelter shelter = ShelterMapper.INSTANCE.toModel(shelterCreationDTO);
         shelter = shelterRepository.save(shelter);
@@ -114,9 +110,9 @@ public class ShelterService {
      * @param shelterUpdateDTO The DTO containing updated pet information.
      * @throws EntityNotFoundException if the shelter with the specified ID is not found
      */
+//    @CachePut(cacheNames = "shelter", key = "#id")
+//    @CacheEvict(cacheNames = "shelters", allEntries = true)
     @Transactional
-    @CachePut(cacheNames = "shelter", key = "#id")
-    @CacheEvict(cacheNames = "shelters", allEntries = true)
     public ShelterDTO updateShelter(@NotNull @Positive Long id, @Valid ShelterUpdateDTO shelterUpdateDTO) {
         Shelter shelter = findActiveShelterEntityById(id);
 
@@ -132,11 +128,11 @@ public class ShelterService {
      * @param id the ID of the shelter to be soft deleted
      * @throws EntityNotFoundException if the shelter with the specified ID is not found
      */
+//    @Caching(evict = {
+//            @CacheEvict(cacheNames = "shelter", key = "#id"),
+//            @CacheEvict(cacheNames = "shelters", allEntries = true)
+//    })
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "shelter", key = "#id"),
-            @CacheEvict(cacheNames = "shelters", allEntries = true)
-    })
     public void softDeleteShelter(@NotNull @Positive Long id) {
         Shelter shelter = findActiveShelterEntityById(id);
         shelter.setDeletedAt(LocalDateTime.now());
