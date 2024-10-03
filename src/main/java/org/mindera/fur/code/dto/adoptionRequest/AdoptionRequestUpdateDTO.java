@@ -12,6 +12,9 @@ import java.util.Set;
 @Schema(description = "A request to adopt a pet")
 public class AdoptionRequestUpdateDTO {
 
+    @Schema(description = "The id of the adoption request")
+    private Long id;
+
     @Schema(description = "The id of the shelter", example = "1")
     private Long shelterId;
 

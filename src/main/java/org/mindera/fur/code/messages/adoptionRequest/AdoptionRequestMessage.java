@@ -71,4 +71,14 @@ public class AdoptionRequestMessage {
      * Message for when the adoption request id is zero or lower.
      */
     public static final String ADOPTION_REQUEST_ID_CANT_BE_ZERO_OR_LOWER = "Adoption request id is not positive";
+
+    /**
+     * Message for when the adoption request is not found.
+     */
+    public static final String ADOPTION_REQUEST_NOT_FOUND = "Adoption request not found with id ";
+
+    /**
+     * Message for when the form is not found.
+     */
+    public static final String FORM_NOT_FOUND = "Form not found with id ";
 }
