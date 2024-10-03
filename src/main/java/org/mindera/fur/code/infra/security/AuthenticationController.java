@@ -25,38 +25,42 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 
-
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
     private final PersonRepository personRepository;
-    private PersonMapper personMapper;
-
+    private final PersonMapper personMapper;
 
     /**
-     * Constructor for AuthenticationController
+     * Authentication controller constructor.
      *
      * @param tokenService
      * @param authenticationManager
      * @param personRepository
+     * @param personMapper
      */
+
     @Autowired
-    public AuthenticationController(TokenService tokenService, AuthenticationManager authenticationManager, PersonRepository personRepository) {
+    public AuthenticationController(TokenService tokenService,
+                                    AuthenticationManager authenticationManager,
+                                    PersonRepository personRepository,
+                                    PersonMapper personMapper) {
         this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
         this.personRepository = personRepository;
+        this.personMapper = personMapper;
     }
 
     /**
-     * Login a person
+     * Login a person.
      *
-     * @param personAuthenticationDTO The person authentication information
-     * @return The login response
+     * @param personAuthenticationDTO
+     * @return
      */
+
     @Schema(description = "Login a person")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid PersonAuthenticationDTO personAuthenticationDTO) {
         try {
-
             if (personAuthenticationDTO.getEmail() == null || personAuthenticationDTO.getPassword() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, TokenMessage.INVALID_EMAIL_OR_PASSWORD);
             }
@@ -72,13 +76,15 @@ public class AuthenticationController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, TokenMessage.INVALID_EMAIL_OR_PASSWORD);
             }
 
-            PersonDTO personDTO = personMapper.INSTANCE.toDTO(person);
+            PersonDTO personDTO = personMapper.toDTO(person);
+
             String token = tokenService.generateToken(personDTO);
-            return new ResponseEntity<>(new LoginResponseDTO(token), HttpStatus.OK);
+
+            LoginResponseDTO response = LoginResponseDTO.create(personDTO, token);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(new LoginResponseDTO(TokenMessage.INVALID_EMAIL_OR_PASSWORD), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(LoginResponseDTO.create(null, TokenMessage.INVALID_EMAIL_OR_PASSWORD), HttpStatus.BAD_REQUEST);
         }
-    }
-
-}
+    }}

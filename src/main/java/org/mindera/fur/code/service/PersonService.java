@@ -19,7 +19,7 @@ import org.mindera.fur.code.dto.shelterPersonRoles.ShelterPersonRolesDTO;
 import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.infra.security.TokenService;
 import org.mindera.fur.code.mapper.PersonMapper;
-import org.mindera.fur.code.mapper.ShelterPersonRolesMapper;
+import org.mindera.fur.code.mapper.shelter.ShelterPersonRolesMapper;
 import org.mindera.fur.code.messages.email.EmailMessages;
 import org.mindera.fur.code.messages.person.PersonMessages;
 import org.mindera.fur.code.model.*;
