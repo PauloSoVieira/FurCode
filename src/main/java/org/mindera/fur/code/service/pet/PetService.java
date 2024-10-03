@@ -21,10 +21,6 @@ import org.mindera.fur.code.repository.pet.PetRecordRepository;
 import org.mindera.fur.code.repository.pet.PetRepository;
 import org.mindera.fur.code.repository.pet.PetTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -54,8 +50,8 @@ public class PetService {
         this.petRepository = petRepository;
         this.petRecordRepository = petRecordRepository;
         this.petTypeRepository = petTypeRepository;
-        this.shelterRepository = shelterRepository;
         this.favoriteRepository = favoriteRepository;
+        this.shelterRepository = shelterRepository;
     }
 
     /**
@@ -63,7 +59,7 @@ public class PetService {
      *
      * @return a list of all active pets
      */
-    @Cacheable(cacheNames = "pets")
+//    @Cacheable(cacheNames = "pets")
     public List<PetDTO> findAllPets() {
         List<Pet> pets = petRepository.findAllActive();
         return pets.stream().map(PetMapper.INSTANCE::toDTO).toList();
@@ -76,7 +72,7 @@ public class PetService {
      * @return The pet.
      * @throws EntityNotFoundException if the pet with the specified ID is not found.
      */
-    @Cacheable(cacheNames = "pet", key = "#id")
+//    @Cacheable(cacheNames = "pet", key = "#id")
     public PetDTO findPetById(@NotNull @Positive Long id) {
         Pet pet = findActivePetEntityById(id);
         return PetMapper.INSTANCE.toDTO(pet);
@@ -88,9 +84,9 @@ public class PetService {
      * @param petCreateDTO The DTO containing pet creation data.
      * @return The created pet.
      */
+//    @CachePut(cacheNames = "pet", key = "#result.id")
+//    @CacheEvict(cacheNames = "pets", allEntries = true)
     @Transactional
-    @CachePut(cacheNames = "pet", key = "#result.id")
-    @CacheEvict(cacheNames = "pets", allEntries = true)
     public PetDTO addPet(@Valid PetCreateDTO petCreateDTO) {
         Pet pet = PetMapper.INSTANCE.toModel(petCreateDTO);
 
@@ -112,9 +108,9 @@ public class PetService {
      * @param petUpdateDTO The DTO containing updated pet information.
      * @throws EntityNotFoundException if the pet with the specified ID is not found.
      */
+//    @CachePut(cacheNames = "pet", key = "#id")
+//    @CacheEvict(cacheNames = "pets", allEntries = true)
     @Transactional
-    @CachePut(cacheNames = "pet", key = "#id")
-    @CacheEvict(cacheNames = "pets", allEntries = true)
     public PetDTO updatePet(@NotNull @Positive Long id, @Valid PetUpdateDTO petUpdateDTO) {
         Pet pet = findActivePetEntityById(id);
 
@@ -133,11 +129,11 @@ public class PetService {
      * @param id the ID of the pet to be soft deleted
      * @throws EntityNotFoundException if the pet with the specified ID is not found
      */
+//    @Caching(evict = {
+//            @CacheEvict(cacheNames = "pet", key = "#id"),
+//            @CacheEvict(cacheNames = "pets", allEntries = true)
+//    })
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "pet", key = "#id"),
-            @CacheEvict(cacheNames = "pets", allEntries = true)
-    })
     public void softDeletePet(@NotNull @Positive Long id) {
         Pet pet = findActivePetEntityById(id);
         pet.setDeletedAt(LocalDateTime.now());
@@ -150,7 +146,7 @@ public class PetService {
      * @param id The ID of the pet.
      * @return A list of pet records.
      */
-    @Cacheable(cacheNames = "record", key = "#id")
+//    @Cacheable(cacheNames = "record", key = "#id")
     public List<PetRecordDTO> getAllPetRecordsByPetId(@NotNull @Positive Long id) {
         Pet pet = findActivePetEntityById(id);
         return pet.getPetRecords().stream().map(PetRecordMapper.INSTANCE::toDTO).toList();
@@ -164,8 +160,8 @@ public class PetService {
      * @return The pet record.
      * @throws EntityNotFoundException if the pet with the specified ID is not found.
      */
+//    @CacheEvict(cacheNames = "record", key = "#id")
     @Transactional
-    @CacheEvict(cacheNames = "record", key = "#id")
     public PetRecordDTO addPetRecord(@NotNull @Positive Long id, @Valid PetRecordCreateDTO petRecordCreateDTO) {
         Pet pet = findActivePetEntityById(id);
 
@@ -206,7 +202,7 @@ public class PetService {
     }
 
     private Shelter findAndAssignShelter(Long id) {
-        return shelterRepository.findById(id)
+        return shelterRepository.findActiveById(id)
                 .orElseThrow(() -> new EntityNotFoundException(PetMessages.SHELTER_NOT_FOUND + id));
     }
 

@@ -3,8 +3,9 @@ package org.mindera.fur.code.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.mindera.fur.code.model.interfaces.SoftDeletable;
 import org.mindera.fur.code.model.pet.Pet;
 
@@ -15,8 +16,9 @@ import java.util.Set;
 /**
  * Class representing a Shelter.
  */
+@Getter
+@Setter
 @Entity
-@Data
 @NoArgsConstructor
 @Table(name = "shelter")
 public class Shelter implements SoftDeletable {
@@ -106,9 +108,5 @@ public class Shelter implements SoftDeletable {
     @Override
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
-    }
-
-    public Shelter(Long shelterId) {
-        this.id = shelterId;
     }
 }
