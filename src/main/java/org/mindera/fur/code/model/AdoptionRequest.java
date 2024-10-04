@@ -7,8 +7,7 @@ import lombok.Setter;
 import org.mindera.fur.code.model.form.Form;
 import org.mindera.fur.code.model.pet.Pet;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
 
 /**
  * Class representing an adoption request.
@@ -40,6 +39,13 @@ public class AdoptionRequest {
     @JoinColumn(name = "form_id", nullable = false)
     private Form form;
 
-    @OneToMany(mappedBy = "adoptionRequest", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<RequestDetail> requestDetails = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state")
+    private State state;
+
+    @Column(name = "date")
+    private LocalDate date;
+
+//    @OneToMany(mappedBy = "adoptionRequest", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private Set<RequestDetail> requestDetails = new HashSet<>();
 }

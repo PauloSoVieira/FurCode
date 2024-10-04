@@ -1,7 +1,6 @@
 package org.mindera.fur.code.model.pet;
 
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
