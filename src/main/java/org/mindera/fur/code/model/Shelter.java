@@ -38,6 +38,7 @@ public class Shelter implements SoftDeletable {
     private String vat;
 
     @NotBlank(message = "Email can't be empty")
+    @Email(message = "Email must be valid")
     @Size(max = 50, message = "Email must be between 1 and 50 characters")
     @Column(nullable = false)
     private String email;
@@ -47,7 +48,6 @@ public class Shelter implements SoftDeletable {
     @Column(nullable = false)
     private String address1;
 
-    @NotBlank(message = "Address2 can't be empty")
     @Size(max = 200, message = "Address2 must be between 1 and 200 characters")
     @Column(nullable = false)
     private String address2;

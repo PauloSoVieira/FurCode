@@ -2,6 +2,8 @@ package org.mindera.fur.code.controller;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.mindera.fur.code.aspect.roleauth.RequiresRole;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
@@ -71,19 +73,18 @@ public class PersonController {
     /**
      * Add a person to a shelter.
      *
-     * @param request The request containing the person id and shelter id.
+     * @param personId The person id.
+     * @param shelterId The shelter id.
      * @return The shelter person roles DTO.
      */
 
     @RequiresRole(value = Role.ADMIN, shelterIdParam = 1)
-    @PostMapping("/add-person-to-shelter")
+    @PostMapping("/add-person-to-shelter/{personId}/{shelterId}")
     @Schema(description = "Add a person to a shelter")
-    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(@RequestBody AddPersonToShelterRequest request) {
-        return new ResponseEntity<>(personService.addPersonToShelter(
-                request.getPersonId(),
-                request.getShelterId()
-                ),
-                HttpStatus.OK);
+    public ResponseEntity<ShelterPersonRolesDTO> addPersonToShelter(
+            @PathVariable @NotNull @Positive Long personId,
+            @PathVariable @NotNull @Positive Long shelterId) {
+        return new ResponseEntity<>(personService.addPersonToShelter(personId, shelterId), HttpStatus.OK);
     }
 
     /**
@@ -203,7 +204,7 @@ public class PersonController {
     }
 
 
-    @Data
+/*    @Data
     @Schema(description = "Request object for adding a person to a shelter.")
     public static class AddPersonToShelterRequest {
 
@@ -212,5 +213,5 @@ public class PersonController {
 
         @Schema(description = "ID of the shelter to which the person is being added", example = "2", required = true)
         private Long shelterId;
-    }
+    }*/
 }

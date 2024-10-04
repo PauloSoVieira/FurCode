@@ -1,12 +1,14 @@
 package org.mindera.fur.code.dto.adoptionRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
-import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
+import org.mindera.fur.code.model.State;
 
-import java.util.Set;
+import java.time.LocalDate;
 
 /**
  * DTO for creating an adoption request.
@@ -30,9 +32,13 @@ public class AdoptionRequestCreationDTO {
     @Schema(description = "The id of the pet", example = "1")
     private Long petId;
 
-    @NotNull(message = "Request details must be provided")
-    @Schema(description = "The request details of the adoption request")
-    private Set<RequestDetailDTO> requestDetails;
+    @Enumerated(EnumType.STRING)
+    @Schema(description = "The state of the adoption request", example = "SENT")
+    private State state;
+
+//    @NotNull(message = "Request details must be provided")
+//    @Schema(description = "The request details of the adoption request")
+//    private Set<RequestDetailDTO> requestDetails;
 
     //TODO VERIFY HOW TO LEAVE SOMETHING TO SENT BY DEFAULT
 }

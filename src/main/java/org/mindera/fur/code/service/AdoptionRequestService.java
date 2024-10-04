@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -183,32 +184,32 @@ public class AdoptionRequestService {
         return RequestDetailMapper.INSTANCE.toDTO(requestDetails);
     }
 
-    /**
-     * Creates a request detail.
-     *
-     * @param id                       the id
-     * @param creationDTO the request detail creation dto
-     * @return the request detail dto
-     */
-//    @CacheEvict(cacheNames = "requestDetails", key = "#id")
-    @Transactional
-    public RequestDetailDTO createRequestDetail(@NotNull @Positive Long id, @Valid RequestDetailCreationDTO creationDTO) {
-        findAndAssignAdoptionRequest(id);
-        return requestDetailService.createRequestDetail(id, creationDTO);
-    }
+//    /**
+//     * Creates a request detail.
+//     *
+//     * @param id                       the id
+//     * @param creationDTO the request detail creation dto
+//     * @return the request detail dto
+//     */
+////    @CacheEvict(cacheNames = "requestDetails", key = "#id")
+//    @Transactional
+//    public RequestDetailDTO createRequestDetail(@NotNull @Positive Long id, @Valid RequestDetailCreationDTO creationDTO) {
+//        findAndAssignAdoptionRequest(id);
+//        return requestDetailService.createRequestDetail(id, creationDTO);
+//    }
 
-    /**
-     * Gets a request detail by id.
-     *
-     * @param id       the id
-     * @param detailId the detail id
-     * @return the request detail dto
-     */
-//    @Cacheable(cacheNames = "requestDetail", key = "#detailId")
-    public RequestDetailDTO getRequestDetailById(Long id, Long detailId) {
-        findAndAssignAdoptionRequest(id);
-        return requestDetailService.getRequestDetailById(detailId);
-    }
+//    /**
+//     * Gets a request detail by id.
+//     *
+//     * @param id       the id
+//     * @param detailId the detail id
+//     * @return the request detail dto
+//     */
+////    @Cacheable(cacheNames = "requestDetail", key = "#detailId")
+//    public RequestDetailDTO getRequestDetailById(Long id, Long detailId) {
+//        findAndAssignAdoptionRequest(id);
+//        return requestDetailService.getRequestDetailById(detailId);
+//    }
 
     // Helper methods
     private AdoptionRequest buildAdoptionRequest(AdoptionRequestCreationDTO creationDto) {
@@ -216,6 +217,8 @@ public class AdoptionRequestService {
         adoptionRequest.setPet(findAndAssignPet(creationDto.getPetId()));
         adoptionRequest.setShelter(findAndAssignShelter(creationDto.getShelterId()));
         adoptionRequest.setPerson(findAndAssignPerson(creationDto.getPersonId()));
+        adoptionRequest.setState(creationDto.getState());
+        adoptionRequest.setDate(LocalDate.now());
         adoptionRequest.setForm(createAndAssignForm());
         return adoptionRequest;
     }
