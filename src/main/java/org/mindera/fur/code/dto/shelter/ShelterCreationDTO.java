@@ -66,4 +66,13 @@ public class ShelterCreationDTO {
     @NotNull(message = "CreationDate can't be null")
     @Schema(description = "The creation date of the shelter", example = "2023-01-01")
     private LocalDate creationDate;
+
+    /**
+     * Constructor with parameters.
+     *
+     * @param name The name of the shelter.
+     */
+    public ShelterCreationDTO(String name) {
+        this.name = name;
+    }
 }
