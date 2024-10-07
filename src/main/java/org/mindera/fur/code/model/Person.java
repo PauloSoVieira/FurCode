@@ -65,6 +65,10 @@ public class Person implements UserDetails {
     @Schema(description = "The donations of the person", required = true)
     private Set<Donation> donations;
 
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "The shelters of the person", required = true)
+    private Set<Shelter> shelters;
+
     /**
      * Constructor with id.
      *
