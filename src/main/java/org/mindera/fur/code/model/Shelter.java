@@ -32,6 +32,7 @@ public class Shelter implements SoftDeletable {
     @Column(nullable = false)
     private String name;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Vat can't be empty")
     @Size(max = 50, message = "Vat must be between 1 and 50 characters")
     @Column(nullable = false)
@@ -48,20 +49,24 @@ public class Shelter implements SoftDeletable {
     @Column(nullable = false)
     private String address1;
 
+    @NotBlank(message = "Address2 can't be empty")
     @Size(max = 200, message = "Address2 must be between 1 and 200 characters")
     @Column(nullable = false)
     private String address2;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Postal code can't be empty")
     @Size(max = 20, message = "Postal code must be between 1 and 20 characters")
     @Column(nullable = false)
     private String postalCode;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Phone can't be empty")
     @Size(max = 20, message = "Phone must be between 1 and 20 characters")
     @Column(nullable = false)
     private String phone;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Size can't be empty")
     @Size(max = 20, message = "Size must be between 1 and 20 characters")
     @Column(nullable = false)

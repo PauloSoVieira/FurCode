@@ -25,6 +25,7 @@ public class ShelterDTO implements Serializable {
     @Schema(description = "The name of the shelter", example = "Shelter 1")
     private String name;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Vat can't be empty")
     @Size(max = 50, message = "Vat must be between 1 and 50 characters")
     @Schema(description = "The vat of the shelter", example = "12345")
@@ -46,16 +47,19 @@ public class ShelterDTO implements Serializable {
     @Schema(description = "The address2 of the shelter", example = "Apartment 1")
     private String address2;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Postal code can't be empty")
     @Size(max = 20, message = "Postal code must be between 1 and 20 characters")
     @Schema(description = "The postal code of the shelter", example = "12345")
     private String postalCode;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Phone can't be empty")
     @Size(max = 20, message = "Phone must be between 1 and 20 characters")
     @Schema(description = "The phone of the shelter", example = "1234567890")
     private String phone;
 
+    @Pattern(regexp = "\\d+", message = "This field must contain only numbers")
     @NotBlank(message = "Size can't be empty")
     @Size(max = 20, message = "Size must be between 1 and 20 characters")
     @Schema(description = "The size of the shelter", example = "10")
