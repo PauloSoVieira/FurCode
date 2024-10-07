@@ -80,7 +80,7 @@ public class PetController {
      * @param petUpdateDTO The pet to update.
      */
     @Operation(summary = "Update a pet")
-    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> updatePet(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid PetUpdateDTO petUpdateDTO) {
         PetDTO petDTO = petService.updatePet(id, petUpdateDTO);
         return new ResponseEntity<>(petDTO, HttpStatus.OK);
