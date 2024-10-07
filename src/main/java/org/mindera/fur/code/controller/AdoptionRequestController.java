@@ -8,8 +8,6 @@ import jakarta.validation.constraints.Positive;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestCreationDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestDTO;
 import org.mindera.fur.code.dto.adoptionRequest.AdoptionRequestUpdateDTO;
-import org.mindera.fur.code.dto.requestDetail.RequestDetailCreationDTO;
-import org.mindera.fur.code.dto.requestDetail.RequestDetailDTO;
 import org.mindera.fur.code.service.AdoptionRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,12 +55,12 @@ public class AdoptionRequestController {
     /**
      * Endpoint to update an adoption request.
      *
-     * @param id         The id of the adoption request.
+     * @param id        The id of the adoption request.
      * @param updateDto The AdoptionRequestUpdateDTO object.
      * @return The updated AdoptionRequestDTO object.
      */
     @Operation(summary = "Update an adoption request", description = "Updates an adoption request with the provided data")
-    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdoptionRequestDTO> updateAdoptionRequest(
             @PathVariable @NotNull @Positive Long id,
             @RequestBody @Valid AdoptionRequestUpdateDTO updateDto) {
