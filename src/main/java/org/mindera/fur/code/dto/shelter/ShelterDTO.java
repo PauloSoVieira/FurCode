@@ -68,4 +68,16 @@ public class ShelterDTO implements Serializable {
     @NotNull(message = "CreationDate can't be null")
     @Schema(description = "The creation date of the shelter", example = "2023-01-01")
     private LocalDate creationDate;
+
+    @Schema(description = "The description of the shelter", example = "This is a description")
+    private String description;
+
+    @Schema(description = "The facebook url of the shelter", example = "https://www.facebook.com/furcode")
+    private String facebookUrl;
+
+    @Schema(description = "The instagram url of the shelter", example = "https://www.instagram.com/furcode")
+    private String instagramUrl;
+
+    @Schema(description = "The twitter url of the shelter", example = "https://www.twitter.com/furcode")
+    private String webPageUrl;
 }

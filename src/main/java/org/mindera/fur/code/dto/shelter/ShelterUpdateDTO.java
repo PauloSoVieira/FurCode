@@ -1,7 +1,8 @@
 package org.mindera.fur.code.dto.shelter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -49,4 +50,16 @@ public class ShelterUpdateDTO implements Serializable {
 
     @Schema(description = "The is active of the shelter", example = "true")
     private Boolean isActive;
+
+    @Schema
+    private String description;
+
+    @Schema
+    private String facebookUrl;
+
+    @Schema
+    private String instagramUrl;
+
+    @Schema
+    private String webPageUrl;
 }
