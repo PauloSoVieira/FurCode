@@ -259,7 +259,7 @@ public class PersonService {
         Person person = personRepository.findById(personId).orElseThrow(
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
         );
-        Shelter shelter = shelterRepository.findActiveById(shelterId).orElseThrow(
+        Shelter shelter = shelterRepository.findById(shelterId).orElseThrow(
                 () -> new PersonException(PersonMessages.SHELTER_NOT_FOUND)
         );
 

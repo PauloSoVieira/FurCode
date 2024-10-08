@@ -1,10 +1,13 @@
 package org.mindera.fur.code.dto.pet;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
+
+import java.time.LocalDate;
 
 /**
  * A DTO class for updating a pet.
@@ -31,10 +34,11 @@ public class PetUpdateDTO {
     @Schema(description = "The color of the pet", example = "Blue")
     private String color;
 
-    @Min(value = 1, message = "Pet age must be greater than 1")
-    @Max(value = 99, message = "Pet age must be less than 99")
-    @Schema(description = "The age of the pet", example = "3")
-    private Integer age;
+    @NotNull(message = "Pet age must be provided")
+    @PastOrPresent(message = "Pet birth date cannot be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Schema(description = "The age of the pet", example = "2023-01-01")
+    private LocalDate dateOfBirth;
 
     @Size(min = 1, max = 999, message = "Pet observation must be between 1 and 999 characters")
     @Schema(description = "The observations of the pet", example = "Healthy")

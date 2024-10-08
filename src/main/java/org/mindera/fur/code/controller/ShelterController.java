@@ -99,7 +99,7 @@ public class ShelterController {
     @Operation(summary = "Delete a shelter by id", description = "Deletes a shelter with the specified id")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteShelter(@PathVariable @NotNull @Positive Long id) {
-        shelterService.softDeleteShelter(id);
+        shelterService.deleteShelter(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

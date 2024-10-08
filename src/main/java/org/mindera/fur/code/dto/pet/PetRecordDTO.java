@@ -1,9 +1,9 @@
 package org.mindera.fur.code.dto.pet;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
  * A DTO class for a pet record.
  */
 @Data
+@NoArgsConstructor
+@Schema(description = "A pet record")
 public class PetRecordDTO implements Serializable {
 
     @Positive(message = "ID must be greater than 0")
@@ -29,7 +31,6 @@ public class PetRecordDTO implements Serializable {
     @Schema(description = "The intervention of the pet record", example = "Pet was washed")
     private String intervention;
 
-    @Valid
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
     @Schema(description = "The date of the pet record", example = "2024-08-15T11:08:13.990Z")

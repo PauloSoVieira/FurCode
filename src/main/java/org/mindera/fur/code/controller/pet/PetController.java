@@ -40,7 +40,7 @@ public class PetController {
      *
      * @return a list of all pets
      */
-    @Operation(summary = "Get all pets")
+    @Operation(summary = "Get all active pets")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetDTO>> getAllPets() {
         List<PetDTO> petDTOs = petService.findAllPets();
@@ -53,7 +53,7 @@ public class PetController {
      * @param id The ID of the pet.
      * @return The pet.
      */
-    @Operation(summary = "Get a pet by ID")
+    @Operation(summary = "Get a active pet by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetDTO> getPetById(@PathVariable @NotNull @Positive Long id) {
         PetDTO petDTO = petService.findPetById(id);
@@ -99,12 +99,12 @@ public class PetController {
     }
 
     /**
-     * Get all pet records by pet ID.
+     * Get all active pet records by pet ID.
      *
-     * @param id The ID of the pet.
-     * @return A list of pet records.
+     * @param id The ID of the active pet.
+     * @return A list of all active pet records.
      */
-    @Operation(summary = "Get all pet records by pet ID")
+    @Operation(summary = "Get all active pet records by pet ID")
     @GetMapping(value = "/{id}/record", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetRecordDTO>> getAllPetRecordsByPetId(@PathVariable @NotNull @Positive Long id) {
         List<PetRecordDTO> petRecordDTO = petService.getAllPetRecordsByPetId(id);
@@ -123,6 +123,56 @@ public class PetController {
     public ResponseEntity<PetRecordDTO> createPetRecord(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid PetRecordCreateDTO petRecordCreateDTO) {
         PetRecordDTO petRecordDTO = petService.addPetRecord(id, petRecordCreateDTO);
         return new ResponseEntity<>(petRecordDTO, HttpStatus.CREATED);
+    }
+
+    /**
+     * Retrieves all soft-deleted pets.
+     *
+     * @return List of soft-deleted pet DTOs.
+     */
+    @Operation(summary = "Get all deleted pets")
+    @GetMapping("/deleted")
+    public ResponseEntity<List<PetDTO>> getAllDeletedPets() {
+        List<PetDTO> deletedPets = petService.findAllDeletedPets();
+        return new ResponseEntity<>(deletedPets, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves a soft-deleted pet by ID.
+     *
+     * @param id The ID of the pet.
+     * @return The soft-deleted pet DTO.
+     */
+    @Operation(summary = "Get a deleted pet by ID")
+    @GetMapping("/deleted/{id}")
+    public ResponseEntity<PetDTO> getDeletedPetById(@PathVariable @NotNull @Positive Long id) {
+        PetDTO petDTO = petService.findDeletedPetById(id);
+        return new ResponseEntity<>(petDTO, HttpStatus.OK);
+    }
+
+    /**
+     * Restores a soft-deleted pet.
+     *
+     * @param id The ID of the pet to restore.
+     */
+    @Operation(summary = "Restore a deleted pet")
+    @PostMapping("/restore/{id}")
+    public ResponseEntity<Void> restorePet(@PathVariable @NotNull @Positive Long id) {
+        petService.restorePet(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Retrieves all deleted pet records for a specific pet ID.
+     *
+     * @param petId The ID of the pet.
+     * @return List of soft-deleted PetRecordDTOs.
+     */
+    @Operation(summary = "Retrieves all deleted pet records for a specific pet ID")
+    @GetMapping("/{petId}/records/deleted")
+    public ResponseEntity<List<PetRecordDTO>> getDeletedPetRecordsByPetId(@PathVariable Long petId) {
+        List<PetRecordDTO> deletedPetRecords = petService.findDeletedPetRecordEntityByPetId(petId);
+        return new ResponseEntity<>(deletedPetRecords, HttpStatus.OK);
     }
 
     /**

@@ -18,6 +18,7 @@ public interface PetRecordMapper {
     @Mapping(source = "pet.id", target = "petId")
     PetRecordDTO toDTO(PetRecord petRecord);
 
+    @Mapping(source = "petId", target = "pet.id")
     PetRecord toModel(PetRecordDTO petRecordDTO);
 
     PetRecord toModel(PetRecordCreateDTO petRecordCreateDTO);

@@ -238,7 +238,7 @@ public class AdoptionRequestService {
     }
 
     private Shelter findAndAssignShelter(Long id) {
-        return shelterService.findActiveShelterEntityById(id);
+        return shelterService.findShelterEntityById(id);
     }
 
     private Person findAndAssignPerson(Long id) {

@@ -6,11 +6,9 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.mindera.fur.code.model.interfaces.SoftDeletable;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -21,7 +19,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Table(name = "shelter")
-public class Shelter implements SoftDeletable {
+public class Shelter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,38 +78,41 @@ public class Shelter implements SoftDeletable {
     @Column(nullable = false)
     private LocalDate creationDate;
 
+    @Column
+    private String description;
+
+    @Column
+    private String facebookUrl;
+
+    @Column
+    private String instagramUrl;
+
+    @Column
+    private String webPageUrl;
+
     /**
      * The set of ShelterPersonRoles.
      */
-    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Schema(description = "The collection of person roles associated with the shelter")
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
     /**
      * The set of Pet.
      */
-    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Schema(description = "The collection of pets associated with the shelter")
     private Set<Pet> pet;
 
     /**
      * The set of Donation.
      */
-    @OneToMany(mappedBy = "shelter")
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Schema(description = "The collection of donations associated with the shelter")
     private Set<Donation> donations;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
-    // SoftDeletable methods
-    @Override
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    @Override
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id")
+    @Schema(description = "The person who donated")
+    private Person person;
 }
