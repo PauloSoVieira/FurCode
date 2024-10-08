@@ -40,6 +40,28 @@ public class FileController {
     }
 
     /**
+     * Uploads a shelter image
+     *
+     * @param id
+     * @param file
+     * @return
+     */
+    @Schema(name = "Upload a shelter image", description = "Uploads a shelter image")
+    @Operation(summary = "Upload a shelter image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "File uploaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid file, Shelter not found"),
+    })
+    @PostMapping("api/v1/upload/shelter/{id}/image/")
+    public ResponseEntity<Void> uploadImageShelter(
+            @Parameter(description = "Shelter ID", required = true)
+            @PathVariable("id") Long id, @RequestBody FileUploadDTO file) {
+        String filePath = String.format("/shelter/%s/image/", id);
+        fileService.uploadImageShelter(filePath, file, id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
      * Uploads a pet image
      *
      * @param id
@@ -102,11 +124,61 @@ public class FileController {
                 .body(resource);
     }
 
+    /**
+     * Downloads a shelter image
+     *
+     * @param id
+     * @param fileName
+     * @return
+     */
+    @Schema(name = "Download a shelter image", description = "Downloads a shelter image")
+    @Operation(summary = "Download a shelter image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    content = {
+                            @Content(mediaType = MediaType.IMAGE_JPEG_VALUE),
+                            @Content(mediaType = MediaType.IMAGE_PNG_VALUE),
+                            @Content(mediaType = "image/webp")
+                    },
+                    description = "File downloaded successfully"),
+            @ApiResponse(responseCode = "400",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
+                    description = "File not found")
+    })
+    @GetMapping("api/v1/download/shelter/{id}/image/{fileName}")
+    public ResponseEntity<Resource> downloadImageShelter(
+            @Parameter(description = "Shelter ID", required = true)
+            @PathVariable("id") Long id,
+
+            @Parameter(description = "File name", required = true)
+            @PathVariable("fileName") String fileName) {
+        String filePath = String.format("/pet/%s/image/%s", id, fileName);
+        byte[] file = fileService.downloadImageShelter(filePath, id);
+
+        Resource resource = new ByteArrayResource(file);
+        String mimeType = fileService.getMimeTypeFromBytes(file);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, mimeType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"") // "inline" to display in browser
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length))
+                .body(resource);
+    }
+
     @GetMapping("api/v1/download/pet/{id}/image/")
-    public ResponseEntity<List<Map<String, String>> > getAllImagesFromPet(
+    public ResponseEntity<List<Map<String, String>>> getAllImagesFromPet(
             @Parameter(description = "Pet ID", required = true)
-            @PathVariable("id") Long id ) {
-        List<Map<String, String>>  imageUrls = fileService.getAllImagesFromPetAsBase64(id);
+            @PathVariable("id") Long id) {
+        List<Map<String, String>> imageUrls = fileService.getAllImagesFromPetAsBase64(id);
+
+        return ResponseEntity.ok(imageUrls);
+    }
+
+    @GetMapping("api/v1/download/shelter/{id}/image/")
+    public ResponseEntity<List<Map<String, String>>> getAllImagesFromShelter(
+            @Parameter(description = "Shelter ID", required = true)
+            @PathVariable("id") Long id) {
+        List<Map<String, String>> imageUrls = fileService.getAllImagesFromShelterAsBase64(id);
 
         return ResponseEntity.ok(imageUrls);
     }
@@ -120,6 +192,26 @@ public class FileController {
             @PathVariable("fileName") String fileName) {
         String filePath = String.format("/pet/%s/image/%s", id, fileName);
         byte[] file = fileService.downloadImagePet(filePath, id);
+
+        String mimeType = fileService.getMimeTypeFromBytes(file);
+        String base64Image = Base64.getEncoder().encodeToString(file);
+        String base64DataUrl = String.format("data:%s;base64,%s", mimeType, base64Image);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(base64DataUrl.length()))
+                .body(base64DataUrl);
+    }
+
+    @GetMapping("api/v1/download/shelter/{id}/image/{fileName}/base64")
+    public ResponseEntity<String> downloadImageShelterAsBase64(
+            @Parameter(description = "Shelter ID", required = true)
+            @PathVariable("id") Long id,
+
+            @Parameter(description = "File name", required = true)
+            @PathVariable("fileName") String fileName) {
+        String filePath = String.format("/pet/%s/image/%s", id, fileName);
+        byte[] file = fileService.downloadImageShelter(filePath, id);
 
         String mimeType = fileService.getMimeTypeFromBytes(file);
         String base64Image = Base64.getEncoder().encodeToString(file);
