@@ -6,11 +6,9 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.mindera.fur.code.model.interfaces.SoftDeletable;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -21,7 +19,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Table(name = "shelter")
-public class Shelter implements SoftDeletable {
+public class Shelter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -95,21 +93,21 @@ public class Shelter implements SoftDeletable {
     /**
      * The set of ShelterPersonRoles.
      */
-    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Schema(description = "The collection of person roles associated with the shelter")
     private Set<ShelterPersonRoles> shelterPersonRoles;
 
     /**
      * The set of Pet.
      */
-    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Schema(description = "The collection of pets associated with the shelter")
     private Set<Pet> pet;
 
     /**
      * The set of Donation.
      */
-    @OneToMany(mappedBy = "shelter")
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Schema(description = "The collection of donations associated with the shelter")
     private Set<Donation> donations;
 

@@ -2,19 +2,22 @@ package org.mindera.fur.code.model.pet;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 import org.mindera.fur.code.model.interfaces.SoftDeletable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * A model class for a pet.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "pet")
@@ -64,10 +67,9 @@ public class Pet implements SoftDeletable {
     private String color;
 
     @NotNull(message = "Pet age must be provided")
-    @Min(value = 1, message = "Pet age must be greater than 1")
-    @Max(value = 99, message = "Pet age must be less than 99")
+    @PastOrPresent(message = "Pet birth date cannot be in the future")
     @Column(nullable = false)
-    private Integer age;
+    private LocalDate dateOfBirth;
 
     @NotBlank(message = "Pet observation must be provided")
     @Size(min = 1, max = 999, message = "Pet observation must be between 1 and 999 characters")

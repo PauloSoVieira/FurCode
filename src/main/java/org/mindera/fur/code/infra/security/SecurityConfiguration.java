@@ -53,10 +53,14 @@ public class SecurityConfiguration {
 
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/pet").hasAnyAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/pet/update/{id}").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/pet/update/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/pet/delete/{id}").hasAnyAuthority("MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/pet/{id}/create-record").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/pet/{id}/record").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/pet/restore/{id}").hasAnyAuthority("MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/pet/{petId}/records/deleted").hasAnyAuthority("MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/pet/deleted").hasAnyAuthority("MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/pet/deleted/{id}").hasAnyAuthority("MANAGER")
 
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/shelter").hasAnyAuthority("USER")

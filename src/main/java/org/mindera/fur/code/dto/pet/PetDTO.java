@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import org.mindera.fur.code.model.enums.pet.PetSizeEnum;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A DTO class for a pet.
@@ -39,11 +42,11 @@ public class PetDTO implements Serializable {
     private Long shelterId;
 
     @NotNull(message = "Adopted status must be provided")
-    @Schema(description = "The adopted status of the pet", example = "true")
+    @Schema(description = "The adopted status of the pet", example = "false")
     private Boolean isAdopted;
 
     @NotNull(message = "Vaccination status is required")
-    @Schema(description = "The vaccination status of the pet", example = "true")
+    @Schema(description = "The vaccination status of the pet", example = "false")
     private Boolean isVaccinated;
 
     @NotNull(message = "Size must be provided")
@@ -63,13 +66,14 @@ public class PetDTO implements Serializable {
     private String color;
 
     @NotNull(message = "Pet age must be provided")
-    @Min(value = 1, message = "Pet age must be greater than 1")
-    @Max(value = 99, message = "Pet age must be less than 99")
-    @Schema(description = "The age of the pet", example = "3")
-    private Integer age;
+    @PastOrPresent(message = "Pet birth date cannot be in the future")
+    private LocalDate dateOfBirth;
 
     @NotBlank(message = "Pet observation must be provided")
     @Size(min = 1, max = 999, message = "Pet observation must be between 1 and 999 characters")
     @Schema(description = "The observations of the pet", example = "I love my pet")
     private String observations;
+
+    @Schema(description = "List of pet records associated with the pet")
+    private List<PetRecordDTO> petRecords;
 }

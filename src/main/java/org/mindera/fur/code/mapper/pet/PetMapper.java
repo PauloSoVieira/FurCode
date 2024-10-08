@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * A mapper class for mapping pets.
  */
-@Mapper
+@Mapper(uses = PetRecordMapper.class)
 public interface PetMapper {
 
     PetMapper INSTANCE = Mappers.getMapper(PetMapper.class);
@@ -21,11 +21,15 @@ public interface PetMapper {
     @Mapping(source = "shelter.id", target = "shelterId")
     PetDTO toDTO(Pet pet);
 
+    @Mapping(source = "petTypeId", target = "petType.id")
+    @Mapping(source = "shelterId", target = "shelter.id")
     Pet toModel(PetDTO dto);
 
     @Mapping(source = "petTypeId", target = "petType.id")
     @Mapping(source = "shelterId", target = "shelter.id")
     Pet toModel(PetCreateDTO dto);
 
+    @Mapping(source = "petType.id", target = "petTypeId")
+    @Mapping(source = "shelter.id", target = "shelterId")
     List<PetDTO> toDto(List<Pet> pet);
 }

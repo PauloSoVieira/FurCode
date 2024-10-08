@@ -136,7 +136,30 @@ public class PetService {
     @Transactional
     public void softDeletePet(@NotNull @Positive Long id) {
         Pet pet = findActivePetEntityById(id);
-        pet.setDeletedAt(LocalDateTime.now());
+        LocalDateTime deletedAt = LocalDateTime.now();
+        pet.setDeletedAt(deletedAt);
+
+        if (pet.getPetRecords() != null) {
+            pet.getPetRecords().forEach(petRecord -> petRecord.setDeletedAt(deletedAt));
+        }
+        petRepository.save(pet);
+    }
+
+    /**
+     * Restores a soft-deleted pet by setting its deletedAt timestamp to null.
+     *
+     * @param id the ID of the pet to be restored
+     * @throws EntityNotFoundException if the pet with the specified ID is not found
+     */
+    @Transactional
+    public void restorePet(@NotNull @Positive Long id) {
+        Pet pet = petRepository.findByIdIncludingDeleted(id)
+                .orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + id));
+
+        if (pet.getDeletedAt() == null) {
+            throw new IllegalStateException("Pet with id " + id + " is not deleted");
+        }
+        pet.setDeletedAt(null);
         petRepository.save(pet);
     }
 
@@ -167,9 +190,42 @@ public class PetService {
 
         PetRecord petRecord = PetRecordMapper.INSTANCE.toModel(petRecordCreateDTO);
 
+        petRecord.setCreatedAt(LocalDateTime.now());
         petRecord.setPet(pet);
+
         petRecord = petRecordRepository.save(petRecord);
         return PetRecordMapper.INSTANCE.toDTO(petRecord);
+    }
+
+    /**
+     * Retrieves all soft-deleted pets.
+     *
+     * @return a list of soft-deleted pet DTOs
+     */
+    public List<PetDTO> findAllDeletedPets() {
+        List<Pet> pets = petRepository.findAllDeleted();
+        return pets.stream().map(PetMapper.INSTANCE::toDTO).toList();
+    }
+
+    /**
+     * Retrieves a soft-deleted pet by ID.
+     *
+     * @param id The ID of the pet.
+     * @return The pet DTO.
+     * @throws EntityNotFoundException if the pet with the specified ID is not found or not deleted.
+     */
+    public PetDTO findDeletedPetById(@NotNull @Positive Long id) {
+        Pet pet = findDeletedPetEntityById(id);
+        return PetMapper.INSTANCE.toDTO(pet);
+    }
+
+    public List<PetRecordDTO> findDeletedPetRecordEntityByPetId(@NotNull @Positive Long petId) {
+        findDeletedPetEntityById(petId);
+        List<PetRecord> deletedPetRecords = petRecordRepository.findAllByPet_IdAndDeletedAtIsNotNull(petId);
+
+        return deletedPetRecords.stream()
+                .map(PetRecordMapper.INSTANCE::toDTO)
+                .toList();
     }
 
     /**
@@ -201,8 +257,13 @@ public class PetService {
                 .orElseThrow(() -> new EntityNotFoundException(PetMessages.PET_NOT_FOUND + id));
     }
 
+    public Pet findDeletedPetEntityById(Long id) {
+        return petRepository.findDeletedById(id)
+                .orElseThrow(() -> new EntityNotFoundException(PetMessages.DELETED_PET_NOT_FOUND + id));
+    }
+
     private Shelter findAndAssignShelter(Long id) {
-        return shelterRepository.findActiveById(id)
+        return shelterRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(PetMessages.SHELTER_NOT_FOUND + id));
     }
 

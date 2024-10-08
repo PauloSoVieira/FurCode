@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -72,7 +71,7 @@ public class ShelterService {
      */
 //    @Cacheable(cacheNames = "shelters")
     public List<ShelterDTO> getAllShelters() {
-        List<Shelter> shelters = shelterRepository.findAllActive();
+        List<Shelter> shelters = shelterRepository.findAll();
         return shelters.stream().map(ShelterMapper.INSTANCE::toDTO).toList();
     }
 
@@ -84,7 +83,7 @@ public class ShelterService {
      */
 //    @Cacheable(cacheNames = "shelter", key = "#id")
     public ShelterDTO getShelterById(@NotNull @Positive Long id) {
-        Shelter shelter = findActiveShelterEntityById(id);
+        Shelter shelter = findShelterEntityById(id);
         return ShelterMapper.INSTANCE.toDTO(shelter);
     }
 
@@ -114,7 +113,7 @@ public class ShelterService {
 //    @CacheEvict(cacheNames = "shelters", allEntries = true)
     @Transactional
     public ShelterDTO updateShelter(@NotNull @Positive Long id, @Valid ShelterUpdateDTO shelterUpdateDTO) {
-        Shelter shelter = findActiveShelterEntityById(id);
+        Shelter shelter = findShelterEntityById(id);
 
         ShelterUpdateMapper.INSTANCE.updateShelterFromDto(shelterUpdateDTO, shelter);
 
@@ -133,10 +132,9 @@ public class ShelterService {
 //            @CacheEvict(cacheNames = "shelters", allEntries = true)
 //    })
     @Transactional
-    public void softDeleteShelter(@NotNull @Positive Long id) {
-        Shelter shelter = findActiveShelterEntityById(id);
-        shelter.setDeletedAt(LocalDateTime.now());
-        shelterRepository.save(shelter);
+    public void deleteShelter(@NotNull @Positive Long id) {
+        Shelter shelter = findShelterEntityById(id);
+        shelterRepository.delete(shelter);
     }
 
     /**
@@ -149,7 +147,7 @@ public class ShelterService {
      */
     public void addPetToShelter(@NotNull @Positive Long shelterId, @NotNull @Positive Long petId) {
         Pet pet = petService.findActivePetEntityById(petId);
-        Shelter shelter = findActiveShelterEntityById(shelterId);
+        Shelter shelter = findShelterEntityById(shelterId);
 
         pet.setShelter(shelter);
         petRepository.save(pet);
@@ -186,8 +184,8 @@ public class ShelterService {
      * @return The Shelter entity.
      * @throws EntityNotFoundException if the shelter with the specified ID is not found.
      */
-    public Shelter findActiveShelterEntityById(@NotNull @Positive Long id) {
-        return shelterRepository.findActiveById(id)
+    public Shelter findShelterEntityById(@NotNull @Positive Long id) {
+        return shelterRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ShelterMessages.SHELTER_NOT_FOUND + id));
     }
 
