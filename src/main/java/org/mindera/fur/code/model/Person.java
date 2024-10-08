@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -65,9 +66,11 @@ public class Person implements UserDetails {
     @Schema(description = "The donations of the person", required = true)
     private Set<Donation> donations;
 
-    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Schema(description = "The shelters of the person", required = true)
-    private Set<Shelter> shelters;
+    @ElementCollection
+    @CollectionTable(name = "person_shelter_ids", joinColumns = @JoinColumn(name = "person_id"))
+    @Column(name = "shelter_id")
+    @Schema(description = "The IDs of the shelters the person works at", required = true)
+    private Set<Long> shelterIds = new HashSet<>();
 
     /**
      * Constructor with id.

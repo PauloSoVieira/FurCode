@@ -100,7 +100,7 @@ public class Shelter implements SoftDeletable {
     private Set<Donation> donations;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "person_id", nullable = false)
+    @JoinColumn(name = "person_id")
     @Schema(description = "The person who donated", required = true)
     private Person person;
 
