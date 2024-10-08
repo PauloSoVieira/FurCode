@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Data
 @Schema(description = "A person")
@@ -25,6 +26,8 @@ public class PersonDTO implements Serializable {
     private String postalCode;
     @Schema(description = "The state of the person", example = "NY", required = true)
     private Long cellPhone;
+    @Schema(description = "The id of the shelters where the person is", example = "1")
+    private Set<Long> shelterIds;
 
     /**
      * Constructor for PersonDTO

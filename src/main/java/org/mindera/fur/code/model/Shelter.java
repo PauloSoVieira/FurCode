@@ -2,7 +2,10 @@ package org.mindera.fur.code.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -111,8 +114,23 @@ public class Shelter {
     @Schema(description = "The collection of donations associated with the shelter")
     private Set<Donation> donations;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id")
-    @Schema(description = "The person who donated")
+    @Schema(description = "The person who donated", required = true)
     private Person person;
+
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    // SoftDeletable methods
+    @Override
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    @Override
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
 }
