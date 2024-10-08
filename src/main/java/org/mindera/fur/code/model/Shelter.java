@@ -2,7 +2,10 @@ package org.mindera.fur.code.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -79,6 +82,18 @@ public class Shelter implements SoftDeletable {
     @NotNull(message = "CreationDate can't be null")
     @Column(nullable = false)
     private LocalDate creationDate;
+
+    @Column
+    private String description;
+
+    @Column
+    private String facebookUrl;
+
+    @Column
+    private String instagramUrl;
+
+    @Column
+    private String webPageUrl;
 
     /**
      * The set of ShelterPersonRoles.

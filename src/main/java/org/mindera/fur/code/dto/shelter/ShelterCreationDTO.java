@@ -68,6 +68,9 @@ public class ShelterCreationDTO {
     @Schema(description = "The creation date of the shelter", example = "2023-01-01")
     private LocalDate creationDate;
 
+    @Schema(description = "The description of the shelter", example = "This is a description")
+    private String description;
+
     /**
      * Constructor with parameters.
      *
