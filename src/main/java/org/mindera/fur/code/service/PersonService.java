@@ -260,7 +260,7 @@ public class PersonService {
         Shelter shelter = shelterRepository.findActiveById(shelterId).orElseThrow(
                 () -> new PersonException(PersonMessages.SHELTER_NOT_FOUND)
         );
-        
+
         person.getShelterIds().add(shelterId);
 
         ShelterPersonRoles shelterPersonRoles = new ShelterPersonRoles();
@@ -438,6 +438,7 @@ public class PersonService {
 
         return addPersonToShelter(id, shelterId);
     }
+//
 
     /**
      * Create a pet.
