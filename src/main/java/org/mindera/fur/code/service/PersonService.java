@@ -1,10 +1,6 @@
 package org.mindera.fur.code.service;
 
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
@@ -20,9 +16,11 @@ import org.mindera.fur.code.exceptions.person.PersonException;
 import org.mindera.fur.code.infra.security.TokenService;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.shelter.ShelterPersonRolesMapper;
-import org.mindera.fur.code.messages.email.EmailMessages;
 import org.mindera.fur.code.messages.person.PersonMessages;
-import org.mindera.fur.code.model.*;
+import org.mindera.fur.code.model.Person;
+import org.mindera.fur.code.model.Role;
+import org.mindera.fur.code.model.Shelter;
+import org.mindera.fur.code.model.ShelterPersonRoles;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
@@ -40,7 +38,7 @@ import java.util.regex.Pattern;
 @Service
 @Schema(description = "The person service")
 public class PersonService {
-    private  static final Integer MAX_PASSWORD_LENGTH = 100;
+    private static final Integer MAX_PASSWORD_LENGTH = 100;
     private static final String COMPANY_EMAIL = "paulo.vieira@minderacodeacademy.com";
     private static final int MIN_PASSWORD_LENGTH = 6;
     private final PersonRepository personRepository;
@@ -263,12 +261,16 @@ public class PersonService {
                 () -> new PersonException(PersonMessages.SHELTER_NOT_FOUND)
         );
 
+        person.getShelterIds().add(shelterId);
+
         ShelterPersonRoles shelterPersonRoles = new ShelterPersonRoles();
         shelterPersonRoles.setPerson(person);
         shelterPersonRoles.setShelter(shelter);
         shelterPersonRoles.setRole(person.getRole());
 
         shelterPersonRoles = shelterPersonRolesRepository.save(shelterPersonRoles);
+
+        personRepository.save(person);
 
         return shelterPersonRolesMapper.INSTANCE.toDto(shelterPersonRoles);
     }
@@ -315,6 +317,7 @@ public class PersonService {
         );
         return personMapper.INSTANCE.toDTO(person);
     }
+
 
     // Returns a Person Entity, to be used in internal operations
     public Person getPersonEntityById(Long id) {
@@ -435,6 +438,7 @@ public class PersonService {
 
         return addPersonToShelter(id, shelterId);
     }
+//
 
     /**
      * Create a pet.

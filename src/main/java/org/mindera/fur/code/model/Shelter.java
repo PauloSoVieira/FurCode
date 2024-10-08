@@ -116,6 +116,12 @@ public class Shelter implements SoftDeletable {
     @Schema(description = "The collection of donations associated with the shelter")
     private Set<Donation> donations;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "person_id")
+    @Schema(description = "The person who donated", required = true)
+    private Person person;
+
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
