@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -34,15 +33,17 @@ public class FileService {
 
     private final MinioClient minioClient;
     private final PetService petService;
+    private final ShelterService shelterService;
 
     @Autowired
-    public FileService(MinioClient minioClient, PetService petService) {
+    public FileService(MinioClient minioClient, PetService petService, ShelterService shelterService) {
         this.minioClient = minioClient;
         this.petService = petService;
+        this.shelterService = shelterService;
     }
 
     /**
-     * Uploads a file to the Minio bucket.
+     * Uploads a pet image to the Minio bucket.
      *
      * @param filePath the path to the file in the Minio bucket.
      * @param id       the ID of the pet associated with the file.
@@ -56,6 +57,31 @@ public class FileService {
 
         //if (petService.findPetById(id) == null) {
         //    throw new IllegalArgumentException("Pet not found");
+        //}
+
+        checkFileValidity(file);
+        checkImageType(file.getFileData());
+
+        File newFile = convertBase64ToFile(file.getFileData(), file.getMd5());
+        uploadFileToBucket(filePath, file, newFile);
+        newFile.delete();
+    }
+
+    /**
+     * Uploads a shelter image to the Minio bucket.
+     *
+     * @param filePath the path to the file in the Minio bucket.
+     * @param id       the ID of the shelter associated with the file.
+     * @param file     the file to upload.
+     */
+    //@RequiresRole(value = Role.ADMIN) TODO: enable this after testing
+    public void uploadImageShelter(String filePath, FileUploadDTO file, Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Shelter ID must be provided");
+        }
+
+        //if (shelterService.findShelterById(id) == null) {
+        //    throw new IllegalArgumentException("Shelter not found");
         //}
 
         checkFileValidity(file);
@@ -137,7 +163,7 @@ public class FileService {
     }
 
     /**
-     * Downloads a file from the Minio bucket.
+     * Downloads a pet image from the Minio bucket.
      *
      * @param filePath the path to the file in the Minio bucket.
      * @param id       the ID of the pet associated with the file.
@@ -150,6 +176,40 @@ public class FileService {
 
         //if (petService.findPetById(id) == null) {
         //    throw new IllegalArgumentException("Pet not found");
+        //}
+
+        byte[] fileData = null;
+        try {
+            fileData = downloadFileFromBucket(filePath);
+            return fileData;
+        } catch (FileException e) {
+            for (String extension : SUPPORTED_EXTENSIONS) {
+                try {
+                    String fileWithExtension = filePath + "." + extension;
+                    fileData = downloadFileFromBucket(fileWithExtension);
+                    return fileData; // Return if successful
+                } catch (FileException ignored) {
+                    // Ignore the error and try the next extension
+                }
+            }
+        }
+        throw new FileException("File not found for name: " + filePath + " with any supported extensions");
+    }
+
+    /**
+     * Downloads a shelter image from the Minio bucket.
+     *
+     * @param filePath the path to the file in the Minio bucket.
+     * @param id       the ID of the pet associated with the file.
+     * @return the downloaded file.
+     */
+    public byte[] downloadImageShelter(String filePath, Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Shelter ID must be provided");
+        }
+
+        //if (shelterService.findShelterById(id) == null) {
+        //    throw new IllegalArgumentException("Shelter not found");
         //}
 
         byte[] fileData = null;
@@ -387,6 +447,39 @@ public class FileService {
 
         return imageList;
     }
+
+    public List<Map<String, String>> getAllImagesFromShelterAsBase64(Long petId) {
+        List<Map<String, String>> imageList = new ArrayList<>();
+        String prefix = String.format("shelter/%s/image/", petId);
+
+        try {
+            for (Result<Item> result : minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(BUCKET_NAME)
+                    .prefix(prefix)
+                    .build())) {
+                Item item = result.get();
+                String objectName = item.objectName();
+
+                byte[] fileBytes = downloadFileFromBucket(objectName);
+                String mimeType = getMimeTypeFromBytes(fileBytes);
+                String base64Image = Base64.getEncoder().encodeToString(fileBytes);
+                String base64DataUrl = String.format("data:%s;base64,%s", mimeType, base64Image);
+
+                // Create a map for the image
+                Map<String, String> imageMap = new HashMap<>();
+                imageMap.put("id", item.objectName());
+                imageMap.put("name", objectName);
+                imageMap.put("data", base64DataUrl);
+
+                imageList.add(imageMap);
+            }
+        } catch (Exception e) {
+            throw new FileException("Error listing pet images: " + e.getMessage());
+        }
+
+        return imageList;
+    }
+
 
     @RequiresRole(value = Role.ADMIN, isPetOperation = true, petIdParam = 1)
     public void deleteImagePet(String filePath, Long petId) {

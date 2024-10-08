@@ -24,12 +24,13 @@ public class FileServiceUnitTest {
     private FileService fileService;
     private MinioClient minioClient;
     private PetService petService;
+    private ShelterService shelterService;
 
     @BeforeEach
     void setUp() {
         minioClient = mock(MinioClient.class);
         petService = mock(PetService.class);
-        fileService = new FileService(minioClient, petService);
+        fileService = new FileService(minioClient, petService, shelterService);
     }
 
     @Nested
