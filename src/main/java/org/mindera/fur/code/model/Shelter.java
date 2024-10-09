@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -115,4 +116,8 @@ public class Shelter {
     @JoinColumn(name = "person_id")
     @Schema(description = "The person who donated")
     private Person person;
+
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

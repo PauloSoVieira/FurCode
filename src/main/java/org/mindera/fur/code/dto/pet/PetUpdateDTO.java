@@ -34,11 +34,10 @@ public class PetUpdateDTO {
     @Schema(description = "The color of the pet", example = "Blue")
     private String color;
 
-    @NotNull(message = "Pet age must be provided")
-    @PastOrPresent(message = "Pet birth date cannot be in the future")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "The age of the pet", example = "2023-01-01")
-    private LocalDate dateOfBirth;
+    @Min(value = 1, message = "Pet age must be greater than 1")
+    @Max(value = 99, message = "Pet age must be less than 99")
+    @Schema(description = "The age of the pet", example = "3")
+    private Integer age;
 
     @Size(min = 1, max = 999, message = "Pet observation must be between 1 and 999 characters")
     @Schema(description = "The observations of the pet", example = "Healthy")
