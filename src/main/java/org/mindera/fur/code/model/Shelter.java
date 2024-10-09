@@ -113,21 +113,6 @@ public class Shelter {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id")
-    @Schema(description = "The person who donated", required = true)
+    @Schema(description = "The person who donated")
     private Person person;
-
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
-    // SoftDeletable methods
-    @Override
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    @Override
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
 }
