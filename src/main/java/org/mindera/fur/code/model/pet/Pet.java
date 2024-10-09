@@ -67,9 +67,10 @@ public class Pet implements SoftDeletable {
     private String color;
 
     @NotNull(message = "Pet age must be provided")
-    @PastOrPresent(message = "Pet birth date cannot be in the future")
+    @Min(value = 1, message = "Pet age must be greater than 1")
+    @Max(value = 99, message = "Pet age must be less than 99")
     @Column(nullable = false)
-    private LocalDate dateOfBirth;
+    private Integer age;
 
     @NotBlank(message = "Pet observation must be provided")
     @Size(min = 1, max = 999, message = "Pet observation must be between 1 and 999 characters")

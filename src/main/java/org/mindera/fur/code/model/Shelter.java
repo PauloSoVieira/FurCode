@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -120,14 +121,5 @@ public class Shelter {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    // SoftDeletable methods
-    @Override
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
 
-    @Override
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
 }

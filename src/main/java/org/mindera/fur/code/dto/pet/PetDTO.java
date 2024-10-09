@@ -65,9 +65,10 @@ public class PetDTO implements Serializable {
     @Schema(description = "The color of the pet", example = "White")
     private String color;
 
-    @NotNull(message = "Pet age must be provided")
-    @PastOrPresent(message = "Pet birth date cannot be in the future")
-    private LocalDate dateOfBirth;
+    @Min(value = 1, message = "Pet age must be greater than 1")
+    @Max(value = 99, message = "Pet age must be less than 99")
+    @Schema(description = "The age of the pet", example = "3")
+    private Integer age;
 
     @NotBlank(message = "Pet observation must be provided")
     @Size(min = 1, max = 999, message = "Pet observation must be between 1 and 999 characters")
