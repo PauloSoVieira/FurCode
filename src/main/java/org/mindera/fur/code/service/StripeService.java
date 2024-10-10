@@ -8,6 +8,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class StripeService {
 
+
+    /**
+     * Create a payment intent for a given amount and currency
+     * @param amount
+     * @param currency
+     * @return
+     * @throws StripeException
+     */
     public PaymentIntent createPaymentIntent(Long amount, String currency) throws StripeException {
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                 .setAmount(amount)

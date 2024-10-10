@@ -1,13 +1,21 @@
 package org.mindera.fur.code.model;
 
+
+/**
+ * Request to confirm a donation
+ */
+
 public class ConfirmDonationRequest {
     private String paymentIntentId;
     private Long personId;
     private Long shelterId;
 
+
     public String getPaymentIntentId() {
         return paymentIntentId;
     }
+
+
 
     public void setPaymentIntentId(String paymentIntentId) {
         this.paymentIntentId = paymentIntentId;
