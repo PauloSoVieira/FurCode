@@ -1,5 +1,7 @@
 package org.mindera.fur.code.controller;
 
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -98,7 +100,24 @@ public class PersonController {
     @PostMapping("/{id}/donate")
     @Schema(description = "Donate to a shelter")
     public ResponseEntity<DonationDTO> donate(@PathVariable Long id, @RequestBody DonationCreateDTO donationCreateDTO) {
-        return new ResponseEntity<>(personService.donate(id, donationCreateDTO), HttpStatus.CREATED);
+        try {
+            // Validate the Stripe payment
+            String paymentIntentId = donationCreateDTO.getPaymentIntentId();
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+
+            if (!"succeeded".equals(paymentIntent.getStatus())) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            // If payment is successful, save the donation
+            DonationDTO donationDTO = personService.donate(id, donationCreateDTO);
+            return new ResponseEntity<>(donationDTO, HttpStatus.CREATED);
+        } catch (StripeException e) {
+            // Handle Stripe-specific exceptions
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

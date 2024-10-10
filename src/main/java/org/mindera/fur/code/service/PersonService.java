@@ -2,6 +2,7 @@ package org.mindera.fur.code.service;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
@@ -17,10 +18,8 @@ import org.mindera.fur.code.infra.security.TokenService;
 import org.mindera.fur.code.mapper.PersonMapper;
 import org.mindera.fur.code.mapper.shelter.ShelterPersonRolesMapper;
 import org.mindera.fur.code.messages.person.PersonMessages;
-import org.mindera.fur.code.model.Person;
-import org.mindera.fur.code.model.Role;
-import org.mindera.fur.code.model.Shelter;
-import org.mindera.fur.code.model.ShelterPersonRoles;
+import org.mindera.fur.code.model.*;
+import org.mindera.fur.code.repository.DonationRepository;
 import org.mindera.fur.code.repository.PersonRepository;
 import org.mindera.fur.code.repository.ShelterPersonRolesRepository;
 import org.mindera.fur.code.repository.ShelterRepository;
@@ -31,6 +30,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -498,19 +498,52 @@ public class PersonService {
      * <p>After successful validation, the donation is mapped to a Donation model object
      * and saved to the repository.
      *
-     * @param id                the ID of the person whose donations are to be retrieved
+                    the ID of the person whose donations are to be retrieved
      * @param donationCreateDTO the DonationCreateDTO containing the donation details
      * @return the saved Donation object
      * @throws PersonException if any required fields are null or invalid
      * @throws PersonException if the email is already in use
      */
 
-    public DonationDTO donate(Long id, DonationCreateDTO donationCreateDTO) {
-        idValidation(id);
-        personRepository.findById(id).orElseThrow(
-                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
-        );
-        return donationService.createDonation(donationCreateDTO);
+
+    @Autowired
+    private DonationRepository donationRepository;
+    public DonationDTO donate(Long personId, DonationCreateDTO donationCreateDTO) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new EntityNotFoundException("Person not found"));
+
+        Shelter shelter = shelterRepository.findById(donationCreateDTO.getShelterId())
+                .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
+
+        Donation donation = new Donation();
+        donation.setTotal(donationCreateDTO.getTotal());
+        donation.setCurrency(donationCreateDTO.getCurrency());
+        donation.setDate(LocalDateTime.now());
+        donation.setShelter(shelter);
+        donation.setPerson(person);
+        donation.setPaymentIntentId(donationCreateDTO.getPaymentIntentId());
+        donation.setStatus("completed");
+        donation.setPaymentMethod(donationCreateDTO.getPaymentMethod());
+
+        donation = donationRepository.save(donation);
+
+        return convertToDTO(donation);
+    }
+
+    private DonationDTO convertToDTO(Donation donation) {
+        DonationDTO dto = new DonationDTO();
+        dto.setId(donation.getId());
+        dto.setTotal(donation.getTotal());
+        dto.setCurrency(donation.getCurrency());
+        dto.setDate(donation.getDate());
+        dto.setShelterId(donation.getShelter().getId());
+        dto.setPersonId(donation.getPerson().getId());
+        dto.setPaymentIntentId(donation.getPaymentIntentId());
+        dto.setStatus(donation.getStatus());
+        dto.setPaymentMethod(donation.getPaymentMethod());
+        dto.setCreatedAt(donation.getCreatedAt());
+        dto.setUpdatedAt(donation.getUpdatedAt());
+        return dto;
     }
 
     /**
