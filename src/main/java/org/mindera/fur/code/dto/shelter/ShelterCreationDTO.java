@@ -80,6 +80,7 @@ public class ShelterCreationDTO {
     @Schema(description = "The web page url of the shelter")
     private String webPageUrl;
 
+
     /**
      * Constructor with parameters.
      *
