@@ -8,15 +8,34 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
 public class DonationCreateDTO {
-    private BigDecimal total;
-    private String currency;
-    private Long personId;
+
+    @Schema(type = "double", example = "20")
+    @NotNull
+    @NotBlank(message = "Donation amount is required")
+    @Min(value = 1, message = "Donation amount must be greater than 0")
+    @Max(value = 999999, message = "Donation amount must be less than 999999")
+    private Double total;
+
+
+    @Schema(type = "date", example = "2024-01-01")
+    @NotNull
+    @NotBlank(message = "Donation date is required")
+    @Valid
+    private Date date;
+
+    @Schema(type = "long", example = "2")
+    @NotNull
+    @NotBlank(message = "Shelter id is required")
+    @Valid
     private Long shelterId;
-    private String paymentIntentId;
-    private String paymentMethod;
+
+    @Schema(type = "long", example = "23")
+    @NotNull
+    @NotBlank(message = "Person id is required")
+    @Valid
+    private Long personId;
 }

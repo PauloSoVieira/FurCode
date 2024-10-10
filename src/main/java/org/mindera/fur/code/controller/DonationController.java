@@ -60,12 +60,9 @@ public class DonationController {
             switch (status) {
                 case "succeeded":
                     DonationCreateDTO donationCreateDTO = new DonationCreateDTO();
-                    donationCreateDTO.setTotal(BigDecimal.valueOf(paymentIntent.getAmount()).divide(BigDecimal.valueOf(100)));
-                    donationCreateDTO.setCurrency(paymentIntent.getCurrency());
-                    donationCreateDTO.setPersonId(request.getPersonId());
-                    donationCreateDTO.setShelterId(request.getShelterId());
-                    donationCreateDTO.setPaymentIntentId(paymentIntent.getId());
-                    donationCreateDTO.setPaymentMethod(paymentIntent.getPaymentMethod());
+                  donationCreateDTO.setDate(new Date());
+                  donationCreateDTO.setPersonId(request.getPersonId());
+                  donationCreateDTO.setShelterId(request.getShelterId());
 
                     DonationDTO savedDonation = donationService.createDonation(donationCreateDTO);
                     logger.info("Donation confirmed and saved: {}", savedDonation);

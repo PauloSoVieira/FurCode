@@ -506,44 +506,12 @@ public class PersonService {
      */
 
 
-    @Autowired
-    private DonationRepository donationRepository;
-    public DonationDTO donate(Long personId, DonationCreateDTO donationCreateDTO) {
-        Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new EntityNotFoundException("Person not found"));
-
-        Shelter shelter = shelterRepository.findById(donationCreateDTO.getShelterId())
-                .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
-
-        Donation donation = new Donation();
-        donation.setTotal(donationCreateDTO.getTotal());
-        donation.setCurrency(donationCreateDTO.getCurrency());
-        donation.setDate(LocalDateTime.now());
-        donation.setShelter(shelter);
-        donation.setPerson(person);
-        donation.setPaymentIntentId(donationCreateDTO.getPaymentIntentId());
-        donation.setStatus("completed");
-        donation.setPaymentMethod(donationCreateDTO.getPaymentMethod());
-
-        donation = donationRepository.save(donation);
-
-        return convertToDTO(donation);
-    }
-
-    private DonationDTO convertToDTO(Donation donation) {
-        DonationDTO dto = new DonationDTO();
-        dto.setId(donation.getId());
-        dto.setTotal(donation.getTotal());
-        dto.setCurrency(donation.getCurrency());
-        dto.setDate(donation.getDate());
-        dto.setShelterId(donation.getShelter().getId());
-        dto.setPersonId(donation.getPerson().getId());
-        dto.setPaymentIntentId(donation.getPaymentIntentId());
-        dto.setStatus(donation.getStatus());
-        dto.setPaymentMethod(donation.getPaymentMethod());
-        dto.setCreatedAt(donation.getCreatedAt());
-        dto.setUpdatedAt(donation.getUpdatedAt());
-        return dto;
+    public DonationDTO donate(Long id, DonationCreateDTO donationCreateDTO) {
+        idValidation(id);
+        personRepository.findById(id).orElseThrow(
+                () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
+        );
+        return donationService.createDonation(donationCreateDTO);
     }
 
     /**
