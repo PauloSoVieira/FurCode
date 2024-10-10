@@ -18,6 +18,7 @@ public interface PersonMapper {
     PersonMapper INSTANCE = Mappers.getMapper(PersonMapper.class);
 
     @Mapping(source = "shelterIds", target = "shelterIds")
+    @Mapping(source = "role", target = "role")
     PersonDTO toDTO(Person person);
 
     @Mapping(source = "shelterIds", target = "shelterIds")
