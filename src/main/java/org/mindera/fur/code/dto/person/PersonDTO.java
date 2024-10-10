@@ -2,6 +2,7 @@ package org.mindera.fur.code.dto.person;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.mindera.fur.code.model.Role;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -28,6 +29,8 @@ public class PersonDTO implements Serializable {
     private Long cellPhone;
     @Schema(description = "The id of the shelters where the person is", example = "1")
     private Set<Long> shelterIds;
+    @Schema
+    private Role role;
 
     /**
      * Constructor for PersonDTO
