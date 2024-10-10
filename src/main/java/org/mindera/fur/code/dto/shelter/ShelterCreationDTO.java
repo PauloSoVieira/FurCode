@@ -71,6 +71,17 @@ public class ShelterCreationDTO {
     @Schema(description = "The description of the shelter", example = "This is a description")
     private String description;
 
+    @Schema(description = "The facebook url of the shelter")
+    private String facebookUrl;
+
+    @Schema(description = "The instagram url of the shelter")
+    private String instagramUrl;
+
+    @Schema(description = "The web page url of the shelter")
+    private String webPageUrl;
+
+    //
+
     /**
      * Constructor with parameters.
      *
