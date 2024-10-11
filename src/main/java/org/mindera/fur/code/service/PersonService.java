@@ -544,7 +544,6 @@ public class PersonService {
 
     }
 
-
     /**
      * Gets all persons in a shelter
      *
