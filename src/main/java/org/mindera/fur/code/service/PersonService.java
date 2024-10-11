@@ -2,7 +2,6 @@ package org.mindera.fur.code.service;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.mindera.fur.code.dto.donation.DonationCreateDTO;
 import org.mindera.fur.code.dto.donation.DonationDTO;
@@ -182,7 +181,7 @@ public class PersonService {
      * @throws PersonException if any required fields are null or invalid
      * @throws PersonException if the email is already in use
      */
-    @CacheEvict(cacheNames = "persons", allEntries = true)
+//    @CacheEvict(cacheNames = "persons", allEntries = true)
     public PersonDTO createPerson(PersonCreationDTO personCreationDTO) {
         try {
             personValidation(personCreationDTO);
@@ -292,7 +291,7 @@ public class PersonService {
      * @return an ArrayList of PersonDTO objects representing all persons
      */
 
-    @Cacheable(cacheNames = "persons")
+//    @Cacheable(cacheNames = "persons")
     public List<PersonDTO> getAllPersons() {
         List<Person> persons = personRepository.findAll();
         return personMapper.INSTANCE.toDTO(persons);
@@ -347,7 +346,7 @@ public class PersonService {
      * @throws PersonException if the email is already in use
      */
 
-    @CacheEvict(cacheNames = "persons", allEntries = true)
+//    @CacheEvict(cacheNames = "persons", allEntries = true)
     public PersonDTO updatePerson(Long id, PersonDTO personDTO) {
         idValidation(id);
         Person person = personRepository.findById(id).orElseThrow(
@@ -388,7 +387,7 @@ public class PersonService {
      * @throws PersonException if no person with the specified ID is found
      */
 
-    @CacheEvict(cacheNames = "persons", allEntries = true)
+//    @CacheEvict(cacheNames = "persons", allEntries = true)
     public void deletePerson(Long id) {
         Person person = personRepository.findById(id).orElseThrow(
                 () -> new PersonException(PersonMessages.PERSON_NOT_FOUND)
@@ -545,7 +544,6 @@ public class PersonService {
 
     }
 
-
     /**
      * Gets all persons in a shelter
      *
@@ -557,5 +555,4 @@ public class PersonService {
         List<Person> persons = shelterPersonRolesRepository.findPersonsByShelterId(id);
         return personMapper.INSTANCE.toDTO(persons);
     }
-
 }
