@@ -1,4 +1,3 @@
-/*
 package org.mindera.fur.code;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,16 +39,19 @@ public class PersonControllerIntegrationTest {
 
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_PASSWORD = "correctpassword";
-
-    @LocalServerPort
-    private Integer port;
-    @Autowired
-    private PersonService personService;
     private String adminToken;
     private String managerToken;
     private String userToken;
+
+    @LocalServerPort
+    private Integer port;
+
+    @Autowired
+    private PersonService personService;
+
     @Autowired
     private ShelterPersonRolesRepository shelterPersonRolesRepository;
+
     @Autowired
     private ShelterRepository shelterRepository;
 
@@ -305,23 +307,27 @@ public class PersonControllerIntegrationTest {
             LocalDate now = LocalDate.now();
             ShelterCreationDTO shelterCreationDTO = new ShelterCreationDTO(
                     "Shelter",
-                    123456789L,
+                    "123456789",
                     "shelter@shelter.com",
                     "Shelter Street",
-                    "number",
+                    "Shelter Street 2",
                     "4400",
-                    987654321L,
-                    12L,
+                    "987654321",
+                    "12",
                     true,
-                    now
+                    now,
+                    "This is a description",
+                    "test",
+                    "test",
+                    "test"
             );
 
             Response response = given()
-                    .header("Authorization", "Bearer " + userToken)
-                    .contentType(ContentType.JSON)
-                    .body(shelterCreationDTO)
-                    .when()
-                    .post("/api/v1/person/" + personId + "/create-shelter");
+            .header("Authorization", "Bearer " + userToken)
+            .contentType(ContentType.JSON)
+            .body(shelterCreationDTO)
+            .when()
+            .post("/api/v1/person/" + personId + "/create-shelter");
 
             System.out.println("Response Status: " + response.getStatusCode());
             System.out.println("Response Body: " + response.getBody().asString());
@@ -342,7 +348,7 @@ public class PersonControllerIntegrationTest {
                 assertNotNull(shelterDTO, "ShelterDTO should not be null");
                 assertNotNull(shelterDTO.getName(), "Shelter name should not be null");
                 assertEquals("Shelter", shelterDTO.getName());
-                assertEquals(123456789L, shelterDTO.getVat());
+                assertEquals("123456789", shelterDTO.getVat());
                 assertEquals("shelter@shelter.com", shelterDTO.getEmail());
 
             }
@@ -514,4 +520,3 @@ public class PersonControllerIntegrationTest {
         }
     }
 }
-*/

@@ -2,6 +2,7 @@ package org.mindera.fur.code.dto.shelter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
  * DTO for creating a shelter.
  */
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "A shelter creation request")
 public class ShelterCreationDTO {

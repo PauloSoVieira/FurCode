@@ -67,7 +67,8 @@ public class SecurityConfiguration {
                         // .requestMatchers(HttpMethod.GET, "/api/v1/shelter/all").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/shelter/{id}").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/shelter/delete/{id}").hasAnyAuthority("MANAGER")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/shelter/update/{id}").hasAnyAuthority("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/shelter/update/{id}").hasAnyAuthority("MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/shelter/{id}/get-all-donations").hasAnyAuthority("ADMIN")
 
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/adoption-request").hasAnyAuthority("USER")
@@ -75,6 +76,13 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/all").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/adoption-request/{id}").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/adoption-request/delete/{id}").hasAnyAuthority("MANAGER")
+
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/favorite/add").hasAnyAuthority("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/favorite/{personId}/{petId}").hasAnyAuthority("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/favorite/person/{id}").hasAnyAuthority("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/favorite/delete/{personId}/{petId}").hasAnyAuthority("USER")
+
 
                         .anyRequest().permitAll())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,5 +1,6 @@
 package org.mindera.fur.code.dto.shelter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
  */
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShelterDTO implements Serializable {
 
     @Positive(message = "Id must be greater than 0")

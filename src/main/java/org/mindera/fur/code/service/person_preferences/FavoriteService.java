@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.mindera.fur.code.dto.person_preferences.FavoriteCreateDTO;
 import org.mindera.fur.code.dto.person_preferences.FavoriteDTO;
 import org.mindera.fur.code.mapper.person_preferences.FavoriteMapper;
 import org.mindera.fur.code.model.Person;
@@ -40,9 +41,9 @@ public class FavoriteService {
     }
 
     @Transactional
-    public FavoriteDTO addFavorite(@Valid FavoriteDTO favoriteDTO) {
-        Long personId = favoriteDTO.getPersonId();
-        Long petId = favoriteDTO.getPetId();
+    public FavoriteDTO addFavorite(@Valid FavoriteCreateDTO createDTO) {
+        Long personId = createDTO.getPersonId();
+        Long petId = createDTO.getPetId();
 
         Person person = personService.getPersonEntityById(personId);
         Pet pet = petService.findActivePetEntityById(petId);

@@ -43,6 +43,22 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class PetControllerTest {
 
+    // A validPetJson to use globally across multiple tests
+    private static final String VALID_PET_JSON = """
+        {
+          "name": "Max",
+          "petTypeId": 1,
+          "shelterId": 1,
+          "isAdopted": false,
+          "isVaccinated": true,
+          "size": "LARGE",
+          "weight": 25.5,
+          "color": "Brown",
+          "age": 3,
+          "observations": "Healthy and active"
+        }
+    """;
+
     private String managerToken;
     private String adminToken;
     private String userToken;
@@ -72,7 +88,6 @@ class PetControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
@@ -83,13 +98,13 @@ class PetControllerTest {
         LocalDate now = LocalDate.now();
         Shelter shelter = new Shelter();
         shelter.setName("Test shelter");
-        shelter.setVat(123456789L);
+        shelter.setVat("123456789");
         shelter.setEmail("shelter@shelter.com");
         shelter.setAddress1("Shelter Street");
         shelter.setAddress2("number");
         shelter.setPostalCode("4400");
-        shelter.setPhone(987654321L);
-        shelter.setSize(234L);
+        shelter.setPhone("987654321");
+        shelter.setSize("234");
         shelter.setIsActive(true);
         shelter.setCreationDate(now);
         shelterRepository.save(shelter);
@@ -109,6 +124,7 @@ class PetControllerTest {
 
         // Create the pet once and store its ID for use in all tests
         petId = createPetAndGetId();
+
         // Create the pet record using the pet ID
         createPetRecord(petId);
     }
@@ -120,7 +136,6 @@ class PetControllerTest {
 
         // Reset the auto-increment IDs
         jdbcTemplate.execute("ALTER SEQUENCE pet_id_seq RESTART WITH 1");
-        // jdbcTemplate.execute("ALTER SEQUENCE person_id_seq RESTART WITH 1");
     }
 
     private void createTestUsers() {
@@ -182,22 +197,6 @@ class PetControllerTest {
                 .statusCode(200);
     }
 
-    // A validPetJson to use globally across multiple tests
-    private static final String VALID_PET_JSON = """
-                {
-                  "name": "Max",
-                  "petTypeId": 1,
-                  "shelterId": 1,
-                  "isAdopted": false,
-                  "isVaccinated": true,
-                  "size": "LARGE",
-                  "weight": 25.5,
-                  "color": "Brown",
-                  "age": 3,
-                  "observations": "Healthy and active"
-                }
-            """;
-
     // A validPetRecordJson to use globally across multiple tests
     private String createPetRecordJson(Long petId) {
         return """
@@ -210,7 +209,7 @@ class PetControllerTest {
     }
 
     private Long createPetAndGetId() {
-        Integer idAsInteger = given()
+        Integer petIdAsInteger = given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + adminToken) // Admin token
                 .body(VALID_PET_JSON)
@@ -221,7 +220,7 @@ class PetControllerTest {
                 .extract()
                 .path("id"); // Extract and return the pet's ID
 
-        return idAsInteger.longValue();
+        return petIdAsInteger.longValue();
     }
 
     private void createPetRecord(Long petId) {
@@ -824,10 +823,10 @@ class PetControllerTest {
                         .then()
                         .statusCode(expectedStatus);
                 break;
-            case "PUT":
+            case "PATCH":
                 request.body(requestBody)
                         .when()
-                        .put(url)
+                        .patch(url)
                         .then()
                         .statusCode(expectedStatus);
                 break;
@@ -878,6 +877,7 @@ class PetControllerTest {
                 Arguments.of("MANAGER", "POST", "/api/v1/pet", 201),
                 Arguments.of("ADMIN", "POST", "/api/v1/pet", 201),
                 Arguments.of("USER", "POST", "/api/v1/pet", 403),
+
                 Arguments.of("MANAGER", "POST", "/api/v1/pet/%d/create-record", 201),
                 Arguments.of("ADMIN", "POST", "/api/v1/pet/%d/create-record", 201),
                 Arguments.of("USER", "POST", "/api/v1/pet/%d/create-record", 403),
@@ -886,22 +886,146 @@ class PetControllerTest {
                 Arguments.of("MANAGER", "GET", "/api/v1/pet/all", 200),
                 Arguments.of("ADMIN", "GET", "/api/v1/pet/all", 200),
                 Arguments.of("USER", "GET", "/api/v1/pet/all", 200), // No security for this endpoint
+
                 Arguments.of("MANAGER", "GET", "/api/v1/pet/%d", 200),
                 Arguments.of("ADMIN", "GET", "/api/v1/pet/%d", 200),
                 Arguments.of("USER", "GET", "/api/v1/pet/%d", 200), // No security for this endpoint
+
                 Arguments.of("MANAGER", "GET", "/api/v1/pet/%d/record", 200),
                 Arguments.of("ADMIN", "GET", "/api/v1/pet/%d/record", 200),
                 Arguments.of("USER", "GET", "/api/v1/pet/%d/record", 403),
 
-                // Test PUT endpoints
-                Arguments.of("MANAGER", "PUT", "/api/v1/pet/update/%d", 204),
-                Arguments.of("ADMIN", "PUT", "/api/v1/pet/update/%d", 204),
-                Arguments.of("USER", "PUT", "/api/v1/pet/update/%d", 403),
+                // Test PATCH endpoints
+                Arguments.of("MANAGER", "PATCH", "/api/v1/pet/update/%d", 200),
+                Arguments.of("ADMIN", "PATCH", "/api/v1/pet/update/%d", 200),
+                Arguments.of("USER", "PATCH", "/api/v1/pet/update/%d", 403),
 
                 // Test DELETE endpoints
                 Arguments.of("MANAGER", "DELETE", "/api/v1/pet/delete/%d", 204),
                 Arguments.of("ADMIN", "DELETE", "/api/v1/pet/delete/%d", 403),
                 Arguments.of("USER", "DELETE", "/api/v1/pet/delete/%d", 403)
         );
+    }
+
+    @Test
+    void shouldSoftDeletePet() {
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .body(VALID_PET_JSON)
+                .pathParam("id", petId)
+                .when()
+                .delete("/api/v1/pet/delete/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .when()
+                .get("/api/v1/pet/all")
+                .then()
+                .statusCode(200)
+                .body("id", not(hasItem(petId)));
+    }
+
+    @Test
+    void shouldRestoreSoftDeletedPet() {
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("id", petId)
+                .when()
+                .delete("/api/v1/pet/delete/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("id", petId)
+                .when()
+                .post("/api/v1/pet/restore/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .when()
+                .get("/api/v1/pet/all")
+                .then()
+                .statusCode(200)
+                .body("id", hasItem(petId.intValue()));
+    }
+
+    @Test
+    void shouldFetchAllDeletedPets() {
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("id", petId)
+                .when()
+                .delete("/api/v1/pet/delete/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .when()
+                .get("/api/v1/pet/deleted")
+                .then()
+                .statusCode(200)
+                .body("id", hasItem(petId.intValue()));
+    }
+
+    @Test
+    void shouldFetchDeletedPetById() {
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("id", petId)
+                .when()
+                .delete("/api/v1/pet/delete/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("id", petId)
+                .when()
+                .get("/api/v1/pet/deleted/{id}")
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(petId.intValue()));
+    }
+
+    @Test
+    void shouldFetchDeletedPetRecordByPetId() {
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("id", petId)
+                .when()
+                .delete("/api/v1/pet/delete/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("petId", petId)
+                .when()
+                .get("/api/v1/pet/{petId}/deleted-record")
+                .then()
+                .statusCode(200);
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .pathParam("petId", petId)
+                .when()
+                .get("/api/v1/pet/{petId}/deleted-record")
+                .then()
+                .statusCode(200)
+                .body("[0].petId", equalTo(petId.intValue()));
     }
 }
