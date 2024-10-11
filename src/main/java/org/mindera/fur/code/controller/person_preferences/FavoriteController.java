@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.mindera.fur.code.dto.person_preferences.FavoriteCreateDTO;
 import org.mindera.fur.code.dto.person_preferences.FavoriteDTO;
 import org.mindera.fur.code.service.person_preferences.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public class FavoriteController {
 
     @Operation(summary = "Add a favorite")
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FavoriteDTO> addFavorite(@RequestBody @Valid FavoriteDTO favoriteDTO) {
-        FavoriteDTO favoriteDto = favoriteService.addFavorite(favoriteDTO);
+    public ResponseEntity<FavoriteDTO> addFavorite(@RequestBody @Valid FavoriteCreateDTO createDTO) {
+        FavoriteDTO favoriteDto = favoriteService.addFavorite(createDTO);
         return new ResponseEntity<>(favoriteDto, HttpStatus.CREATED);
     }
 

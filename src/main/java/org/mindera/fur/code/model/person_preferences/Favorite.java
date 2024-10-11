@@ -3,14 +3,15 @@ package org.mindera.fur.code.model.person_preferences;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Positive;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.mindera.fur.code.model.Person;
 import org.mindera.fur.code.model.pet.Pet;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "favorites", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"person_id", "pet_id"})

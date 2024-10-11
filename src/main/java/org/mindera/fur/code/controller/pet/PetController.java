@@ -169,7 +169,7 @@ public class PetController {
      * @return List of soft-deleted PetRecordDTOs.
      */
     @Operation(summary = "Retrieves all deleted pet records for a specific pet ID")
-    @GetMapping("/{petId}/records/deleted")
+    @GetMapping("/{petId}/deleted-record")
     public ResponseEntity<List<PetRecordDTO>> getDeletedPetRecordsByPetId(@PathVariable Long petId) {
         List<PetRecordDTO> deletedPetRecords = petService.findDeletedPetRecordEntityByPetId(petId);
         return new ResponseEntity<>(deletedPetRecords, HttpStatus.OK);
