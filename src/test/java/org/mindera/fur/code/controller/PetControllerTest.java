@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mindera.fur.code.dto.person.PersonCreationDTO;
 import org.mindera.fur.code.dto.person.PersonDTO;
 import org.mindera.fur.code.dto.pet.PetDTO;
+import org.mindera.fur.code.dto.pet.PetRecordDTO;
 import org.mindera.fur.code.model.Role;
 import org.mindera.fur.code.model.Shelter;
 import org.mindera.fur.code.model.enums.pet.PetSpeciesEnum;
@@ -25,11 +26,15 @@ import org.mindera.fur.code.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
@@ -88,6 +93,10 @@ class PetControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private CacheManager cacheManager;
+
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
@@ -127,6 +136,9 @@ class PetControllerTest {
 
         // Create the pet record using the pet ID
         createPetRecord(petId);
+
+        // Clear caches
+        clearAllCaches();
     }
 
     @AfterEach
@@ -186,6 +198,15 @@ class PetControllerTest {
                 .then()
                 .statusCode(200)
                 .extract().body().jsonPath().getString("token");
+    }
+
+    private void clearAllCaches() {
+        for (String name : cacheManager.getCacheNames()) {
+            Cache cache = cacheManager.getCache(name);
+            if (cache != null) {
+                cache.clear();
+            }
+        }
     }
 
     @Test
@@ -1027,5 +1048,287 @@ class PetControllerTest {
                 .then()
                 .statusCode(200)
                 .body("[0].petId", equalTo(petId.intValue()));
+    }
+
+    ////////////////////////////// Tests for cache //////////////////////////////
+    @Test
+    void givenPetId_whenGetPetById_thenPetIsCached() {
+        // Arrange
+        Long id = petId;
+        Cache petCache = cacheManager.getCache("pet");
+        assertNotNull(petCache, "Cache 'pet' should not be null");
+
+        // Ensure cache is empty
+        petCache.clear();
+
+        // Act
+        // First call - should fetch from database and cache the result
+        given()
+                .when()
+                .get("/api/v1/pet/{id}", id)
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(id.intValue()));
+
+        // Verify cache contains the pet
+        PetDTO cachedPet = petCache.get(id, PetDTO.class);
+        assertNotNull(cachedPet, "Pet should be cached after first call");
+        assertEquals(id, cachedPet.getId(), "Cached pet ID should match");
+
+        // Second call - should fetch from cache
+        given()
+                .when()
+                .get("/api/v1/pet/{id}", id)
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(id.intValue()));
+
+        // No changes to cache; verify the same cached object is used
+        PetDTO cachedPetAfterSecondCall = petCache.get(id, PetDTO.class);
+        assertNotNull(cachedPetAfterSecondCall, "Pet should still be cached");
+        assertEquals(cachedPet, cachedPetAfterSecondCall, "Cached pet should be the same");
+    }
+
+    @Test
+    void givenCachedPet_whenUpdatePet_thenCacheIsUpdated() {
+        // Arrange
+        Long id = petId;
+        Cache petCache = cacheManager.getCache("pet");
+        Cache petsCache = cacheManager.getCache("pets");
+        assertNotNull(petCache, "Cache 'pet' should not be null");
+        assertNotNull(petsCache, "Cache 'pets' should not be null");
+
+        // Ensure caches are empty
+        petCache.clear();
+        petsCache.clear();
+
+        // Populate caches by making initial requests
+        given()
+                .when()
+                .get("/api/v1/pet/{id}", id)
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(id.intValue()));
+
+        given()
+                .when()
+                .get("/api/v1/pet/all")
+                .then()
+                .statusCode(200);
+
+        // Verify caches are populated
+        assertNotNull(petCache.get(id, PetDTO.class), "Pet should be cached");
+        assertNotNull(petsCache.get(SimpleKey.EMPTY), "Pets list should be cached");
+
+        // Prepare update data
+        String updateJson = """
+        {
+            "isAdopted": true
+        }
+    """;
+
+        // Act
+        // Update the pet
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + adminToken)
+                .body(updateJson)
+                .when()
+                .patch("/api/v1/pet/update/{id}", id)
+                .then()
+                .statusCode(200)
+                .body("isAdopted", equalTo(true));
+
+        // Verify that the pet cache entry is updated
+        PetDTO cachedPetAfterUpdate = petCache.get(id, PetDTO.class);
+        assertNotNull(cachedPetAfterUpdate, "Pet cache should be updated after update");
+        assertTrue(cachedPetAfterUpdate.getIsAdopted(), "Cached pet adoption status should be updated");
+
+        // Verify that caches are evicted
+        assertNull(petsCache.get(SimpleKey.EMPTY), "Pets list cache should be evicted after update");
+
+        // Make GET request again to repopulate cache
+        given()
+                .when()
+                .get("/api/v1/pet/{id}", id)
+                .then()
+                .statusCode(200)
+                .body("isAdopted", equalTo(true));
+
+        // Verify that cache now contains the updated pet
+        PetDTO cachedUpdatedPet = petCache.get(id, PetDTO.class);
+        assertNotNull(cachedUpdatedPet, "Updated pet should be cached");
+        assertTrue(cachedUpdatedPet.getIsAdopted(), "Cached pet adoption status should be updated");
+    }
+
+    @Test
+    void givenNoCachedPets_whenGetAllPets_thenAllPetsAreCached() {
+        // Arrange
+        Cache petsCache = cacheManager.getCache("pets");
+        assertNotNull(petsCache, "Cache 'pets' should not be null");
+        petsCache.clear();
+
+        // Act
+        // First call - should fetch from database and cache the result
+        given()
+                .when()
+                .get("/api/v1/pet/all")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0));
+
+        // Verify cache contains the pets list
+        List<PetDTO> cachedPets = petsCache.get(SimpleKey.EMPTY, List.class);
+        assertNotNull(cachedPets, "Pets list should be cached after first call");
+        assertFalse(cachedPets.isEmpty(), "Cached pets list should not be empty");
+
+        // Second call - should fetch from cache
+        given()
+                .when()
+                .get("/api/v1/pet/all")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0));
+
+        // Verify that the cache still contains the same data
+        List<PetDTO> cachedPetsAfterSecondCall = petsCache.get(SimpleKey.EMPTY, List.class);
+        assertEquals(cachedPets, cachedPetsAfterSecondCall, "Cached pets list should remain the same");
+    }
+
+    @Test
+    void givenPetId_whenGetAllPetRecords_thenPetRecordsAreCached() {
+        // Arrange
+        Long id = petId;
+        Cache recordCache = cacheManager.getCache("record");
+        assertNotNull(recordCache, "Cache 'record' should not be null");
+        recordCache.clear();
+
+        // Ensure the pet has at least one record
+        createPetRecord(id);
+
+        // Act
+        // First call - should fetch from database and cache the result
+        given()
+                .header("Authorization", "Bearer " + adminToken)
+                .when()
+                .get("/api/v1/pet/{id}/record", id)
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0));
+
+        // Verify cache contains the pet records
+        List<PetRecordDTO> cachedRecords = recordCache.get(id, List.class);
+        assertNotNull(cachedRecords, "Pet records should be cached after first call");
+        assertFalse(cachedRecords.isEmpty(), "Cached pet records list should not be empty");
+
+        // Second call - should fetch from cache
+        given()
+                .header("Authorization", "Bearer " + adminToken)
+                .when()
+                .get("/api/v1/pet/{id}/record", id)
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0));
+    }
+
+    @Test
+    void givenCachedPetRecords_whenAddPetRecord_thenCacheIsEvicted() {
+        // Arrange
+        Long id = petId;
+        Cache recordCache = cacheManager.getCache("record");
+        assertNotNull(recordCache, "Cache 'record' should not be null");
+        recordCache.clear();
+
+        // Ensure the pet has at least one record
+        createPetRecord(id);
+
+        // Populate cache
+        given()
+                .header("Authorization", "Bearer " + adminToken)
+                .when()
+                .get("/api/v1/pet/{id}/record", id)
+                .then()
+                .statusCode(200);
+
+        // Verify cache is populated
+        assertNotNull(recordCache.get(id), "Pet records should be cached");
+
+        // Prepare new pet record data
+        String newPetRecordJson = """
+    {
+      "intervention": "New health check",
+      "createdAt": "2024-08-15T11:08:13.990Z"
+    }
+    """;
+
+        // Act
+        // Add a new pet record
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + adminToken)
+                .body(newPetRecordJson)
+                .when()
+                .post("/api/v1/pet/{id}/create-record", id)
+                .then()
+                .statusCode(201);
+
+        // Verify that cache is evicted
+        assertNull(recordCache.get(id), "Pet records cache should be evicted after adding a new record");
+
+        // Make GET request again to repopulate cache
+        given()
+                .header("Authorization", "Bearer " + adminToken)
+                .when()
+                .get("/api/v1/pet/{id}/record", id)
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(1));
+
+        // Verify cache is repopulated
+        List<PetRecordDTO> cachedRecordsAfterUpdate = recordCache.get(id, List.class);
+        assertNotNull(cachedRecordsAfterUpdate, "Pet records should be cached after repopulating");
+        assertTrue(cachedRecordsAfterUpdate.size() > 1, "Cached pet records should include the new record");
+    }
+
+    @Test
+    void givenCachedPet_whenSoftDeletePet_thenCachesAreEvicted() {
+        // Arrange
+        Long id = petId;
+        Cache petCache = cacheManager.getCache("pet");
+        Cache petsCache = cacheManager.getCache("pets");
+        assertNotNull(petCache, "Cache 'pet' should not be null");
+        assertNotNull(petsCache, "Cache 'pets' should not be null");
+        petCache.clear();
+        petsCache.clear();
+
+        // Populate caches
+        given()
+                .when()
+                .get("/api/v1/pet/{id}", id)
+                .then()
+                .statusCode(200);
+
+        given()
+                .when()
+                .get("/api/v1/pet/all")
+                .then()
+                .statusCode(200);
+
+        // Verify caches are populated
+        assertNotNull(petCache.get(id), "Pet should be cached");
+        assertNotNull(petsCache.get(SimpleKey.EMPTY), "Pets list should be cached");
+
+        // Act
+        // Soft delete the pet
+        given()
+                .header("Authorization", "Bearer " + managerToken)
+                .when()
+                .delete("/api/v1/pet/delete/{id}", id)
+                .then()
+                .statusCode(204);
+
+        // Verify that caches are evicted
+        assertNull(petCache.get(id), "Pet cache should be evicted after deletion");
+        assertNull(petsCache.get(SimpleKey.EMPTY), "Pets list cache should be evicted after deletion");
     }
 }
